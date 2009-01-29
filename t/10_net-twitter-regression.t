@@ -1,7 +1,7 @@
 #!perl
 use Carp;
 use strict;
-use Test::More tests => 35;
+use Test::More tests => 34;
 use Test::Exception;
 
 # Originally written by Marc Mims for Net::Twitter, modifeid for Net::Twitter::Lite.
@@ -19,18 +19,11 @@ my $nt = Net::Twitter::Lite->new(
 $nt->_ua->print_diags(1);
 
 ok      $nt->friends_timeline,                        'friends_timeline no args';
-
-TODO: {
-    local $TODO = 'Validation errors should throw with die_on_validation';
-    eval { $nt->friends_timeline({ bogus_arg => 1 }) };
-    ok  $@ && $@ =~ /bogus_arg/,                     'unexpected args';
-}
-
 ok      $nt->create_friend('flanders'),               'create_friend scalar arg';
 ok      $nt->create_friend({ id => 'flanders' }),     'create_friend hashref';
 ok      $nt->destroy_friend('flanders'),              'destroy_friend scalar arg';
 
-$nt->_ua->success_content('true');
+$nt->_ua->set_response({ content => 'true' });
 my $r;
 
 # back compat: 1.23 accepts scalar args
@@ -41,7 +34,7 @@ ok       $r = $nt->relationship_exists({ user_a => 'homer', user_b => 'marge' })
 
 # back compat: 1.23 returns bool
 cmp_ok   $r, '==', 1, 'relationship_exists returns bool';
-$nt->_ua->clear_success_content;
+$nt->_ua->clear_response;
 
 
 # Net::Twitter calls used by POE::Component::Server::Twirc

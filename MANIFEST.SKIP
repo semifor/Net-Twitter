@@ -1,0 +1,45 @@
+# Avoid version control files.
+\bRCS\b
+\bCVS\b
+,v$
+\B\.svn\b
+^\.git
+
+# Avoid Makemaker generated and utility files.
+\bMakefile$
+\bblib
+\bMakeMaker-\d
+\bpm_to_blib$
+\bblibdirs$
+^MANIFEST\.SKIP$
+
+# for developers only :)
+^TODO$
+
+# Avoid Module::Build generated and utility files.
+\bBuild$
+\b_build
+
+# Avoid temp and backup files.
+~$
+\.tmp$
+\.old$
+\.bak$
+\..*?\.sw[po]$
+\#$
+\b\.#
+
+# avoid OS X finder files
+\.DS_Store$
+
+# Don't ship the test db
+^t/var
+
+# Don't ship the last dist we built :)
+\.tar\.gz$
+
+# Skip maint stuff
+^maint/
+
+# Avoid copies to .orig
+\.orig$

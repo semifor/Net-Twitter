@@ -1,0 +1,7 @@
+.*.swp
+META.yml
+Makefile
+MANIFEST
+blib/
+pm_to_blib
+*.bak

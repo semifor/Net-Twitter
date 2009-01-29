@@ -309,7 +309,7 @@ sub _twitter_rest_api {
 
     chomp $@, return $self->_error_response(400, $@) if $@;
 
-    return $self->_error_response(400, "Bad URL, /ID.json present.") if $uri =~ m/ID.json/;    
+    return $self->_error_response(400, "Bad URL, /ID.json present.") if $uri =~ m/ID.json/;
 
     my $api_entry = $twitter_api{$path}
         || return $self->error_response(404, "$path is not a twitter api entry");
@@ -372,12 +372,10 @@ sub _error_response {
 sub _response {
     my ($self, %args) = @_;
 
-    my $content = $self->success_content;
-    $content = '{"test":"1"}' unless defined $content;
     bless {
-        _content => $content,
-        _rc      => 200,
-        _msg     => 'OK',
+        _content => $self->{_res_content} || '{"test":"1"}',
+        _rc      => $self->{_res_code   } || 200,
+        _msg     => $self->{_res_message} || 'OK',
         _headers => {},
         %args,
     }, 'HTTP::Response';
@@ -403,19 +401,6 @@ sub print_diags {
     $self->{_print_diags} = shift;
 }
 
-sub success_content {
-    my $self = shift;
-
-    return $self->{_success_content} unless @_;
-    $self->{_success_content} = shift;
-}
-
-sub clear_success_content {
-    my $self = shift;
-
-    delete $self->{_success_content};
-}
-
 sub input_args {
     my $self = shift;
 
@@ -425,5 +410,16 @@ sub input_args {
 sub input_uri { shift->{_input_uri} }
 
 sub input_method { shift->{_input_method} }
+
+sub set_response {
+    my ($self, $args) = @_;
+
+    @{$self}{qw/_res_code _res_message _res_content/} = @{$args}{qw/code message content/};
+    ref $args->{content}
+        && ( $self->{_res_content} = eval { JSON::Any->to_json($args->{content}) } )
+        || ref $args->{content};
+}
+
+sub clear_response { delete @{shift()}{qw/_res_code _res_message _re_content/} }
 
 1;

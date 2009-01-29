@@ -1,0 +1,86 @@
+NAME
+    Net::Twitter::Lite - A lean perl interface to the Twitter API
+
+SYNOPSIS
+      use Net::Twitter::Light;
+
+      my $ntl = Net::Twitter::Light->new(username => $user, password => $password);
+
+      my $result = $ntl->update('Hello, world!');
+
+      eval {
+          my $feed = $ntl->friends_timeline({ since_id => $high_water, count => 100 });
+          for my $status ( @$feed ) {
+              say "$status->{user}{screen_name}: $status->{text};
+          }
+      };
+      if ( @_ ) {
+          if( my $e = TwitterException->caught() ) {
+              warn "$e\n";
+          }
+          elsif ( $e = HttpException->caught() ) {
+              warn "Network connection down?\n";
+          }
+          else {
+              die $@; # something bad happened
+          }
+      }
+
+      # Net::Twitter compatibility mode
+      my $ntl = Net::Twitter::Lite->new(
+          compat_mode => 1,
+          username    => $user,
+          password    => $password,
+      my $feed = $ntl->friend_timeline;
+      if ( $feed ) {
+          for my $satus ( @$feed ) { ... }
+      }
+      else {
+          warn "error: HTML resposes code ", $ntl->http_code, "\n";
+      }
+
+DESCRIPTION
+    "Net::Twitter::Lite" attempts to provide a lean, robust, and easy to
+    maintain perl interface to the Twitter API. It provides some basic
+    compatibility with the Net::Twitter module. It takes a different
+    approach in some areas, however, so it is not a drop-in replacement.
+
+    Most Twitter API methods take parameters. All "Net::Twitter::Lite"
+    methods will accept a hash ref of named parameters as specified in the
+    Twitter API documentation. For convenience, many "Net::Twitter::Lite"
+    methods accept simple placeholder arguments as documented, below. The
+    placeholder parameter passing style is optional; you can always use the
+    named parameters in a hash ref if you prefer.
+
+    "Net::Twitter::Lite" does not do aggressive parameter validation. It
+    will dutifully pass invalid parameters to Twitter if instructed, and if
+    Twitter returns an error as a result, "Net::Twitter::Lite" will throw an
+    appropriate exception.
+
+    The lack of aggressive parameter checking has an advantage. If Twitter
+    adds new parameters to any of the API methods, you may begin using them
+    immediately without warning or errors and without any need for
+    modification to the source code of this module.
+
+    "Net::Twitter::Lite" differs from "Net::Twitter" significantly in its
+    error handling strategy. It throws exceptions in response to Twitter and
+    network errors. You can catch and deal with these errors using eval
+    blocks in the usual way. Throwing exceptions allows "Net::Twitter::Lite"
+    to work well with "LWP::UserAgent::POE" in an environment where there
+    may be concurrent requests.
+
+    For compatibility with "Net::Twitter", "Net::Twitter::Lite" provides a
+    "compat_mode" option to "new". In compatibility mode,
+    "Net::Twitter::Lite" will return "undef" on error. Use the "get_error",
+    "http_code", and "http_message" methods to determine the nature of the
+    error.
+
+AUTHOR
+    Marc Mims <marc@questright.com>
+
+LICENSE
+    Copyright (c) 2009 Marc Mims
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
