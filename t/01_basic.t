@@ -59,7 +59,7 @@ my @tests = (
     [ verify_credentials     => [],                        GET  => "/account/verify_credentials.json"     ],
 );
 
-plan tests => @tests * 4 + 1;
+plan tests => @tests * 2 * 4 + 1;
 
 use_ok 'Net::Twitter::Lite';
 
@@ -70,6 +70,8 @@ my $nt = Net::Twitter::Lite->new(
 
 my $ua = $nt->_ua;
 
+# run 2 passes to ensure the first pass isn't changing internal state
+for my $pass ( 1, 2 ) {
 for my $test ( @tests ) {
     my ($api_call, $args, $method, $path) = @$test;
 
@@ -87,10 +89,11 @@ for my $test ( @tests ) {
         %args = ref $args->[0] ? %{$args->[0]} : ( id => $args->[0] );
     }
 
-    ok $nt->$api_call(@$args),         "$api_call call";
-    is_deeply $ua->input_args, \%args, "$api_call args";
-    is $ua->input_uri->path, $path,    "$api_call path";
-    is $ua->input_method, $method,     "$api_call method";
+    ok $nt->$api_call(@$args),         "[$pass] $api_call call";
+    is_deeply $ua->input_args, \%args, "[$pass] $api_call args";
+    is $ua->input_uri->path, $path,    "[$pass] $api_call path";
+    is $ua->input_method, $method,     "[$pass] $api_call method";
+}
 }
 
 exit 0;
