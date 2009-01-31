@@ -1,6 +1,9 @@
 NAME
     Net::Twitter::Lite - A lean perl interface to the Twitter API
 
+VERSION
+    This document describes version 0.00000_01
+
 SYNOPSIS
       use Net::Twitter::Light;
 
@@ -74,6 +77,346 @@ DESCRIPTION
     "Net::Twitter::Lite" will return "undef" on error. Use the "get_error",
     "http_code", and "http_message" methods to determine the nature of the
     error.
+
+METHODS
+    new
+    credentials
+
+API METHODS
+  Status Methods
+    public_timeline
+        Parameters: *none*
+
+        Returns the 20 most recent statuses from non-protected users who
+        have set a custom user icon. Does not require authentication. Note
+        that the public timeline is cached for 60 seconds so requesting it
+        more often than that is a waste of resources.
+
+        Returns: ArrayRef[Status]
+
+    friends_timeline
+        Parameters: since, since_id, count, page
+
+        Returns the 20 most recent statuses posted by the authenticating
+        user and that user's friends. This is the equivalent of /home on the
+        Web.
+
+        Returns: ArrayRef[Status]
+
+    user_timeline
+        Parameters: id, count, since, since_id
+
+        Returns the 20 most recent statuses posted from the authenticating
+        user. It's also possible to request another user's timeline via the
+        id parameter. This is the equivalent of the Web /archive page for
+        your own user, or the profile page for a third party.
+
+        Returns: ArrayRef[Status]
+
+    show_status
+    show_status(id)
+        Parameters: id
+
+        Returns a single status, specified by the id parameter. The status's
+        author will be returned inline.
+
+        Returns: Status
+
+    update
+    update(status)
+        Parameters: status, in_reply_to_status_id
+
+        Updates the authenticating user's status. Requires the status
+        parameter specified. A status update with text identical to the
+        authenticating user's current status will be ignored.
+
+        Returns: Status
+
+    replies
+        Parameters: page, since, since_id
+
+        Returns the 20 most recent @replies (status updates prefixed with
+        @username) for the authenticating user.
+
+        Returns: ArrayRef[Status]
+
+    destroy_status
+    destroy_status(id)
+        Parameters: id
+
+        Destroys the status specified by the required ID parameter. The
+        authenticating user must be the author of the specified status.
+
+        Returns: Status
+
+  User Methods
+    friends
+        Parameters: id, page
+
+        Returns the authenticating user's friends, each with current status
+        inline. They are ordered by the order in which they were added as
+        friends. It's also possible to request another user's recent friends
+        list via the id parameter.
+
+        Returns: ArrayRef[BasicUser]
+
+    followers
+        Parameters: id, page
+
+        Returns the authenticating user's followers, each with current
+        status inline. They are ordered by the order in which they joined
+        Twitter (this is going to be changed).
+
+        Returns: ArrayRef[BasicUser]
+
+    show_user
+    show_user(id)
+        Parameters: id, email
+
+        Returns extended information of a given user, specified by ID or
+        screen name as per the required id parameter. This information
+        includes design settings, so third party developers can theme their
+        widgets according to a given user's preferences. You must be
+        properly authenticated to request the page of a protected user.
+
+        Returns: ExtendedUser
+
+  Direct Message Methods
+    direct_messages
+        Parameters: since, since_id
+
+        Returns a list of the 20 most recent direct messages sent to the
+        authenticating user including detailed information about the sending
+        and recipient users.
+
+        Returns: ArrayRef[DirectMessage]
+
+    sent_direct_messages
+        Parameters: since, since_id, page
+
+        Returns a list of the 20 most recent direct messages sent by the
+        authenticating user including detailed information about the sending
+        and recipient users.
+
+        Returns: ArrayRef[DirectMessage]
+
+    new_direct_message
+    new_direct_message(user, text)
+        Parameters: user, text
+
+        Sends a new direct message to the specified user from the
+        authenticating user. Requires both the user and text parameters.
+        Returns the sent message in the requested format when successful.
+
+        Returns: DirectMessage
+
+    destroy_direct_message
+    destroy_direct_message(id)
+        Parameters: id
+
+        Destroys the direct message specified in the required ID parameter.
+        The authenticating user must be the recipient of the specified
+        direct message.
+
+        Returns: DirectMessage
+
+  Friendship Methods
+    create_friend
+    create_friend(id)
+        Parameters: id, follow
+
+        Befriends the user specified in the ID parameter as the
+        authenticating user. Returns the befriended user in the requested
+        format when successful. Returns a string describing the failure
+        condition when unsuccessful.
+
+        Returns: BasicUser
+
+    destroy_friend
+    destroy_friend(id)
+        Parameters: id
+
+        Discontinues friendship with the user specified in the ID parameter
+        as the authenticating user. Returns the un-friended user when
+        successful. Returns a string describing the failure condition when
+        unsuccessful.
+
+        Returns: BasicUser
+
+    friendship_exists
+    friendship_exists(user_a, user_b)
+    alias: relationship_exists
+    alias: follows
+        Parameters: user_a, user_b
+
+        Tests if a friendship exists between two users.
+
+        Returns: Bool
+
+  Account Methods
+    verify_credentials
+        Parameters: *none*
+
+        Returns an HTTP 200 OK response code and a representation of the
+        requesting user if authentication was successful; returns a 401
+        status code and an error message if not. Use this method to test if
+        supplied user credentials are valid.
+
+        Returns: ExtendedUser
+
+    end_session
+        Parameters: *none*
+
+        Ends the session of the authenticating user, returning a null
+        cookie. Use this method to sign users out of client-facing
+        applications like widgets.
+
+        Returns: Error
+
+    update_delivery_device
+    update_delivery_device(device)
+        Parameters: device
+
+        Sets which device Twitter delivers updates to for the authenticating
+        user. Sending none as the device parameter will disable IM or SMS
+        updates.
+
+        Returns: BasicUser
+
+    update_profile_colors
+        Parameters: profile_background_color, profile_text_color,
+        profile_link_color, profile_sidebar_fill_color,
+        profile_sidebar_border_color
+
+        Sets one or more hex values that control the color scheme of the
+        authenticating user's profile page on twitter.com. These values are
+        also returned in the /users/show API method.
+
+        Returns: ExtendedUser
+
+    update_profile_image
+    update_profile_image(image)
+        Parameters: image
+
+        Updates the authenticating user's profile image. Expects raw
+        multipart data, not a URL to an image.
+
+        Returns: ExtendedUser
+
+    update_profile_background_image
+    update_profile_background_image(image)
+        Parameters: image
+
+        Updates the authenticating user's profile background image. Expects
+        raw multipart data, not a URL to an image.
+
+        Returns: ExtendedUser
+
+    rate_limit_status
+        Parameters: *none*
+
+        Returns the remaining number of API requests available to the
+        requesting user before the API limit is reached for the current
+        hour. Calls to rate_limit_status do not count against the rate
+        limit. If authentication credentials are provided, the rate limit
+        status for the authenticating user is returned. Otherwise, the rate
+        limit status for the requester's IP address is returned.
+
+        Returns: RateLimitStatus
+
+    update_profile
+        Parameters: name, email, url, location, description
+
+        Sets values that users are able to set under the "Account" tab of
+        their settings page. Only the parameters specified will be updated;
+        to only update the "name" attribute, for example, only include that
+        parameter in your request.
+
+        Returns: ExtendedUser
+
+  Favorite Methods
+    favorites
+        Parameters: id, page
+
+        Returns the 20 most recent favorite statuses for the authenticating
+        user or user specified by the ID parameter.
+
+        Returns: ArrayRef[Status]
+
+    create_favorite
+    create_favorite(id)
+        Parameters: id
+
+        Favorites the status specified in the ID parameter as the
+        authenticating user. Returns the favorite status when successful.
+
+        Returns: Status
+
+    destroy_favorite
+    destroy_favorite(id)
+        Parameters: id
+
+        Un-favorites the status specified in the ID parameter as the
+        authenticating user. Returns the un-favorited status.
+
+        Returns: Status
+
+  Notification Methods
+    enable_notifications
+    enable_notifications(id)
+        Parameters: id
+
+        Enables notifications for updates from the specified user to the
+        authenticating user. Returns the specified user when successful.
+
+        Returns: BasicUser
+
+    disable_notifications
+    disable_notifications(id)
+        Parameters: id
+
+        Disables notifications for updates from the specified user to the
+        authenticating user. Returns the specified user when successful.
+
+        Returns: BasicUser
+
+  Block Methods
+    create_block
+    create_block(id)
+        Parameters: id
+
+        Blocks the user specified in the ID parameter as the authenticating
+        user. Returns the blocked user when successful. You can find out
+        more about blocking in the Twitter Support Knowledge Base.
+
+        Returns: BasicUser
+
+    destroy_block
+    destroy_block(id)
+        Parameters: id
+
+        Un-blocks the user specified in the ID parameter as the
+        authenticating user. Returns the un-blocked user when successful.
+
+        Returns: BasicUser
+
+  Help Methods
+    test
+        Parameters: *none*
+
+        Returns the string "ok" status code.
+
+        Returns: Str
+
+SEE ALSO
+    <http://apiwiki.twitter.com/REST+API+Documentation>
+        This is the official Twitter API documentation. It describes the
+        methods and their parameters in more detail and may be more current
+        than the documentation provided with this module.
+
+    Net::Twitter
+        This is the original perl interface to the Twitter API and
+        inspiration for this module.
 
 AUTHOR
     Marc Mims <marc@questright.com>

@@ -187,10 +187,26 @@ my %twitter_api = (
         "post"      => 1,
         "args"      => { "image" => 1, },
     },
+    "/account/update_location" => {
+        "blankargs" => 0,
+        "post"      => 1,
+        "args"      => { "location" => 1, },
+    },
     "/account/update_profile_background_image" => {
         "blankargs" => 0,
         "post"      => 1,
         "args"      => { "image" => 1, },
+    },
+    "/account/update_profile" => {
+        "blankargs" => 0,
+        "post"      => 1,
+        "args"      => {
+            name    => 0,
+            email   => 0,
+            url     => 0,
+            location => 0,
+            description => 0,
+        },
     },
     "/account/update_delivery_device" => {
         "blankargs" => 0,

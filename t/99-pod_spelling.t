@@ -16,7 +16,24 @@ all_pod_files_spelling_ok();
 
 __DATA__
 API
+BasicUser
+DirectMessage
+ExtendedUser
+IM
+IP
 JSON
 Marc
 Mims
+RateLimitStatus
+SMS
+Str
 Twitter
+Un
+favorited
+friended
+inline
+multipart
+ok
+requester's
+timeline
+un
