@@ -292,4 +292,8 @@ Marc Mims <marc@questright.com>
 
 Copyright (c) 2009 Marc Mims
 
+The Twitter API itself, and the description text used in this module is:
+
+Copyright (c) 2009 Twitter
+
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

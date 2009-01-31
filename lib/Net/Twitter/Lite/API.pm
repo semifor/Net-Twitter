@@ -529,3 +529,121 @@ maintenance window is scheduled.
 ]}
 
 1;
+
+__END__
+
+=head1 NAME
+
+Net::Twitter::Lite::API - A definition of the Twitter API in a perl data structure
+
+=head1 SYNOPSIS
+
+    use aliased 'Net::Twitter::Lite::API';
+
+    my $api_def = API->definition;
+
+=head1 DESCRIPTION
+
+B<Net::Twitter::Lite::API> provides a perl data structure describing the Twitter API.  It is used
+by the Net::Twitter::Lite distribution to dynamically build methods, documentation, and tests.
+
+=head1 METHODS
+
+=head2 definition
+
+The single class method C<definition> returns a perl data structure in the following form:
+
+    ArrayRef[Section];
+
+where,
+
+    Section is an ArrayRef: [  SectionName, ArrayRef[Method] ];
+
+where,
+
+    SectionName is a string containing the name of the section;
+
+and,
+
+    Method is an ArrayRef: [ MethodName, HashRef[MethodDefinition] ];
+
+where,
+
+    MethodName is a string containing the same of the Twitter API method;
+
+and,
+
+    MethodDefinion as a HashRef: {
+        description => Str,
+        path        => Str,
+        params      => ArrayRef[Str],
+        required    => ArrayRef[Str],
+        returns     => Str,
+        deprecated  => Bool,
+    }
+
+where,
+
+=over 4
+
+=item description
+
+A string containing text describing the Twitter API call.  Descriptions were lifted, almost
+verbatim, from the Twitter REST API Documentation page L<http://apiwiki.twitter.com/REST+API+Documentation>.
+
+=item path
+
+A string containing the path for the Twitter API excluding the leading slash and
+the C<.format> suffix.
+
+=item params
+
+An ARRAY ref of all documented parameter names, if any.  Otherwise, an empty ARRAY ref.
+
+=item required
+
+An ARRAY ref of all required parameters if any.  Otherwise, an empty ARRAY ref.
+
+=item returns
+
+A string is pseudo L<Moose::Util::TypeConstraint> syntax.  For example, a return type of
+C<ArrayRef[Status]> is an ARRAY ref of status structures as defined by Twitter.
+
+=item deprecated
+
+A bool indicating the Twitter API method has been deprecated.  This can can be
+omitted for non-deprecated methods.
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Net::Twitter::Lite>
+
+Net::Twitter::Lite::API was written for the use of this module and its distribution.
+
+=item L<http://apiwiki.twitter.com/REST+API+Documentation>
+
+The Twitter REST API documentation.
+
+=item L<http://apiwiki.twitter.com/Search+API+Documentation>
+
+The Twitter Search API documentation
+
+=back
+
+=head1 AUTHOR
+
+Marc Mims <marc@questright.com>
+
+=head1 LICENSE
+
+Copyright (c) 2009 Marc Mims
+
+The Twitter API itself, and the description text used in this module is:
+
+Copyright (c) 2009 Twitter
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
