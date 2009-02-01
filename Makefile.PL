@@ -1,7 +1,9 @@
 use inc::Module::Install;
 
 all_from    'lib/Net/Twitter/Lite.pm';
+requires    'aliased';
 requires    'Moose';
+requires    'Moose::Role';
 requires    'JSON::Any';
 requires    'URI::Escape';
 requires    'Exception::Class';
