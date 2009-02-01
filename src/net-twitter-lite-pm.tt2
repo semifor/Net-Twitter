@@ -20,9 +20,7 @@ has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has apiurl          => ( isa => 'Str', is => 'ro', default => API->base_url );
 has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80' );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API' );
-has compat_mode     => ( isa => 'Bool', is => 'rw', default => 0 );
 has _ua             => ( isa => 'Object', is => 'rw' );
-has _response       => ( isa => 'HTTP::Response', is => 'rw' );
 
 use Exception::Class (
     TwitterException => {
@@ -56,10 +54,6 @@ sub credentials {
 
     return $self;
 }
-
-sub get_error { shift->_response->content }
-sub http_code { shift->_response->code }
-sub http_message { shift->_response->message }
 
 my $post_request = sub {
     my ($ua, $uri, $args) = @_;
@@ -111,7 +105,6 @@ while ( my ($method, $def) = each %$method_defs ) {
         my $obj = eval { JSON::Any->from_json($res->content) };
 
         return $obj if $res->is_success && $obj;
-        return $res->is_success && $obj if $self->compat_mode;
         TwitterException->throw(
             error         => $obj->{error},
             http_response => $res,
@@ -166,18 +159,6 @@ This document describes version [% VERSION %]
       }
   }
 
-  # Net::Twitter compatibility mode
-  my $ntl = Net::Twitter::Lite->new(
-      compat_mode => 1,
-      username    => $user,
-      password    => $password,
-  my $feed = $ntl->friend_timeline;
-  if ( $feed ) {
-      for my $satus ( @$feed ) { ... }
-  }
-  else {
-      warn "error: HTML resposes code ", $ntl->http_code, "\n";
-  }
 
 =head1 DESCRIPTION
 

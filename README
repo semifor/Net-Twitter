@@ -29,19 +29,6 @@ SYNOPSIS
           }
       }
 
-      # Net::Twitter compatibility mode
-      my $ntl = Net::Twitter::Lite->new(
-          compat_mode => 1,
-          username    => $user,
-          password    => $password,
-      my $feed = $ntl->friend_timeline;
-      if ( $feed ) {
-          for my $satus ( @$feed ) { ... }
-      }
-      else {
-          warn "error: HTML resposes code ", $ntl->http_code, "\n";
-      }
-
 DESCRIPTION
     "Net::Twitter::Lite" attempts to provide a lean, robust, and easy to
     maintain perl interface to the Twitter API. It provides some basic
