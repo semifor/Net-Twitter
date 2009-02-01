@@ -100,7 +100,7 @@ while ( my ($method, $def) = each %$method_defs ) {
 
         my $local_path = $modify_path->($path, $args);
         my $uri = URI->new($self->apiurl . "/$local_path.json");
-        my $res = $self->_response($request->($self->_ua, $uri, $args));
+        my $res = $request->($self->_ua, $uri, $args);
         my $obj = eval { JSON::Any->from_json($res->content) };
 
         return $obj if $res->is_success && $obj;
