@@ -72,8 +72,6 @@ my $get_request = sub {
     return $ua->get($uri);
 };
 
-my $without_url_arg = sub { $_[0] };
-
 my $with_url_arg = sub {
     my ($path, $args) = @_;
 
@@ -93,24 +91,21 @@ while ( my ($method, $def) = each %$method_defs ) {
     my ($arg_names, $path) = @{$def}{qw/required path/};
     my $request = $def->{method} eq 'POST' ? $post_request : $get_request;
 
-    my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : $without_url_arg;
-    my $extra_args = $method eq 'update' ? sub { { source => $_[0]->source } } : sub { {} };
+    my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : sub { $_[0] };
 
     my $code = sub {
         my $self = shift;
 
-        my $args = $extra_args->($self);
-        if ( @_ ) {
-            if ( !ref $_[0] ) {
-                @_ == @$arg_names || croak "$method expected @{[ scalar @$arg_names ]} args";
-                @{$args}{@$arg_names} = @_;
-            }
-            else {
-                UNIVERSAL::isa($_[0], 'HASH') || croak "$method expected a HashRef";
-                $args = { %$args, %{shift()} };
-                @_ && croak "Too many args, $method expected a single HashRef";
-            }
+        my $args = {};
+        if ( ref $_[0] ) {
+            UNIVERSAL::isa($_[0], 'HASH') && @_ == 1 || croak "$method expected a single HASH ref argument";
+            $args = { %{shift()} }; # copy callers args since we may add ->{source}
         }
+        elsif ( @_ ) {
+            @_ == @$arg_names || croak "$method expected @{[ scalar @$arg_names ]} args";
+            @{$args}{@$arg_names} = @_;
+        }
+        $args->{source} ||= $self->source if $method eq 'update';
 
         my $local_path = $modify_path->($path, $args);
         my $uri = URI->new("$base_url/$local_path.json");
