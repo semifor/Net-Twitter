@@ -408,6 +408,26 @@ API METHODS
 
         Returns: Str
 
+  Search Methods
+    search
+    search(q)
+        Parameters: q, lang, rpp, page, since_id, geocode, show_user
+
+        Returns tweets that match a specified query. You can use a variety
+        of search operators in your query.
+
+        Returns: ArrayRef[Status]
+
+    trends
+        Parameters: *none*
+
+        Returns the top ten queries that are currently trending on Twitter.
+        The response includes the time of the request, the name of each
+        trending topic, and the url to the Twitter Search results page for
+        that topic.
+
+        Returns: ArrayRef[Query]
+
 SEE ALSO
     <http://apiwiki.twitter.com/REST+API+Documentation>
         This is the official Twitter API documentation. It describes the
@@ -423,6 +443,10 @@ AUTHOR
 
 LICENSE
     Copyright (c) 2009 Marc Mims
+
+    The Twitter API itself, and the description text used in this module is:
+
+    Copyright (c) 2009 Twitter
 
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.

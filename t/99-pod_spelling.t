@@ -31,11 +31,14 @@ Twitter
 Un
 favorited
 friended
+geocode
 inline
+lang
 multipart
 ok
 params
 requester's
+rpp
 timeline
 un
 url

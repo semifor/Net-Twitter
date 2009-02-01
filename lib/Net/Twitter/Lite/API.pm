@@ -2,8 +2,17 @@ package Net::Twitter::Lite::API;
 #!/usr/bin/perl
 use warnings;
 use strict;
+use Carp;
 
-sub definition {[
+
+# Definitions stored as subs in order to return a deep copy;
+# we don't want the caller inadvertently chnaging the definition!
+
+my %api = (
+
+######### REST API
+
+    rest => { base_url => 'http://twitter.com', definition => sub{[
 
     [ 'Status Methods' => [
         [ public_timeline => {
@@ -526,7 +535,71 @@ maintenance window is scheduled.
         }],
 
     ]],
-]}
+
+    ]}},
+
+######### Search API
+
+    search => { base_url => 'http://search.twitter.com', definition => sub{[
+
+
+    [ 'Search Methods' => [
+
+
+        [ search => {
+            description => <<'',
+Returns tweets that match a specified query.  You can use a variety of search operators in your query.
+
+            path     => 'search',
+            method   => 'GET',
+            params   => [qw/q lang rpp page since_id geocode show_user/],
+            required => [qw/q/],
+            returns  => 'ArrayRef[Status]',
+        }],
+
+
+        [ trends => {
+            description => <<'',
+Returns the top ten queries that are currently trending on Twitter.  The response includes the time of the request, the name of each trending topic, and the url to the Twitter Search results page for that topic.
+
+            path     => 'trends',
+            method   => 'GET',
+            params   => [qw//],
+            required => [qw//],
+            returns  => 'ArrayRef[Query]',
+        }],
+    ]],
+]}});
+
+sub _default_api { 'rest' }
+
+sub _api_component {
+    my ($class, $component, $api_name) = @_;
+
+    $api_name ||= $class->_default_api;
+    my $api_entry = $api{lc $api_name} || croak "API $api_name does not exist";
+    return $api_entry->{$component};
+}
+
+sub base_url {
+    my ($class, $api_name) = @_;
+
+    $class->_api_component('base_url', $api_name);
+}
+
+sub definition {
+    my ($class, $api_name) = @_;
+
+    $class->_api_component('definition', $api_name)->();
+}
+
+sub method_definitions {
+    my ($class, $api) = @_;
+
+    $api ||= $class->_default_api;
+
+    return { map { $_->[0] => $_->[1] } map @{$_->[1]}, @{$class->definition($api)} };
+}
 
 1;
 
@@ -549,15 +622,26 @@ by the Net::Twitter::Lite distribution to dynamically build methods, documentati
 
 =head1 METHODS
 
-=head2 definition
+=head2 base_url($api_name)
 
-The single class method C<definition> returns a perl data structure in the following form:
+=head2 definition_url($api_name)
+
+The two class methods B<base_url> and B<definition> take a single, optional
+argument, $api_name, which may be either C<REST> for the Twitter REST API, or
+C<search> for the Twitter Search API.  If $api_name is not specified, it
+defaults to C<REST>. (The $api_name argument is not case sensitive, so C<rest>,
+and C<REST> both work.)
+
+B<base_url> returns the the base portion of the URL for the methods in the
+requested API. B<definition> returns a data structure describing the API methods
+in the following form:
+
 
     ArrayRef[Section];
 
 where,
 
-    Section is an ArrayRef: [  SectionName, ArrayRef[Method] ];
+    Section is an ARRAY ref: [  SectionName, ArrayRef[Method] ];
 
 where,
 
@@ -565,7 +649,7 @@ where,
 
 and,
 
-    Method is an ArrayRef: [ MethodName, HashRef[MethodDefinition] ];
+    Method is an ARRAY ref: [ MethodName, HashRef[MethodDefinition] ];
 
 where,
 
@@ -573,7 +657,7 @@ where,
 
 and,
 
-    MethodDefinion as a HashRef: {
+    MethodDefinion as a HASH ref: {
         description => Str,
         path        => Str,
         params      => ArrayRef[Str],
@@ -615,6 +699,12 @@ A bool indicating the Twitter API method has been deprecated.  This can can be
 omitted for non-deprecated methods.
 
 =back
+
+=head2 method_definitions($api_name)
+
+This method returns a HASH ref where the keys are method names and the values are individual
+method definitions as described above for the API specified by the optional $api_name
+argument.  If $api_name is not specified, it defaults to C<REST>.
 
 =head1 SEE ALSO
 

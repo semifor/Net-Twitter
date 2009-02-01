@@ -1,3 +1,0 @@
-This file exists for the sole purpose of forcing inclusion of the inc/.author
-directory in git repository.  The existence of inc/.author is used in
-Makefile.PL to generate code for the CPAN distribution from TT2 templates.

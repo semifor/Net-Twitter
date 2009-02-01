@@ -86,9 +86,10 @@ my $with_url_arg = sub {
     return $path;
 };
 
-for my $entry ( map @{$_->[1]}, @{API->definition} ) {
-    my ($method, $def) = @$entry;
-
+for my $api ( qw/rest search/ ) {
+    my $base_url = API->base_url($api);
+    my $method_defs = API->method_definitions($api);
+while ( my ($method, $def) = each %$method_defs ) {
     my ($arg_names, $path) = @{$def}{qw/required path/};
     my $request = $def->{method} eq 'POST' ? $post_request : $get_request;
 
@@ -112,7 +113,7 @@ for my $entry ( map @{$_->[1]}, @{API->definition} ) {
         }
 
         my $local_path = $modify_path->($path, $args);
-        my $uri = URI->new("http://twitter.com/$local_path.json");
+        my $uri = URI->new("$base_url/$local_path.json");
         my $res = $self->_response($request->($self->_ua, $uri, $args));
         my $obj = eval { JSON::Any->from_json($res->content) };
 
@@ -130,6 +131,7 @@ for my $entry ( map @{$_->[1]}, @{API->definition} ) {
     };
 
     __PACKAGE__->meta->add_method($_, $code) for ( $method, @{$def->{aliases} || []});
+}
 }
 
 __PACKAGE__->meta->make_immutable;

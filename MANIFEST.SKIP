@@ -43,3 +43,6 @@
 
 # Avoid copies to .orig
 \.orig$
+
+# used to condition creation of Lite.pm from src/net-twitter-lite-pm.tt2
+MAINTAINER

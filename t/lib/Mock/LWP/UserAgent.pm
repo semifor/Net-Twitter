@@ -272,6 +272,25 @@ my %twitter_api = (
         "post"      => 0,
         "args"      => {},
     },
+    '/search' => {
+        blankargs => 0,
+        post      => 0,
+        args      => {
+            q   => 1,
+            lang => 0,
+            rpp  => 0,
+            page    => 0,
+            since_id    => 0,
+            geocode     => 0,
+            show_user   => 0,
+        },
+    },
+    '/trends' => {
+        blankargs   => 1,
+        post        => 0,
+        args        => {},
+    },
+
 );
 
 sub new {

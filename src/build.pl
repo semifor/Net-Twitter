@@ -7,7 +7,7 @@ use aliased 'Net::Twitter::Lite::API';
 
 my $tt = Template->new;
 $tt->process('src/net-twitter-lite-pm.tt2',
-             { api_def => API->definition },
+             { api_def => [ @{API->definition('rest')}, @{API->definition('search')} ] },
              'lib/Net/Twitter/Lite.pm'
 ) || die $tt->error;
 
