@@ -5,5 +5,5 @@ MANIFEST
 blib/
 pm_to_blib
 *.bak
-lib/Net/Twitter/Lite.pm
+lib/Net/Twitter/Lite.pod
 *.old
