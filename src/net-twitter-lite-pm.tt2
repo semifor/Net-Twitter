@@ -5,7 +5,7 @@ use Moose;
 use Carp;
 use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
-use aliased 'Net::Twitter::Lite::API';
+use aliased 'Net::Twitter::Lite::API::REST' => 'API';
 
 # use *all* digits for fBSD ports
 our $VERSION = '[% VERSION %]';
@@ -17,7 +17,7 @@ has username        => ( isa => 'Str', is => 'rw' );
 has password        => ( isa => 'Str', is => 'rw' );
 has useragent       => ( isa => 'Str', is => 'ro', default => __PACKAGE__ . "/$VERSION" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
-has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.com' );
+has apiurl          => ( isa => 'Str', is => 'ro', default => API->base_url );
 has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80' );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API' );
 has compat_mode     => ( isa => 'Bool', is => 'rw', default => 0 );
@@ -84,9 +84,7 @@ my $with_url_arg = sub {
     return $path;
 };
 
-for my $api ( qw/rest search/ ) {
-    my $base_url = API->base_url($api);
-    my $method_defs = API->method_definitions($api);
+my $method_defs = API->method_definitions;
 while ( my ($method, $def) = each %$method_defs ) {
     my ($arg_names, $path) = @{$def}{qw/required path/};
     my $request = $def->{method} eq 'POST' ? $post_request : $get_request;
@@ -108,7 +106,7 @@ while ( my ($method, $def) = each %$method_defs ) {
         $args->{source} ||= $self->source if $method eq 'update';
 
         my $local_path = $modify_path->($path, $args);
-        my $uri = URI->new("$base_url/$local_path.json");
+        my $uri = URI->new($self->apiurl . "/$local_path.json");
         my $res = $self->_response($request->($self->_ua, $uri, $args));
         my $obj = eval { JSON::Any->from_json($res->content) };
 
@@ -126,7 +124,6 @@ while ( my ($method, $def) = each %$method_defs ) {
     };
 
     __PACKAGE__->meta->add_method($_, $code) for ( $method, @{$def->{aliases} || []});
-}
 }
 
 __PACKAGE__->meta->make_immutable;

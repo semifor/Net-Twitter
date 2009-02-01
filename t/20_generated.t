@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Test::More;
 use Net::Twitter::Lite;
-use aliased 'Net::Twitter::Lite::API';
+use aliased 'Net::Twitter::Lite::API::REST' => 'API';
 use List::Util qw/sum/;
 
 use lib qw(t/lib);
