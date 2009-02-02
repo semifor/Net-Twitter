@@ -391,7 +391,7 @@ sub _validate_basic_url {
     my $uri = URI->new($url);
 
     die "scheme: expected http\n" unless $uri->scheme eq 'http';
-    die "bad host\n" unless $uri->host eq 'twitter.com';
+    die "bad host\n" unless $uri->host eq $self->_host;
     die "expected .json\n" unless (my $path = $uri->path) =~ s/\.json$//;
 
     $uri->path($path);
@@ -456,5 +456,12 @@ sub set_response {
 }
 
 sub clear_response { delete @{shift()}{qw/_res_code _res_message _re_content/} }
+
+sub _host {
+    my $self = shift;
+
+    $self->{_host} = shift if @_;
+    return $self->{_host};
+}
 
 1;

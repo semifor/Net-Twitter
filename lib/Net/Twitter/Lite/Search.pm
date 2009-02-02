@@ -3,8 +3,7 @@ use 5.008;
 use Moose;
 use Carp;
 use aliased 'Net::Twitter::Lite::API::Search' => 'API';
-
-extends 'Net::Twitter::Lite';
+use Net::Twitter::Lite;
 
 my $version = Net::Twitter::Lite->VERSION;
 
