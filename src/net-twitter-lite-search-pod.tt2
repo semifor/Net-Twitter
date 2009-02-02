@@ -1,0 +1,141 @@
+=head1 NAME
+
+Net::Twitter::Lite::Search - A Moose based perl interface to the Twitter Search API
+
+=head1 SYNOPSIS
+
+  use Net::Twitter::Lite;
+
+  my $ntl = Net::Twitter::Lite->new(username => $user, password => $password);
+
+  my $result = $ntl->update('Hello, world!');
+
+  eval {
+      my $feed = $ntl->friends_timeline({ since_id => $high_water, count => 100 });
+      for my $status ( @$feed ) {
+          say "$status->{user}{screen_name}: $status->{text};
+      }
+  };
+  if ( @_ ) {
+      if( my $e = TwitterException->caught() ) {
+          warn "$e\n";
+      }
+      elsif ( $e = HttpException->caught() ) {
+          warn "Network connection down?\n";
+      }
+      else {
+          die $@; # something bad happened
+      }
+  }
+
+
+=head1 DESCRIPTION
+
+This module provides an interface to the Twitter Search API using the same
+mechanisms and methodology as L<Net::Twitter::Lite> does for the Twitter REST
+API.
+
+
+=head1 METHODS
+
+=over 4
+
+=item new
+
+This creates a new instance of Net::Twitter::Lite.  It accepts several named
+arguments, all of them optional:
+
+=over 4
+
+=item useragent
+
+This is the useragent string passed in each request to twitter.  It defaults
+to C<Net::Twitter::Lite::Search/[% VERSION %]>.
+
+=item apiurl
+
+This is the base URL for the Twitter API methods.  It defaults to
+C<http://search.twitter.com>.  You may use a different URL to specify another
+service, provides a Twitter Compatible API (although, the author is not aware
+of any).
+
+=item useragent_class
+
+This is the name of the useragent class used internally.  It defaults to
+C<LWP::UserAgent>.  You may pass C<LWP::UserAgent::POE> or another
+LWP::UserAgent compatible class instead.
+
+=back
+
+=back
+
+=head1 API METHODS
+
+[% FOREACH section IN api_def;
+   title = section.0; 
+   methods = section.1  -%]
+=head2 [% title %]
+
+=over 4
+
+[% FOREACH method IN methods;
+   name = method.0;
+   def  = method.1;
+   NEXT IF def.deprecated -%]
+=item B<[% name %]>
+
+[% IF def.required.size -%]
+=item B<[% name %]([% def.required.join(", ") %])>
+
+[% END -%]
+
+[% FOREACH alias IN def.aliases -%]
+=item alias: [% alias %]
+
+[% END -%]
+Parameters: [% IF def.params.size %][% def.params.join(", ") %][% ELSE %]I<none>[% END %]
+
+[% def.description %]
+
+Returns: [% def.returns %]
+
+[% END -%]
+=back
+
+[% END -%]
+
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<http://apiwiki.twitter.com/Search+API+Documentation>
+
+This is the official Twitter Search API documentation. It describes the methods
+and their parameters in more detail and may be more current than the
+documentation provided with this module.
+
+=item L<Net::Twitter::Lite>
+
+A perl interface to the Twitter REST API provided in this distribution.
+
+=item L<LWP::UserAgent::POE>
+
+This LWP::UserAgent compatible class can be used in L<POE> based application
+along with Net::Twitter::Lite::Search to provide concurrent, non-blocking requests.
+
+=back
+
+=head1 AUTHOR
+
+Marc Mims <marc@questright.com>
+
+=head1 LICENSE
+
+Copyright (c) 2009 Marc Mims
+
+The Twitter Search API itself, and the description text used in this module is:
+
+Copyright (c) 2009 Twitter
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

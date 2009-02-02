@@ -8,9 +8,9 @@ This document describes version [% VERSION %]
 
 =head1 SYNOPSIS
 
-  use Net::Twitter::Light;
+  use Net::Twitter::Lite;
 
-  my $ntl = Net::Twitter::Light->new(username => $user, password => $password);
+  my $ntl = Net::Twitter::Lite->new(username => $user, password => $password);
 
   my $result = $ntl->update('Hello, world!');
 
