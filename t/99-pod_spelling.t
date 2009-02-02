@@ -44,6 +44,7 @@ requester's
 rpp
 timeline
 un
+unfollow
 url
 useragent
 username

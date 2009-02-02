@@ -131,6 +131,7 @@ API METHODS
         Returns: ArrayRef[Status]
 
     friends_timeline
+    alias: following_timeline
         Parameters: since, since_id, count, page
 
         Returns the 20 most recent statuses posted by the authenticating
@@ -187,6 +188,7 @@ API METHODS
 
   User Methods
     friends
+    alias: following
         Parameters: id, page
 
         Returns the authenticating user's friends, each with current status
@@ -270,6 +272,7 @@ API METHODS
 
     destroy_friend
     destroy_friend(id)
+    alias: unfollow
         Parameters: id
 
         Discontinues friendship with the user specified in the ID parameter

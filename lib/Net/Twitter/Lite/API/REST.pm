@@ -33,6 +33,7 @@ often than that is a waste of resources.
 Returns the 20 most recent statuses posted by the authenticating user
 and that user's friends. This is the equivalent of /home on the Web.
 
+            aliases   => [qw/following_timeline/],
             path      => 'statuses/friends_timeline',
             method    => 'GET',
             api_limit => 1,
@@ -118,6 +119,7 @@ inline. They are ordered by the order in which they were added as
 friends. It's also possible to request another user's recent friends
 list via the id parameter.
 
+            aliases  => [qw/following/],
             path     => 'statuses/friends',
             method   => 'GET',
             params   => [qw/id page/],
@@ -225,6 +227,7 @@ user.  Returns the befriended user in the requested format when
 successful.  Returns a string describing the failure condition when
 unsuccessful.
 
+            alias    => [qw/follow_new/],
             path     => 'friendships/create/id',
             method   => 'POST',
             params   => [qw/id follow/],
@@ -239,6 +242,7 @@ Discontinues friendship with the user specified in the ID parameter as the
 authenticating user.  Returns the un-friended user when successful.
 Returns a string describing the failure condition when unsuccessful.
 
+            aliases  => [qw/unfollow/],
             path     => 'friendships/destroy/id',
             method   => 'POST',
             params   => [qw/id/],
