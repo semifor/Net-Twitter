@@ -1,7 +1,6 @@
-
 =head1 NAME
 
-Net::Twitter::Lite - A lean perl interface to the Twitter API
+Net::Twitter::Lite - A lean Moose based perl interface to the Twitter API
 
 =head1 VERSION
 
@@ -36,39 +35,46 @@ This document describes version [% VERSION %]
 
 =head1 DESCRIPTION
 
-C<Net::Twitter::Lite> attempts to provide a lean, robust, and easy to maintain
+B<Net::Twitter::Lite> attempts to provide a lean, robust, and easy to maintain
 perl interface to the Twitter API. It provides some basic compatibility with
 the L<Net::Twitter> module.  It takes a different approach in some areas,
-however, so it is not a drop-in replacement.
+however, so it is not a drop-in replacement.  See
+L<Net::Twitter::Lite::Compat>, included with this distribution, for a
+Net::Twitter compatible interface.
 
-Most Twitter API methods take parameters.  All C<Net::Twitter::Lite> methods
-will accept a hash ref of named parameters as specified in the Twitter API
-documentation.  For convenience, many C<Net::Twitter::Lite> methods accept
+Net::Twitter::Lite uses L<Moose>.  Some may contend Moose and Lite are
+mutually exclusive.  Moose greatly reduces the number of lines of code
+necessary to accomplish the goals of Net::Twitter::Lite, so the author finds
+the name appropriate.
+
+Most Twitter API methods take parameters.  All Net::Twitter::Lite API
+methods will accept a HASH ref of named parameters as specified in the Twitter
+API documentation.  For convenience, many Net::Twitter::Lite methods accept
 simple placeholder arguments as documented, below.  The placeholder parameter
 passing style is optional; you can always use the named parameters in a hash
 ref if you prefer.
 
-C<Net::Twitter::Lite> does not do aggressive parameter validation. It will
+Net::Twitter::Lite does not do aggressive parameter validation. It will
 dutifully pass invalid parameters to Twitter if instructed, and if Twitter
-returns an error as a result, C<Net::Twitter::Lite> will throw an appropriate
+returns an error as a result, Net::Twitter::Lite will throw an appropriate
 exception.
 
 The lack of aggressive parameter checking has an advantage.  If Twitter adds
 new parameters to any of the API methods, you may begin using them immediately
-without warning or errors and without any need for modification to the source
+without warnings or errors and without any need for modification to the source
 code of this module.
 
-C<Net::Twitter::Lite> differs from C<Net::Twitter> significantly in its error
-handling strategy.  It throws exceptions in response to Twitter and network
-errors.  You can catch and deal with these errors using eval blocks in the
-usual way.  Throwing exceptions allows C<Net::Twitter::Lite> to work well with
-C<LWP::UserAgent::POE> in an environment where there may be concurrent
+Net::Twitter::Lite differs from Net::Twitter significantly in its error
+handling strategy.  It throws exceptions in response to Twitter API and
+network errors.  You can catch and deal with these errors using eval blocks in
+the usual way.  Throwing exceptions allows Net::Twitter::Lite to work well
+with L<LWP::UserAgent::POE> in an environment where there may be concurrent
 requests.
 
-For compatibility with C<Net::Twitter>, C<Net::Twitter::Lite> provides a
-C<compat_mode> option to C<new>.  In compatibility mode, C<Net::Twitter::Lite>
-will return C<undef> on error.  Use the C<get_error>, C<http_code>, and
-C<http_message> methods to determine the nature of the error.
+For compatibility with Net::Twitter, this distribution includes
+L<Net::Twitter::Lite::Compat>.  It provides the same error handling strategy
+as Net::Twitter returning C<undef> on error with C<get_error>, C<http_code>,
+and C<http_message> methods to determine the nature of the error.
 
 =head1 METHODS
 
@@ -76,7 +82,58 @@ C<http_message> methods to determine the nature of the error.
 
 =item new
 
-=item credentials
+This creates a new instance of Net::Twitter::Lite.  It accepts several named
+arguments, all of them optional:
+
+=over 4
+
+=item username
+
+This is the username or email address used to authenticate with Twitter.
+
+=item password
+
+This is the password used to authenticate with Twitter.
+
+=item useragent
+
+This is the useragent string passed in each request to twitter.  It defaults
+to C<Net::Twitter::Lite/[% VERSION %]>.
+
+=item source
+
+This is the application source identifier passed to twitter with the L</"update">
+method.  It defaults to C<twitterpm>.
+
+=item apiurl
+
+This is the base URL for the Twitter API methods.  It defaults to
+C<http://twitter.com>.  You may use a different URL to specify another
+service, such as L<http://identi.ca> that provides a Twitter Compatible API.
+Also, see L</"apihost"> and L</"apirealm">, below.
+
+=item apihost
+
+This is the C<netloc> argument passed to L<LWP::UserAgent> internally as part
+of the HTTP Basic Authentication protocol.  It defaults to C<twitter.com:80>.
+
+=item apirealm
+
+This is the C<realm> argument passed to L<LWP::UserAgent> internally as port
+of the HTTP Basic Authentication protocol.  It defaults to C<Twitter API>.
+
+=item useragent_class
+
+This is the name of the useragent class used internally.  It defaults to
+C<LWP::UserAgent>.  You may pass C<LWP::UserAgent::POE> or another
+LWP::UserAgent compatible class instead.
+
+=back
+
+=item credentials($username, $password)
+
+This method can be used to set or change the L</"username"> and L</"password">
+used to authenticated with Twitter.
 
 =back
 
@@ -130,6 +187,11 @@ with this module.
 
 This is the original perl interface to the Twitter API and inspiration for this
 module.
+
+=item L<LWP::UserAgent::POE>
+
+This LWP::UserAgent compatible class can be used in L<POE> based application
+along with Net::Twitter::Lite to provide concurrent, non-blocking requests.
 
 =back
 

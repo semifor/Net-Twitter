@@ -29,6 +29,9 @@ SMS
 Str
 Twitter
 Un
+apihost
+apirealm
+apiurl
 favorited
 friended
 geocode
@@ -42,3 +45,5 @@ rpp
 timeline
 un
 url
+useragent
+username

@@ -21,31 +21,25 @@ Net::Twitter::Lite::API - A definition of the Twitter API in a perl data structu
 
 =head1 SYNOPSIS
 
-    use aliased 'Net::Twitter::Lite::API';
+    use aliased 'Net::Twitter::Lite::API::REST';
 
     my $api_def = API->definition;
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Lite::API> provides a perl data structure describing the Twitter API.  It is used
-by the Net::Twitter::Lite distribution to dynamically build methods, documentation, and tests.
+B<Net::Twitter::Lite::API> is the base class for classes providing API
+definitions. It is used by the Net::Twitter::Lite distribution to dynamically
+build methods, documentation, and tests.
 
 =head1 METHODS
 
-=head2 base_url($api_name)
+=head2 base_url
 
-=head2 definition_url($api_name)
+Returns the base URL for the API.
 
-The two class methods B<base_url> and B<definition> take a single, optional
-argument, $api_name, which may be either C<REST> for the Twitter REST API, or
-C<search> for the Twitter Search API.  If $api_name is not specified, it
-defaults to C<REST>. (The $api_name argument is not case sensitive, so C<rest>,
-and C<REST> both work.)
+=head2 definition_url
 
-B<base_url> returns the the base portion of the URL for the methods in the
-requested API. B<definition> returns a data structure describing the API methods
-in the following form:
-
+Returns the API definition in the following form:
 
     ArrayRef[Section];
 
@@ -82,8 +76,8 @@ where,
 
 =item description
 
-A string containing text describing the Twitter API call.  Descriptions were lifted, almost
-verbatim, from the Twitter REST API Documentation page L<http://apiwiki.twitter.com/REST+API+Documentation>.
+A string containing text describing the Twitter API call suitable for use in
+documentation.
 
 =item path
 
@@ -110,11 +104,11 @@ omitted for non-deprecated methods.
 
 =back
 
-=head2 method_definitions($api_name)
+=head2 method_definitions
 
 This method returns a HASH ref where the keys are method names and the values are individual
 method definitions as described above for the API specified by the optional $api_name
-argument.  If $api_name is not specified, it defaults to C<REST>.
+argument.
 
 =head1 SEE ALSO
 
@@ -124,13 +118,9 @@ argument.  If $api_name is not specified, it defaults to C<REST>.
 
 Net::Twitter::Lite::API was written for the use of this module and its distribution.
 
-=item L<http://apiwiki.twitter.com/REST+API+Documentation>
+=item L<http://apiwiki.twitter.com/>
 
-The Twitter REST API documentation.
-
-=item L<http://apiwiki.twitter.com/Search+API+Documentation>
-
-The Twitter Search API documentation
+The Twitter API documentation.
 
 =back
 
@@ -141,9 +131,5 @@ Marc Mims <marc@questright.com>
 =head1 LICENSE
 
 Copyright (c) 2009 Marc Mims
-
-The Twitter API itself, and the description text used in this module is:
-
-Copyright (c) 2009 Twitter
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

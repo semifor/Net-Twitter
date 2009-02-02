@@ -14,6 +14,4 @@ plan skip_all => 'Test::Pod::Coverage 1.04 required' if $@;
 plan skip_all => 'set TEST_POD to enable this test'
   unless ($ENV{TEST_POD} || -e 'MANIFEST.SKIP');
 
-plan tests => 1;
-
-pod_coverage_ok('Net::Twitter::Lite');
+all_pod_coverage_ok({ trustme => [qw/API BUILD REST/] });
