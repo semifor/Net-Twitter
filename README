@@ -46,8 +46,8 @@ DESCRIPTION
     Most Twitter API methods take parameters. All Net::Twitter::Lite API
     methods will accept a HASH ref of named parameters as specified in the
     Twitter API documentation. For convenience, many Net::Twitter::Lite
-    methods accept simple placeholder arguments as documented, below. The
-    placeholder parameter passing style is optional; you can always use the
+    methods accept simple positional arguments as documented, below. The
+    positional parameter passing style is optional; you can always use the
     named parameters in a hash ref if you prefer.
 
     Net::Twitter::Lite does not do aggressive parameter validation. It will
