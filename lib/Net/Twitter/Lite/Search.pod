@@ -80,7 +80,13 @@ LWP::UserAgent compatible class instead.
 =item B<search(q)>
 
 
-Parameters: q, lang, rpp, page, since_id, geocode, show_user
+=over 4
+
+=item Parameters: q, lang, rpp, page, since_id, geocode, show_user
+
+=item Required: q
+
+=back
 
 Returns tweets that match a specified query.  You can use a variety of search operators in your query.
 
@@ -89,8 +95,16 @@ Returns: ArrayRef[Status]
 
 =item B<trends>
 
+=item B<trends(q)>
 
-Parameters: I<none>
+
+=over 4
+
+=item Parameters: I<none>
+
+=item Required: I<none>
+
+=back
 
 Returns the top ten queries that are currently trending on Twitter.  The response includes the time of the request, the name of each trending topic, and the url to the Twitter Search results page for that topic.
 

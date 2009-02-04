@@ -20,19 +20,20 @@ plan tests => 4 * 2 * sum map 1 + @{$_->[1]{aliases}||[]}, map @{$_->[1]}, @{API
 for my $pass ( 1, 2 ) {
     for my $entry ( map @{$_->[1]}, @{API->definition} ) {
         my ($api_method, $def) = @$entry;
-        my ($aliases, $required, $method, $path) = @{$def}{qw/aliases required method path/};
+        my ($aliases, $pos_params, $method, $path) = @{$def}{qw/aliases required method path/};
+        $pos_params = $def->{params} if @$pos_params == 0 && @{$def->{params}} == 1;
 
-        my $has_id = $path =~ s,/id,/$params[0],;
+        my $has_id = $path =~ s|/id$|/$params[0]|;
         $path = "/$path.json";
 
         for my $call ( $api_method, @{$aliases || []} ) {
             # the parameter names/values expected in GET/POST parameters
             my %expected;
-            my @local_params = @params[0..$#{$required}];
-            @expected{@$required} = @local_params;
+            my @local_params = @params[0..$#{$pos_params}];
+            @expected{@$pos_params} = @local_params;
             $expected{source} = $nt->source if $api_method eq 'update';
 
-            ok $nt->$call(@local_params),          "[$pass] $call(@{[ join ', ' => @$required ]})";
+            ok $nt->$call(@local_params),          "[$pass] $call(@{[ join ', ' => @$pos_params ]})";
             is_deeply $ua->input_args, \%expected, "[$pass] $call args";
             is $ua->input_uri->path, $path,        "[$pass] $call path";
             is $ua->input_method, $method,         "[$pass] $call method";

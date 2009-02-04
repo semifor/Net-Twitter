@@ -25,6 +25,7 @@ often than that is a waste of resources.
             method  => 'GET',
             returns => 'ArrayRef[Status]',
             params  => [],
+            required => [],
         }],
 
 
@@ -36,8 +37,8 @@ and that user's friends. This is the equivalent of /home on the Web.
             aliases   => [qw/following_timeline/],
             path      => 'statuses/friends_timeline',
             method    => 'GET',
-            api_limit => 1,
             params    => [qw/since since_id count page/],
+            required  => [],
             returns   => 'ArrayRef[Status]',
         }],
 
@@ -52,6 +53,7 @@ your own user, or the profile page for a third party.
             path    => 'statuses/user_timeline',
             method  => 'GET',
             params  => [qw/id count since since_id/],
+            required => [],
             returns => 'ArrayRef[Status]',
         }],
 
@@ -214,6 +216,36 @@ message.
             required => [qw/id/],
             returns  => 'DirectMessage',
         }],
+    ]],
+
+
+    [ 'Social Graph Methods' => [
+
+
+        [ friends_ids => {
+            description => <<'',
+Returns an array of numeric IDs for every user the specified user is following.
+
+            aliases  => [qw/following_ids/],
+            path     => 'friends/ids/id',
+            method   => 'GET',
+            params   => [qw/id/],
+            required => [qw//],
+            returns  => 'ArrayRef[Int]',
+        }],
+
+
+        [ followers_ids => {
+            description => <<'',
+Returns an array of numeric IDs for every user is followed by.
+
+            path     => 'followers/ids/id',
+            method   => 'GET',
+            params   => [qw/id/],
+            required => [qw//],
+            returns  => 'ArrayRef[Int]',
+        }],
+
     ]],
 
 
@@ -507,7 +539,6 @@ Returns the un-blocked user when successful.
             returns  => 'BasicUser',
         }],
     ]],
-
 
     [ 'Help Methods' => [
 

@@ -80,6 +80,7 @@ my $with_url_arg = sub {
 my $method_defs = API->method_definitions;
 while ( my ($method, $def) = each %$method_defs ) {
     my ($arg_names, $path) = @{$def}{qw/required path/};
+    $arg_names = $def->{params} if @$arg_names == 0 && @{$def->{params}} == 1;
     my $request = $def->{method} eq 'POST' ? $post_request : $get_request;
 
     my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : sub { $_[0] };

@@ -138,6 +138,18 @@ my %twitter_api = (
         "post"      => 1,
         "args"      => { "id" => 1, },
     },
+    "/friends/ids" => {
+        "has_id"    => 1,
+        "blankargs" => 0,
+        "post"      => 0,
+        "args"      => { "id" => 0, },
+    },
+    "/followers/ids" => {
+        "has_id"    => 1,
+        "blankargs" => 0,
+        "post"      => 0,
+        "args"      => { "id" => 0, },
+    },
     "/friendships/create" => {
         "has_id"    => 1,
         "blankargs" => 0,
@@ -350,7 +362,7 @@ sub _twitter_rest_api {
         || return $self->error_response(404, "$path is not a twitter api entry");
 
     # TODO: What if ID is passed in the URL and args? What if the 2 are different?
-    $args->{id} = $id if $api_entry->{has_id} and defined $id;
+    $args->{id} = $id if $api_entry->{has_id} && defined $id && $id;
 
     $self->{_input_args} = { %$args }; # save a copy of input args for tests
 

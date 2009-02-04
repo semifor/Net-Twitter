@@ -84,8 +84,13 @@ LWP::UserAgent compatible class instead.
    NEXT IF def.deprecated -%]
 =item B<[% name %]>
 
-[% IF def.required.size -%]
-=item B<[% name %]([% def.required.join(", ") %])>
+[% IF def.required.size > 0;
+       pos_params = def.required;
+   ELSIF def.params.size == 1;
+       pos_params = def.params;
+   END;
+   IF pos_params.size -%]
+=item B<[% name %]([% pos_params.join(", ") %])>
 
 [% END -%]
 
@@ -93,7 +98,13 @@ LWP::UserAgent compatible class instead.
 =item alias: [% alias %]
 
 [% END -%]
-Parameters: [% IF def.params.size %][% def.params.join(", ") %][% ELSE %]I<none>[% END %]
+=over 4
+
+=item Parameters: [% IF def.params.size %][% def.params.join(", ") %][% ELSE %]I<none>[% END %]
+
+=item Required: [% IF def.required.size %][% def.required.join(", ") %][% ELSE %]I<none>[% END %]
+
+=back
 
 [% def.description %]
 
