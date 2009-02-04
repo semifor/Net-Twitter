@@ -28,6 +28,8 @@ my $wrapper = sub {
 
 around $_ => $wrapper for keys %{REST->method_definitions};
 
+no Moose;
+
 __PACKAGE__->meta->make_immutable;
 
 1;

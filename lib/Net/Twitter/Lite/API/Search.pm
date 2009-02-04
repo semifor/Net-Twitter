@@ -37,6 +37,8 @@ Returns the top ten queries that are currently trending on Twitter.  The respons
     ]],
 ]}
 
+no Moose;
+
 __PACKAGE__->meta->make_immutable;
 
 1;

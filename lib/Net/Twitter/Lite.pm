@@ -119,6 +119,8 @@ while ( my ($method, $def) = each %$method_defs ) {
     __PACKAGE__->meta->add_method($_, $code) for ( $method, @{$def->{aliases} || []});
 }
 
+no Moose;
+
 __PACKAGE__->meta->make_immutable;
 
 1;
