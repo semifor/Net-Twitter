@@ -4,23 +4,41 @@ use aliased 'Net::Twitter::Lite::API::REST';
 
 extends 'Net::Twitter::Lite';
 
-has _response       => ( isa => 'Maybe[HTTP::Response]', is => 'rw' );
+has _error  => (
+    isa       => 'Net::Twitter::Lite::Error',
+    is        => 'rw',
+    clearer   => '_clear_error',
+    predicate => 'has_error',
+    handles   => {
+        http_code    => 'code',
+        http_message => 'message',
+    },
+);
 
-sub get_error { shift->_response->content }
-sub http_code { shift->_response->code }
-sub http_message { shift->_response->message }
+sub get_error {
+    my $self = shift;
+
+    return unless $self->has_error;
+
+    return $self->_error->has_twitter_error
+        ? $self->_error->twitter_error
+        : {
+            request => undef,
+            error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - " . $self->_response
+          }; 
+}
 
 my $wrapper = sub {
     my $next = shift;
     my $self = shift;
 
-    $self->_response(undef);
+    $self->_clear_error;
 
-    my $r = eval { $next->($self, @_) };
+    my $r = eval { $self->$next(@_) };
     if ( $@ ) {
-        die $@ unless ref $@;
-       $self->_response($@->http_response);
-       return;
+        die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Lite::Error');
+
+        $self->_error($@);
     }
 
     return $r;
@@ -42,9 +60,9 @@ Net::Twitter::Lite::Compat - A Net::Twitter compatibility layer
 
 =head1 SYNOPSIS
 
-    use aliased 'Net::Twitter::Lite::Compat' => 'Twitter';
+    use aliased 'Net::Twitter::Lite::Compat' => 'Net::Twitter';
 
-    my $nt = Twitter->new(username => $username, password => $password);
+    my $nt = Net::Twitter->new(username => $username, password => $password);
 
     my $followers = $nt->followers;
     if ( !followers ) {

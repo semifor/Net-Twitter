@@ -4,6 +4,7 @@ use Moose;
 use Carp;
 use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
+use aliased 'Net::Twitter::Lite::Error'     => 'Error';
 use aliased 'Net::Twitter::Lite::API::REST' => 'API';
 
 # use *all* digits for fBSD ports
@@ -20,17 +21,6 @@ has apiurl          => ( isa => 'Str', is => 'ro', default => API->base_url );
 has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80' );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API' );
 has _ua             => ( isa => 'Object', is => 'rw' );
-
-use Exception::Class (
-    TwitterException => {
-        description => 'Twitter API error',
-        fields      => [qw/http_response twitter_error/ ],
-    },
-    HttpException   => {
-        description => 'HTTP or network error',
-        fields      => [qw/http_response/],
-    },
-);
 
 sub BUILD {
     my $self = shift;
@@ -104,16 +94,17 @@ while ( my ($method, $def) = each %$method_defs ) {
         my $res = $request->($self->_ua, $uri, $args);
         my $obj = eval { JSON::Any->from_json($res->content) };
 
+        # Twitter sometimes returns an error with status code 200
+        if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
+            die Error->new(twitter_error => $obj, http_response => $res);
+        }
+
         return $obj if $res->is_success && $obj;
-        TwitterException->throw(
-            error         => $obj->{error},
-            http_response => $res,
-            twitter_error => $obj
-        ) if $obj;
-        HttpException->throw(
-            error         => $res->message,
-            http_response => $res,
-        );
+
+        my $error = Error->new(http_response => $res);
+        $error->twitter_error($obj) if $obj;
+
+        die $error;
     };
 
     __PACKAGE__->meta->add_method($_, $code) for ( $method, @{$def->{aliases} || []});

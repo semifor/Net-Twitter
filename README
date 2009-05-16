@@ -19,15 +19,9 @@ SYNOPSIS
           }
       };
       if ( @_ ) {
-          if( my $e = TwitterException->caught() ) {
-              warn "$e\n";
-          }
-          elsif ( $e = HttpException->caught() ) {
-              warn "Network connection down?\n";
-          }
-          else {
-              die $@; # something bad happened
-          }
+          die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Lite::Error');
+
+          warn "$@\n";
       }
 
 DESCRIPTION
@@ -52,8 +46,8 @@ DESCRIPTION
 
     Net::Twitter::Lite does not do aggressive parameter validation. It will
     dutifully pass invalid parameters to Twitter if instructed, and if
-    Twitter returns an error as a result, Net::Twitter::Lite will throw an
-    appropriate exception.
+    Twitter returns an error as a result, Net::Twitter::Lite will throw a
+    Net::Twitter::Lite::Error object.
 
     The lack of aggressive parameter checking has an advantage. If Twitter
     adds new parameters to any of the API methods, you may begin using them
@@ -61,11 +55,11 @@ DESCRIPTION
     modification to the source code of this module.
 
     Net::Twitter::Lite differs from Net::Twitter significantly in its error
-    handling strategy. It throws exceptions in response to Twitter API and
-    network errors. You can catch and deal with these errors using eval
-    blocks in the usual way. Throwing exceptions allows Net::Twitter::Lite
-    to work well with LWP::UserAgent::POE in an environment where there may
-    be concurrent requests.
+    handling strategy. It throws Net::Twitter::Lite::Error objects in
+    response to Twitter API and network errors. You can catch and deal with
+    these errors using eval blocks in the usual way. Throwing exceptions
+    allows Net::Twitter::Lite to work well with LWP::UserAgent::POE in an
+    environment where there may be concurrent requests.
 
     For compatibility with Net::Twitter, this distribution includes
     Net::Twitter::Lite::Compat. It provides the same error handling strategy
