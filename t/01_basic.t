@@ -41,7 +41,7 @@ my @tests = (
     [ public_timeline        => [],                        GET  => "/statuses/public_timeline.json"      ],
     [ rate_limit_status      => [],                        GET  => "/account/rate_limit_status.json"     ],
     [ relationship_exists    => [ 'a', 'b'              ], GET  => "/friendships/exists.json"            ],
-    [ replies                => [],                        GET  => "/statuses/replies.json"              ],
+    [ mentions               => [],                        GET  => "/statuses/mentions.json"             ],
     [ sent_direct_messages   => [],                        GET  => "/direct_messages/sent.json"          ],
     [ show_status            => [ $screen_name          ], GET  => "/statuses/show/$screen_name.json"    ],
     [ show_user              => [ $screen_name          ], GET  => "/users/show/$screen_name.json"       ],

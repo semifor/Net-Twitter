@@ -4,7 +4,7 @@ use Moose;
 use Carp;
 use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
-use aliased 'Net::Twitter::Lite::Error'     => 'Error';
+use Net::Twitter::Lite::Error;
 use aliased 'Net::Twitter::Lite::API::REST' => 'API';
 
 # use *all* digits for fBSD ports
@@ -96,12 +96,12 @@ while ( my ($method, $def) = each %$method_defs ) {
 
         # Twitter sometimes returns an error with status code 200
         if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
-            die Error->new(twitter_error => $obj, http_response => $res);
+            die Net::Twitter::Lite::Error->new(twitter_error => $obj, http_response => $res);
         }
 
         return $obj if $res->is_success && $obj;
 
-        my $error = Error->new(http_response => $res);
+        my $error = Net::Twitter::Lite::Error->new(http_response => $res);
         $error->twitter_error($obj) if $obj;
 
         die $error;

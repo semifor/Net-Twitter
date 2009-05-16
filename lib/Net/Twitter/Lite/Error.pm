@@ -9,7 +9,11 @@ has http_response   => ( isa => 'HTTP::Response', is => 'rw', required => 1, han
 sub stringify {
     my $self = shift;
 
-    $self->has_twitter_error ? $self->twitter_error->{error} : $self->http_response->message;
+    # We MUST stringyfy to something that evaluates to true, or testing $@ will fail!
+    $self->has_twitter_error && $self->twitter_error->{error}
+        || $self->message
+        || $self->code
+        || -1;
 }
 
 no Moose;
@@ -22,7 +26,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Lite::Error - A Net::Twitter::Lite execption object
+Net::Twitter::Lite::Error - A Net::Twitter::Lite exception object
 
 =head1 SYNOPSIS
 
@@ -60,7 +64,7 @@ Returns the HTTP response code.
 
 =item message
 
-Returns the HTTP reponse message.
+Returns the HTTP response message.
 
 =item has_twitter_error
 
@@ -70,6 +74,8 @@ Returns true if the object contains a Twitter error HASH.
 
 Returns the error element of the Twitter error HASH, if one exists.  Otherwise,
 it returns the HTTP message.  =back
+
+=back
 
 =head1 SEE ALSO
 

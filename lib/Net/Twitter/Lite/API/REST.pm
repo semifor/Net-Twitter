@@ -570,7 +570,7 @@ Returns an array of user objects that the authenticating user is blocking.
             description => <<'',
 Returns an array of numeric user ids the authenticating user is blocking.
 
-            path     => 'blocks/blocking/ids',
+            path     => 'blocks/ids',
             method   => 'GET',
             params   => [qw//],
             required => [qw//],

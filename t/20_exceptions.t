@@ -1,7 +1,7 @@
 #!perl
 use warnings;
 use strict;
-use Test::More tests => 9;
+use Test::More tests => 8;
 use Test::Exception;
 use lib qw(t/lib);
 use Mock::LWP::UserAgent;
@@ -26,9 +26,9 @@ $ua->set_response({
 });
 
 dies_ok { $nt->destroy_direct_message(456) } 'TwitterException';
-my $e = TwitterException->caught();
-isa_ok $e, 'TwitterException';
-like   $e->error, qr/No direct message/, 'repsonse message';
+my $e = $@;
+isa_ok $e, 'Net::Twitter::Lite::Error';
+like   $e, qr/No direct message/, 'repsonse message';
 is     $e->http_response->code, 404, "respose code";
 like   $e->twitter_error->{request}, qr/456.json/, 'twitter_error request';
 
@@ -41,22 +41,8 @@ $ua->set_response({
 });
 
 dies_ok { $nt->friends_timeline({ since_id => 500_000_000 }) } 'HttpException';
-$e = Exception::Class->caught();
-isa_ok $e, 'HttpException';
+$e = $@;
+isa_ok $e, 'Net::Twitter::Lite::Error';
 like    $e->http_response->content, qr/html/, 'html content';
-
-# test the synopsis usage
-eval { die "not a Net::Twitter::Lite exception" };
-if ( $@ ) {
-    if ( my $e = TwitterException->caught() ) {
-        1;
-    }
-    elsif ( $e = HttpException->caught() ) {
-        1;
-    }
-    else {
-        like $@, qr/not a Net::Twitter::Lite exception/, 'regular exception';
-    }
-}
 
 exit 0;

@@ -6,7 +6,6 @@ requires    'Moose';
 requires    'Moose::Role';
 requires    'JSON::Any';
 requires    'URI::Escape';
-requires    'Exception::Class';
 recommends  'JSON::XS';
 
 no_index    directory => 'src';

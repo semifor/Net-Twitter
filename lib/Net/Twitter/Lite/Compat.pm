@@ -9,11 +9,21 @@ has _error  => (
     is        => 'rw',
     clearer   => '_clear_error',
     predicate => 'has_error',
-    handles   => {
-        http_code    => 'code',
-        http_message => 'message',
-    },
 );
+
+sub http_message {
+    my $self = shift;
+
+    return unless $self->has_error;
+    return $self->_error->message;
+}
+
+sub http_code {
+    my $self = shift;
+
+    return unless $self->has_error;
+    return $self->_error->code;
+}
 
 sub get_error {
     my $self = shift;

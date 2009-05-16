@@ -59,7 +59,7 @@ my %twitter_api = (
             "source"                => 0,
         },
     },
-    "/statuses/replies" => {
+    "/statuses/mentions" => {
         "blankargs" => 1,
         "post"      => 0,
         "args"      => {
@@ -274,6 +274,24 @@ my %twitter_api = (
         "post"      => 1,
         "args"      => { "id" => 1, },
     },
+    "/blocks/exists" => {
+        "has_id"    => 1,
+        "blankargs" => 0,
+        "post"      => 0,
+        "args"      => { "id" => 1, },
+    },
+    "/blocks/blocking" => {
+        "has_id"    => 0,
+        "blankargs" => 0,
+        "post"      => 0,
+        "args"      => {},
+    },
+    "/blocks/ids" => {
+        "has_id"    => 0,
+        "blankargs" => 1,
+        "post"      => 0,
+        "args"      => {},
+    },
     "/help/test" => {
         "blankargs" => 1,
         "post"      => 0,
@@ -379,7 +397,7 @@ sub _twitter_rest_api {
     else {
         my @required = grep { $api_entry->{args}{$_} } keys %{$api_entry->{args}};
         if ( my @missing = grep { !exists $args->{$_} } @required ) {
-            return $self->_error_response(400, "requried args missing: @missing");
+            return $self->_error_response(400, "$path -> requried args missing: @missing");
         }
     }
 
@@ -434,9 +452,9 @@ sub _parse_path_id {
     (my $path = $uri->path) =~ s/\.json$//;
     return ($path) if $twitter_api{$path};
 
-    ($path, my $id) = $path =~ /(.*)\/(.*)$/;
+    my ($ppath, $id) = $path =~ /(.*)\/(.*)$/;
 
-    return ($path, $id) if $twitter_api{$path} && $twitter_api{$path}{has_id};
+    return ($ppath, $id) if $twitter_api{$ppath} && $twitter_api{$ppath}{has_id};
 
     die "$path is not a twitter_api method\n";
 }
