@@ -129,7 +129,7 @@ API METHODS
     friends_timeline
     alias: following_timeline
 
-        Parameters: since, since_id, count, page
+        Parameters: since_id, max_id, count, page
         Required: *none*
 
         Returns the 20 most recent statuses posted by the authenticating
@@ -140,13 +140,24 @@ API METHODS
 
     user_timeline
 
-        Parameters: id, count, since, since_id
+        Parameters: id, user_id, screen_name, since_id, max_id, count, page
         Required: *none*
 
         Returns the 20 most recent statuses posted from the authenticating
         user. It's also possible to request another user's timeline via the
         id parameter. This is the equivalent of the Web /archive page for
         your own user, or the profile page for a third party.
+
+        Returns: ArrayRef[Status]
+
+    mentions
+    alias: replies
+
+        Parameters: since_id, max_id, count, page
+        Required: *none*
+
+        Returns the 20 most recent mentions (statuses containing @username)
+        for the authenticating user.
 
         Returns: ArrayRef[Status]
 
@@ -173,17 +184,6 @@ API METHODS
 
         Returns: Status
 
-    replies
-    replies(status)
-
-        Parameters: page, since, since_id
-        Required: *none*
-
-        Returns the 20 most recent @replies (status updates prefixed with
-        @username) for the authenticating user.
-
-        Returns: ArrayRef[Status]
-
     destroy_status
     destroy_status(id)
 
@@ -200,7 +200,7 @@ API METHODS
     friends(id)
     alias: following
 
-        Parameters: id, page
+        Parameters: id, user_id, screen_name, page
         Required: *none*
 
         Returns the authenticating user's friends, each with current status
@@ -213,7 +213,7 @@ API METHODS
     followers
     followers(id)
 
-        Parameters: id, page
+        Parameters: id, user_id, screen_name, page
         Required: *none*
 
         Returns the authenticating user's followers, each with current
@@ -225,7 +225,7 @@ API METHODS
     show_user
     show_user(id)
 
-        Parameters: id, email
+        Parameters: id
         Required: id
 
         Returns extended information of a given user, specified by ID or
@@ -240,7 +240,7 @@ API METHODS
     direct_messages
     direct_messages(id)
 
-        Parameters: since, since_id
+        Parameters: since_id, max_id, count, page
         Required: *none*
 
         Returns a list of the 20 most recent direct messages sent to the
@@ -252,7 +252,7 @@ API METHODS
     sent_direct_messages
     sent_direct_messages(id)
 
-        Parameters: since, since_id, page
+        Parameters: since_id, max_id, page
         Required: *none*
 
         Returns a list of the 20 most recent direct messages sent by the
@@ -285,34 +285,11 @@ API METHODS
 
         Returns: DirectMessage
 
-  Social Graph Methods
-    friends_ids
-    friends_ids(id)
-    alias: following_ids
-
-        Parameters: id
-        Required: *none*
-
-        Returns an array of numeric IDs for every user the specified user is
-        following.
-
-        Returns: ArrayRef[Int]
-
-    followers_ids
-    followers_ids(id)
-
-        Parameters: id
-        Required: *none*
-
-        Returns an array of numeric IDs for every user is followed by.
-
-        Returns: ArrayRef[Int]
-
   Friendship Methods
     create_friend
     create_friend(id)
 
-        Parameters: id, follow
+        Parameters: id, user_id, screen_name, follow
         Required: id
 
         Befriends the user specified in the ID parameter as the
@@ -326,7 +303,7 @@ API METHODS
     destroy_friend(id)
     alias: unfollow
 
-        Parameters: id
+        Parameters: id, user_id, screen_name
         Required: id
 
         Discontinues friendship with the user specified in the ID parameter
@@ -348,9 +325,32 @@ API METHODS
 
         Returns: Bool
 
+  Social Graph Methods
+    friends_ids
+    friends_ids(id)
+    alias: following_ids
+
+        Parameters: id, user_id, screen_name, page
+        Required: id
+
+        Returns an array of numeric IDs for every user the specified user is
+        following.
+
+        Returns: ArrayRef[Int]
+
+    followers_ids
+    followers_ids(id)
+
+        Parameters: id, user_id, screen_name, page
+        Required: id
+
+        Returns an array of numeric IDs for every user is followed by.
+
+        Returns: ArrayRef[Int]
+
   Account Methods
     verify_credentials
-    verify_credentials(user_a, user_b)
+    verify_credentials(id)
 
         Parameters: *none*
         Required: *none*
@@ -363,7 +363,7 @@ API METHODS
         Returns: ExtendedUser
 
     end_session
-    end_session(user_a, user_b)
+    end_session(id)
 
         Parameters: *none*
         Required: *none*
@@ -531,9 +531,43 @@ API METHODS
 
         Returns: BasicUser
 
+    block_exists
+    block_exists(id)
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        Returns if the authenticating user is blocking a target user. Will
+        return the blocked user's object if a block exists, and error with
+        HTTP 404 response code otherwise.
+
+        Returns: BasicUser
+
+    blocking
+    blocking(page)
+
+        Parameters: page
+        Required: *none*
+
+        Returns an array of user objects that the authenticating user is
+        blocking.
+
+        Returns: ArrayRef[BasicUser]
+
+    blocking_ids
+    blocking_ids(page)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns an array of numeric user ids the authenticating user is
+        blocking.
+
+        Returns: ArrayRef[Int]
+
   Help Methods
     test
-    test(id)
+    test(page)
 
         Parameters: *none*
         Required: *none*

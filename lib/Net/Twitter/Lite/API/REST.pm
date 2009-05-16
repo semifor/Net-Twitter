@@ -37,7 +37,7 @@ and that user's friends. This is the equivalent of /home on the Web.
             aliases   => [qw/following_timeline/],
             path      => 'statuses/friends_timeline',
             method    => 'GET',
-            params    => [qw/since since_id count page/],
+            params    => [qw/since_id max_id count page/],
             required  => [],
             returns   => 'ArrayRef[Status]',
         }],
@@ -52,7 +52,21 @@ your own user, or the profile page for a third party.
 
             path    => 'statuses/user_timeline',
             method  => 'GET',
-            params  => [qw/id count since since_id/],
+            params  => [qw/id user_id screen_name since_id max_id count page/],
+            required => [],
+            returns => 'ArrayRef[Status]',
+        }],
+
+
+        [ mentions => {
+            description => <<'',
+Returns the 20 most recent mentions (statuses containing @username) for the
+authenticating user.
+
+            aliases => [qw/replies/],
+            path    => 'statuses/mentions',
+            method  => 'GET',
+            params  => [qw/since_id max_id count page/],
             required => [],
             returns => 'ArrayRef[Status]',
         }],
@@ -85,19 +99,6 @@ user's current status will be ignored.
         }],
 
 
-        [ replies  => {
-            description => <<'',
-Returns the 20 most recent @replies (status updates prefixed with
-@username) for the authenticating user.
-
-            path     => 'statuses/replies',
-            method   => 'GET',
-            params   => [qw/page since since_id/],
-            required => [qw//],
-            returns  => 'ArrayRef[Status]',
-        }],
-
-
         [ destroy_status => {
             description => <<'',
 Destroys the status specified by the required ID parameter.  The
@@ -124,7 +125,7 @@ list via the id parameter.
             aliases  => [qw/following/],
             path     => 'statuses/friends',
             method   => 'GET',
-            params   => [qw/id page/],
+            params   => [qw/id user_id screen_name page/],
             required => [qw//],
             returns  => 'ArrayRef[BasicUser]',
         }],
@@ -138,7 +139,7 @@ inline.  They are ordered by the order in which they joined Twitter
 
             path     => 'statuses/followers',
             method   => 'GET',
-            params   => [qw/id page/],
+            params   => [qw/id user_id screen_name page/],
             required => [qw//],
             returns  => 'ArrayRef[BasicUser]',
         }],
@@ -154,7 +155,7 @@ authenticated to request the page of a protected user.
 
             path     => 'users/show/id',
             method   => 'GET',
-            params   => [qw/id email/],
+            params   => [qw/id/],
             required => [qw/id/],
             returns  => 'ExtendedUser',
         }],
@@ -171,7 +172,7 @@ user including detailed information about the sending and recipient users.
 
             path     => 'direct_messages',
             method   => 'GET',
-            params   => [qw/since since_id/],
+            params   => [qw/since_id max_id count page/],
             required => [qw//],
             returns  => 'ArrayRef[DirectMessage]',
         }],
@@ -184,7 +185,7 @@ user including detailed information about the sending and recipient users.
 
             path     => 'direct_messages/sent',
             method   => 'GET',
-            params   => [qw/since since_id page/],
+            params   => [qw/since_id max_id page/],
             required => [qw//],
             returns  => 'ArrayRef[DirectMessage]',
         }],
@@ -219,36 +220,6 @@ message.
     ]],
 
 
-    [ 'Social Graph Methods' => [
-
-
-        [ friends_ids => {
-            description => <<'',
-Returns an array of numeric IDs for every user the specified user is following.
-
-            aliases  => [qw/following_ids/],
-            path     => 'friends/ids/id',
-            method   => 'GET',
-            params   => [qw/id/],
-            required => [qw//],
-            returns  => 'ArrayRef[Int]',
-        }],
-
-
-        [ followers_ids => {
-            description => <<'',
-Returns an array of numeric IDs for every user is followed by.
-
-            path     => 'followers/ids/id',
-            method   => 'GET',
-            params   => [qw/id/],
-            required => [qw//],
-            returns  => 'ArrayRef[Int]',
-        }],
-
-    ]],
-
-
     [ 'Friendship Methods' => [
 
 
@@ -262,7 +233,7 @@ unsuccessful.
             alias    => [qw/follow_new/],
             path     => 'friendships/create/id',
             method   => 'POST',
-            params   => [qw/id follow/],
+            params   => [qw/id user_id screen_name follow/],
             required => [qw/id/],
             returns  => 'BasicUser',
         }],
@@ -277,7 +248,7 @@ Returns a string describing the failure condition when unsuccessful.
             aliases  => [qw/unfollow/],
             path     => 'friendships/destroy/id',
             method   => 'POST',
-            params   => [qw/id/],
+            params   => [qw/id user_id screen_name/],
             required => [qw/id/],
             returns  => 'BasicUser',
         }],
@@ -294,6 +265,36 @@ Tests if a friendship exists between two users.
             required => [qw/user_a user_b/],
             returns  => 'Bool',
         }],
+    ]],
+
+
+    [ 'Social Graph Methods' => [
+
+
+        [ friends_ids => {
+            description => <<'',
+Returns an array of numeric IDs for every user the specified user is following.
+
+            aliases  => [qw/following_ids/],
+            path     => 'friends/ids/id',
+            method   => 'GET',
+            params   => [qw/id user_id screen_name page/],
+            required => [qw/id/],
+            returns  => 'ArrayRef[Int]',
+        }],
+
+
+        [ followers_ids => {
+            description => <<'',
+Returns an array of numeric IDs for every user is followed by.
+
+            path     => 'followers/ids/id',
+            method   => 'GET',
+            params   => [qw/id user_id screen_name page/],
+            required => [qw/id/],
+            returns  => 'ArrayRef[Int]',
+        }],
+
     ]],
 
 
@@ -537,6 +538,43 @@ Returns the un-blocked user when successful.
             params   => [qw/id/],
             required => [qw/id/],
             returns  => 'BasicUser',
+        }],
+
+
+        [ block_exists => {
+            description => <<'',
+Returns if the authenticating user is blocking a target user. Will return the blocked user's
+object if a block exists, and error with HTTP 404 response code otherwise.
+
+            path     => 'blocks/exists/id',
+            method   => 'GET',
+            params   => [qw/id user_id screen_name/],
+            required => [qw/id/],
+            returns  => 'BasicUser',
+        }],
+
+
+        [ blocking => {
+            description => <<'',
+Returns an array of user objects that the authenticating user is blocking.
+
+            path     => 'blocks/blocking',
+            method   => 'GET',
+            params   => [qw/page/],
+            required => [qw//],
+            returns  => 'ArrayRef[BasicUser]',
+        }],
+
+
+        [ blocking_ids => {
+            description => <<'',
+Returns an array of numeric user ids the authenticating user is blocking.
+
+            path     => 'blocks/blocking/ids',
+            method   => 'GET',
+            params   => [qw//],
+            required => [qw//],
+            returns  => 'ArrayRef[Int]',
         }],
     ]],
 
