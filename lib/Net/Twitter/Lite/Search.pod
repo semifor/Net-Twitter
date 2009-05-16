@@ -4,28 +4,13 @@ Net::Twitter::Lite::Search - A Moose based perl interface to the Twitter Search 
 
 =head1 SYNOPSIS
 
-  use Net::Twitter::Lite;
+  use Net::Twitter::Lite::Search;
 
-  my $ntl = Net::Twitter::Lite->new(username => $user, password => $password);
+  my $nt = Net::Twitter::Lite::Search->new;
 
-  my $result = $ntl->update('Hello, world!');
-
-  eval {
-      my $feed = $ntl->friends_timeline({ since_id => $high_water, count => 100 });
-      for my $status ( @$feed ) {
-          say "$status->{user}{screen_name}: $status->{text};
-      }
-  };
-  if ( @_ ) {
-      if( my $e = TwitterException->caught() ) {
-          warn "$e\n";
-      }
-      elsif ( $e = HttpException->caught() ) {
-          warn "Network connection down?\n";
-      }
-      else {
-          die $@; # something bad happened
-      }
+  my $tweets = $nt->search('net_twitter');
+  for my $tweet ( @$tweets ) {
+      print $tweet->{text}, "\n";
   }
 
 
@@ -82,7 +67,7 @@ LWP::UserAgent compatible class instead.
 
 =over 4
 
-=item Parameters: q, lang, rpp, page, since_id, geocode, show_user
+=item Parameters: q, callback, lang, rpp, page, since_id, geocode, show_user
 
 =item Required: q
 
@@ -110,6 +95,62 @@ Returns the top ten queries that are currently trending on Twitter.  The respons
 
 
 Returns: ArrayRef[Query]
+
+=item B<trends_current>
+
+=item B<trends_current(exclude)>
+
+
+=over 4
+
+=item Parameters: exclude
+
+=item Required: I<none>
+
+=back
+
+Returns the curret top ten trending toppics on Twitter.  The response includes
+the time of the request, the name of each trending topic, and query used on
+Twitter Search results page for that topic.
+
+
+Returns: HashRef
+
+=item B<trends_daily>
+
+=item B<trends_daily(exclude)>
+
+
+=over 4
+
+=item Parameters: date, exclude
+
+=item Required: I<none>
+
+=back
+
+Returns the top 20 trending topics for each hour in a given day.
+
+
+Returns: HashRef
+
+=item B<trends_weekly>
+
+=item B<trends_weekly(exclude)>
+
+
+=over 4
+
+=item Parameters: date, exclude
+
+=item Required: I<none>
+
+=back
+
+Returns the top 30 treding topics for each day in a given week.
+
+
+Returns: HashRef
 
 =back
 

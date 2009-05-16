@@ -18,7 +18,7 @@ Returns tweets that match a specified query.  You can use a variety of search op
 
             path     => 'search',
             method   => 'GET',
-            params   => [qw/q lang rpp page since_id geocode show_user/],
+            params   => [qw/q callback lang rpp page since_id geocode show_user/],
             required => [qw/q/],
             returns  => 'ArrayRef[Status]',
         }],
@@ -33,6 +33,44 @@ Returns the top ten queries that are currently trending on Twitter.  The respons
             params   => [qw//],
             required => [qw//],
             returns  => 'ArrayRef[Query]',
+        }],
+
+
+        [ trends_current => {
+            description => <<'',
+Returns the curret top ten trending toppics on Twitter.  The response includes
+the time of the request, the name of each trending topic, and query used on
+Twitter Search results page for that topic.
+
+            path     => 'trends/current',
+            method   => 'GET',
+            params   => [qw/exclude/],
+            required => [qw//],
+            returns  => 'HashRef',
+        }],
+
+
+        [ trends_daily => {
+            description => <<'',
+Returns the top 20 trending topics for each hour in a given day.
+
+            path     => 'trends/daily',
+            method   => 'GET',
+            params   => [qw/date exclude/],
+            required => [qw//],
+            returns  => 'HashRef',
+        }],
+
+
+        [ trends_weekly => {
+            description => <<'',
+Returns the top 30 treding topics for each day in a given week.
+
+            path     => 'trends/weekly',
+            method   => 'GET',
+            params   => [qw/date exclude/],
+            required => [qw//],
+            returns  => 'HashRef',
         }],
     ]],
 ]}
