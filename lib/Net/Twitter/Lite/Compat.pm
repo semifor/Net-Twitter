@@ -1,8 +1,11 @@
 package Net::Twitter::Lite::Compat;
 use Moose;
-use aliased 'Net::Twitter::Lite::API::REST';
-
 extends 'Net::Twitter::Lite';
+
+use Net::Twitter::Lite::API::Search;
+
+
+with 'Net::Twitter::Lite::Role::TwitterVision';
 
 has _error  => (
     isa       => 'Net::Twitter::Lite::Error',
@@ -34,17 +37,17 @@ sub get_error {
         ? $self->_error->twitter_error
         : {
             request => undef,
-            error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - " . $self->_response
+            error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - "
+                       . $self->_error->message
           }; 
 }
 
-my $wrapper = sub {
-    my $next = shift;
+sub parse_result {
     my $self = shift;
 
     $self->_clear_error;
 
-    my $r = eval { $self->$next(@_) };
+    my $r = eval { $self->next::method(@_) };
     if ( $@ ) {
         die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Lite::Error');
 
@@ -53,8 +56,6 @@ my $wrapper = sub {
 
     return $r;
 };
-
-around $_ => $wrapper for keys %{REST->method_definitions};
 
 no Moose;
 

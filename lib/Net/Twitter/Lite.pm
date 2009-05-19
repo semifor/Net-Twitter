@@ -5,7 +5,7 @@ use Carp;
 use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
 use Net::Twitter::Lite::Error;
-use aliased 'Net::Twitter::Lite::API::REST' => 'API';
+use aliased 'Net::Twitter::Lite::API::REST';
 
 # use *all* digits for fBSD ports
 our $VERSION = '0.00000_01';
@@ -17,7 +17,7 @@ has username        => ( isa => 'Str', is => 'rw' );
 has password        => ( isa => 'Str', is => 'rw' );
 has useragent       => ( isa => 'Str', is => 'ro', default => __PACKAGE__ . "/$VERSION" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
-has apiurl          => ( isa => 'Str', is => 'ro', default => API->base_url );
+has apiurl          => ( isa => 'Str', is => 'ro', default => REST->base_url );
 has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80' );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API' );
 has _ua             => ( isa => 'Object', is => 'rw' );
@@ -44,70 +44,28 @@ sub credentials {
     return $self;
 }
 
-my $post_request = sub {
-    my ($ua, $uri, $args) = @_;
-    return $ua->post($uri, $args);
-};
+sub from_json {
+    my ($self, $json) = @_;
 
-my $get_request = sub {
-    my ($ua, $uri, $args) = @_;
-    $uri->query_form($args);
-    return $ua->get($uri);
-};
+    return eval { JSON::Any->from_json($json) };
+}
 
-my $with_url_arg = sub {
-    my ($path, $args) = @_;
+sub parse_result {
+    my ($self, $res) = @_;
 
-    if ( defined(my $id = delete $args->{id}) ) {
-        $path .= uri_escape($id);
+    my $obj = $self->from_json($res->content);
+
+    # Twitter sometimes returns an error with status code 200
+    if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
+        die Net::Twitter::Lite::Error->new(twitter_error => $obj, http_response => $res);
     }
-    else {
-        chop($path);
-    }
-    return $path;
-};
 
-my $method_defs = API->method_definitions;
-while ( my ($method, $def) = each %$method_defs ) {
-    my ($arg_names, $path) = @{$def}{qw/required path/};
-    $arg_names = $def->{params} if @$arg_names == 0 && @{$def->{params}} == 1;
-    my $request = $def->{method} eq 'POST' ? $post_request : $get_request;
+    return $obj if $res->is_success && $obj;
 
-    my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : sub { $_[0] };
+    my $error = Net::Twitter::Lite::Error->new(http_response => $res);
+    $error->twitter_error($obj) if $obj;
 
-    my $code = sub {
-        my $self = shift;
-
-        my $args = {};
-        if ( ref $_[0] ) {
-            UNIVERSAL::isa($_[0], 'HASH') && @_ == 1 || croak "$method expected a single HASH ref argument";
-            $args = { %{shift()} }; # copy callers args since we may add ->{source}
-        }
-        elsif ( @_ ) {
-            @_ == @$arg_names || croak "$method expected @{[ scalar @$arg_names ]} args";
-            @{$args}{@$arg_names} = @_;
-        }
-        $args->{source} ||= $self->source if $method eq 'update';
-
-        my $local_path = $modify_path->($path, $args);
-        my $uri = URI->new($self->apiurl . "/$local_path.json");
-        my $res = $request->($self->_ua, $uri, $args);
-        my $obj = eval { JSON::Any->from_json($res->content) };
-
-        # Twitter sometimes returns an error with status code 200
-        if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
-            die Net::Twitter::Lite::Error->new(twitter_error => $obj, http_response => $res);
-        }
-
-        return $obj if $res->is_success && $obj;
-
-        my $error = Net::Twitter::Lite::Error->new(http_response => $res);
-        $error->twitter_error($obj) if $obj;
-
-        die $error;
-    };
-
-    __PACKAGE__->meta->add_method($_, $code) for ( $method, @{$def->{aliases} || []});
+    die $error;
 }
 
 no Moose;

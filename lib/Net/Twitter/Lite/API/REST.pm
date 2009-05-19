@@ -5,8 +5,7 @@ use Carp;
 
 with 'Net::Twitter::Lite::API';
 
-
-sub base_url { 'http://twitter.com' }
+sub base_url { sub { shift->apiurl || 'http://twitter.com' } }
 
 # Definition is stored as a sub in order to return a deep copy;
 # we don't want the caller inadvertently changing the definition!

@@ -1,14 +1,74 @@
 package Net::Twitter::Lite::API;
 
 use Moose::Role;
+use Carp;
 
 requires qw/definition base_url/;
 
+my $post_request = sub {
+    my ($ua, $uri, $args) = @_;
+    return $ua->post($uri, $args);
+};
+
+my $get_request = sub {
+    my ($ua, $uri, $args) = @_;
+    $uri->query_form($args);
+    return $ua->get($uri);
+};
+
+my $with_url_arg = sub {
+    my ($path, $args) = @_;
+
+    if ( defined(my $id = delete $args->{id}) ) {
+        $path .= uri_escape($id);
+    }
+    else {
+        chop($path);
+    }
+    return $path;
+};
 
 sub method_definitions {
     my ($class) = @_;
 
     return { map { $_->[0] => $_->[1] } map @{$_->[1]}, @{$class->definition} };
+}
+
+sub import {
+    my $class = shift;
+
+    my $target = caller(0);
+
+    my $method_definitions = $class->method_definitions;
+    while ( my ($method, $def) = each %$method_definitions ) {
+        my ($arg_names, $path) = @{$def}{qw/required path/};
+        $arg_names = $def->{params} if @$arg_names == 0 && @{$def->{params}} == 1;
+        my $request = $def->{method} eq 'POST' ? $post_request : $get_request;
+
+        my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : sub { $_[0] };
+
+        my $code = sub {
+            my $self = shift;
+
+            my $args = {};
+            if ( ref $_[0] ) {
+                UNIVERSAL::isa($_[0], 'HASH') && @_ == 1 || croak "$method expected a single HASH ref argument";
+                $args = { %{shift()} }; # copy callers args since we may add ->{source}
+            }
+            elsif ( @_ ) {
+                @_ == @$arg_names || croak "$method expected @{[ scalar @$arg_names ]} args";
+                @{$args}{@$arg_names} = @_;
+            }
+            $args->{source} ||= $self->source if $method eq 'update';
+
+            my $local_path = $modify_path->($path, $args);
+            ###my $uri = URI->new($self->apiurl . "/$local_path.json");
+            my $uri = URI->new($class->base_url->($self) . "/$local_path.json");
+            return $self->parse_result($request->($self->_ua, $uri, $args));
+        };
+
+        $target->meta->add_method($_, $code) for ( $method, @{$def->{aliases} || []});
+    }
 }
 
 1;

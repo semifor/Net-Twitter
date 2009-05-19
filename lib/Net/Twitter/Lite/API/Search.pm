@@ -5,7 +5,7 @@ use Carp;
 
 with 'Net::Twitter::Lite::API';
 
-sub base_url { 'http://search.twitter.com' }
+sub base_url { sub { 'http://search.twitter.com' } }
 
 sub definition {[
 
