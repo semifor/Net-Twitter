@@ -9,13 +9,13 @@ use Net::Twitter::Lite::API::Search;
 my $version = shift @ARGV;
 
 my %args_for = (
-    'src/net-twitter-lite-pod.tt2' => [
-        'lib/Net/Twitter/Lite.pod',
-        'Net::Twitter::Lite::API::REST',
+    'src/net-twitter-pod.tt2' => [
+        'lib/Net/Twitter.pod',
+        'Net::Twitter::API::REST',
     ],
-    'src/net-twitter-lite-search-pod.tt2' => [
-        'lib/Net/Twitter/Lite/Search.pod',
-        'Net::Twitter::Lite::API::Search',
+    'src/net-twitter-search-pod.tt2' => [
+        'lib/Net/Twitter/Search.pod',
+        'Net::Twitter::API::Search',
     ],
 );
 
