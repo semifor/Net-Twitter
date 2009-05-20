@@ -16,318 +16,361 @@ use URI;
 
 ### Extracted from Net/Twitter.pm
 
-my %twitter_api = (
-    "/statuses/public_timeline" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {},
-    },
-    "/statuses/friends_timeline" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "since"    => 0,
-            "since_id" => 0,
-            "count"    => 0,
-            "page"     => 0,
+my %_api = (
+    'twitter.com' => {
+        "/statuses/public_timeline" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {},
         },
-    },
-    "/statuses/user_timeline" => {
-        "has_id"    => 1,
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "id"       => 0,
-            "since"    => 0,
-            "since_id" => 0,
-            "count"    => 0,
-            "page"     => 0,
+        "/statuses/friends_timeline" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "since"    => 0,
+                "since_id" => 0,
+                "count"    => 0,
+                "page"     => 0,
+            },
         },
-    },
-    "/statuses/show" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => { "id" => 1, },
-    },
-    "/statuses/update" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => {
-            "status"                => 1,
-            "in_reply_to_status_id" => 0,
-            "source"                => 0,
+        "/statuses/user_timeline" => {
+            "has_id"    => 1,
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "id"       => 0,
+                "since"    => 0,
+                "since_id" => 0,
+                "count"    => 0,
+                "page"     => 0,
+            },
         },
-    },
-    "/statuses/mentions" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "page"     => 0,
-            "since"    => 0,
-            "since_id" => 0,
+        "/statuses/show" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => { "id" => 1, },
         },
-    },
-    "/statuses/destroy" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/statuses/friends" => {
-        "has_id"    => 1,
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "id"    => 0,
-            "page"  => 0,
-            "since" => 0,
+        "/statuses/update" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => {
+                "status"                => 1,
+                "in_reply_to_status_id" => 0,
+                "source"                => 0,
+            },
         },
-    },
-    "/statuses/followers" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "id"   => 0,
-            "page" => 0,
+        "/statuses/mentions" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "page"     => 0,
+                "since"    => 0,
+                "since_id" => 0,
+            },
         },
-    },
-    "/users/show" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => {
-            "id"    => 1,
-            "email" => 1,
+        "/statuses/destroy" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
         },
-        required => sub {
-            my $args = shift;
-            # one, but not both
-            return (exists $args->{id} xor exists $args->{email});
+        "/statuses/friends" => {
+            "has_id"    => 1,
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "id"    => 0,
+                "page"  => 0,
+                "since" => 0,
+            },
         },
-    },
-    "/direct_messages" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "since"    => 0,
-            "since_id" => 0,
-            "page"     => 0,
+        "/statuses/followers" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "id"   => 0,
+                "page" => 0,
+            },
         },
-    },
-    "/direct_messages/sent" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "since"    => 0,
-            "since_id" => 0,
-            "page"     => 0,
+        "/users/show" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => {
+                "id"    => 1,
+                "email" => 1,
+            },
+            required => sub {
+                my $args = shift;
+                # one, but not both
+                return (exists $args->{id} xor exists $args->{email});
+            },
         },
-    },
-    "/direct_messages/new" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => {
-            "user" => 1,
-            "text" => 1,
+        "/direct_messages" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "since"    => 0,
+                "since_id" => 0,
+                "page"     => 0,
+            },
         },
-    },
-    "/direct_messages/destroy" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/friends/ids" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => { "id" => 0, },
-    },
-    "/followers/ids" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => { "id" => 0, },
-    },
-    "/friendships/create" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => {
-            "id"     => 1,
-            "follow" => 0,
+        "/direct_messages/sent" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "since"    => 0,
+                "since_id" => 0,
+                "page"     => 0,
+            },
         },
-    },
-    "/friendships/destroy" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/friendships/exists" => {
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => {
-            "user_a" => 1,
-            "user_b" => 1,
+        "/direct_messages/new" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => {
+                "user" => 1,
+                "text" => 1,
+            },
         },
-    },
-    "/account/verify_credentials" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {},
-    },
-    "/account/end_session" => {
-        "blankargs" => 1,
-        "post"      => 1,
-        "args"      => {},
-    },
-    "/account/update_profile_colors" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => {
-            "profile_background_color"     => 0,
-            "profile_text_color"           => 0,
-            "profile_link_color"           => 0,
-            "profile_sidebar_fill_color"   => 0,
-            "profile_sidebar_border_color" => 0,
+        "/direct_messages/destroy" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
         },
-    },
-    "/account/update_profile_image" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "image" => 1, },
-    },
-    "/account/update_location" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "location" => 1, },
-    },
-    "/account/update_profile_background_image" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "image" => 1, },
-    },
-    "/account/update_profile" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => {
-            name    => 0,
-            email   => 0,
-            url     => 0,
-            location => 0,
-            description => 0,
+        "/friends/ids" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => { "id" => 0, },
         },
-    },
-    "/account/update_delivery_device" => {
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "device" => 1, },
-    },
-    "/account/rate_limit_status" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {},
-    },
-    "/favorites" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {
-            "id"   => 0,
-            "page" => 0,
+        "/followers/ids" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => { "id" => 0, },
         },
-    },
-    "/favorites/create" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/favorites/destroy" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/notifications/follow" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/notifications/leave" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/blocks/create" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/blocks/destroy" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 1,
-        "args"      => { "id" => 1, },
-    },
-    "/blocks/exists" => {
-        "has_id"    => 1,
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => { "id" => 1, },
-    },
-    "/blocks/blocking" => {
-        "has_id"    => 0,
-        "blankargs" => 0,
-        "post"      => 0,
-        "args"      => {},
-    },
-    "/blocks/ids" => {
-        "has_id"    => 0,
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {},
-    },
-    "/help/test" => {
-        "blankargs" => 1,
-        "post"      => 0,
-        "args"      => {},
-    },
-    "/help/downtime_schedule" => {
-        "blankargs" => 100,
-        "post"      => 0,
-        "args"      => {},
-    },
-    '/search' => {
-        blankargs => 0,
-        post      => 0,
-        args      => {
-            q   => 1,
-            lang => 0,
-            rpp  => 0,
-            page    => 0,
-            since_id    => 0,
-            geocode     => 0,
-            show_user   => 0,
+        "/friendships/create" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => {
+                "id"     => 1,
+                "follow" => 0,
+            },
         },
-    },
-    '/trends' => {
-        blankargs   => 1,
-        post        => 0,
-        args        => {},
+        "/friendships/destroy" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/friendships/exists" => {
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => {
+                "user_a" => 1,
+                "user_b" => 1,
+            },
+        },
+        "/account/verify_credentials" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {},
+        },
+        "/account/end_session" => {
+            "blankargs" => 1,
+            "post"      => 1,
+            "args"      => {},
+        },
+        "/account/update_profile_colors" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => {
+                "profile_background_color"     => 0,
+                "profile_text_color"           => 0,
+                "profile_link_color"           => 0,
+                "profile_sidebar_fill_color"   => 0,
+                "profile_sidebar_border_color" => 0,
+            },
+        },
+        "/account/update_profile_image" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "image" => 1, },
+        },
+        "/account/update_location" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "location" => 1, },
+        },
+        "/account/update_profile_background_image" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "image" => 1, },
+        },
+        "/account/update_profile" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => {
+                name    => 0,
+                email   => 0,
+                url     => 0,
+                location => 0,
+                description => 0,
+            },
+        },
+        "/account/update_delivery_device" => {
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "device" => 1, },
+        },
+        "/account/rate_limit_status" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {},
+        },
+        "/favorites" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {
+                "id"   => 0,
+                "page" => 0,
+            },
+        },
+        "/favorites/create" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/favorites/destroy" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/notifications/follow" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/notifications/leave" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/blocks/create" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/blocks/destroy" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 1,
+            "args"      => { "id" => 1, },
+        },
+        "/blocks/exists" => {
+            "has_id"    => 1,
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => { "id" => 1, },
+        },
+        "/blocks/blocking" => {
+            "has_id"    => 0,
+            "blankargs" => 0,
+            "post"      => 0,
+            "args"      => {},
+        },
+        "/blocks/ids" => {
+            "has_id"    => 0,
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {},
+        },
+        "/help/test" => {
+            "blankargs" => 1,
+            "post"      => 0,
+            "args"      => {},
+        },
+        "/help/downtime_schedule" => {
+            "blankargs" => 100,
+            "post"      => 0,
+            "args"      => {},
+        },
     },
 
+    'search.twitter.com' => {
+        '/search' => {
+            blankargs => 0,
+            post      => 0,
+            args      => {
+                q   => 1,
+                lang => 0,
+                rpp  => 0,
+                page    => 0,
+                since_id    => 0,
+                geocode     => 0,
+                show_user   => 0,
+            },
+        },
+        '/trends' => {
+            blankargs   => 1,
+            post        => 0,
+            args        => {},
+        },
+        '/trends/current' => {
+            blankargs   => 1,
+            post        => 0,
+            args        => {},
+        },
+        '/trends/daily' => {
+            blankargs   => 1,
+            post        => 0,
+            args        => {},
+        },
+        '/trends/weekly' => {
+            blankargs   => 1,
+            post        => 0,
+            args        => {},
+        },
+    },
+
+    'twittervision.com' => {
+        '/user/update_location' => {
+            blankargs  => 0,
+            post       => 1,
+            args       => {
+                location => 1,
+            },
+        },
+        '/user/current_status' => {
+            blankargs => 0,
+            has_id    => 1,
+            post      => 0,
+            "args"    => { "id" => 1, },
+        },
+    },
 );
+
+my %twitter_api;
+while ( my($host, $api) = each %_api ) {
+    while ( my($path, $entry) = each %$api ) {
+        if ( my $existing = $twitter_api{$path} ) {
+            die "duplicate $path in $existing->{host} and $host";
+        }
+        $twitter_api{$path} = { %$entry, host => $host };
+    }
+}
 
 sub new {
     my $class = shift;
-    return bless {
-        _host => 'twitter.com',
-    }, $class;
+    return bless {}, $class;
 }
 
 sub credentials {}
@@ -379,6 +422,10 @@ sub _twitter_rest_api {
     my $api_entry = $twitter_api{$path}
         || return $self->error_response(404, "$path is not a twitter api entry");
 
+    my $host = $uri->host;
+    return $self->_error_response(400, "expected $api_entry->{host}, got $host")
+        unless $host = $api_entry->{host};
+
     # TODO: What if ID is passed in the URL and args? What if the 2 are different?
     $args->{id} = $id if $api_entry->{has_id} && defined $id && $id;
 
@@ -421,7 +468,6 @@ sub _validate_basic_url {
     my $uri = URI->new($url);
 
     die "scheme: expected http\n" unless $uri->scheme eq 'http';
-    die "bad host\n" unless $uri->host eq $self->_host;
     die "expected .json\n" unless (my $path = $uri->path) =~ s/\.json$//;
 
     $uri->path($path);
@@ -486,12 +532,5 @@ sub set_response {
 }
 
 sub clear_response { delete @{shift()}{qw/_res_code _res_message _re_content/} }
-
-sub _host {
-    my $self = shift;
-
-    $self->{_host} = shift if @_;
-    return $self->{_host};
-}
 
 1;
