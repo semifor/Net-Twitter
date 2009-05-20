@@ -1,11 +1,12 @@
 package Net::Twitter::Lite::Compat;
 use Moose;
-extends 'Net::Twitter::Lite';
+extends 'Net::Twitter::Lite::Base';
 
-use Net::Twitter::Lite::API::Search;
+use namespace::autoclean;
 
-
-with 'Net::Twitter::Lite::Role::TwitterVision';
+with 'Net::Twitter::Lite::API::REST';
+with 'Net::Twitter::Lite::API::Search';
+with 'Net::Twitter::Lite::API::TwitterVision';
 
 has _error  => (
     isa       => 'Net::Twitter::Lite::Error',
@@ -56,8 +57,6 @@ sub parse_result {
 
     return $r;
 };
-
-no Moose;
 
 __PACKAGE__->meta->make_immutable;
 

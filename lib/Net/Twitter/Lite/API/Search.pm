@@ -1,83 +1,68 @@
 package Net::Twitter::Lite::API::Search;
 
-use Moose;
-use Carp;
+use Moose::Role;
+use Net::Twitter::Lite::API;
 
-with 'Net::Twitter::Lite::API';
+has search_apiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
-sub base_url { sub { 'http://search.twitter.com' } }
+base_url 'search_apiurl';
 
-sub definition {[
-
-    [ 'Search Methods' => [
-
-
-        [ search => {
-            description => <<'',
+twitter_api_method search => (
+    description => <<'',
 Returns tweets that match a specified query.  You can use a variety of search operators in your query.
 
-            path     => 'search',
-            method   => 'GET',
-            params   => [qw/q callback lang rpp page since_id geocode show_user/],
-            required => [qw/q/],
-            returns  => 'ArrayRef[Status]',
-        }],
+    path     => 'search',
+    method   => 'GET',
+    params   => [qw/q callback lang rpp page since_id geocode show_user/],
+    required => [qw/q/],
+    returns  => 'ArrayRef[Status]',
+);
 
-
-        [ trends => {
-            description => <<'',
+twitter_api_method trends => (
+    description => <<'',
 Returns the top ten queries that are currently trending on Twitter.  The response includes the time of the request, the name of each trending topic, and the url to the Twitter Search results page for that topic.
 
-            path     => 'trends',
-            method   => 'GET',
-            params   => [qw//],
-            required => [qw//],
-            returns  => 'ArrayRef[Query]',
-        }],
+    path     => 'trends',
+    method   => 'GET',
+    params   => [qw//],
+    required => [qw//],
+    returns  => 'ArrayRef[Query]',
+);
 
-
-        [ trends_current => {
-            description => <<'',
+twitter_api_method trends_current => (
+    description => <<'',
 Returns the curret top ten trending toppics on Twitter.  The response includes
 the time of the request, the name of each trending topic, and query used on
 Twitter Search results page for that topic.
 
-            path     => 'trends/current',
-            method   => 'GET',
-            params   => [qw/exclude/],
-            required => [qw//],
-            returns  => 'HashRef',
-        }],
+    path     => 'trends/current',
+    method   => 'GET',
+    params   => [qw/exclude/],
+    required => [qw//],
+    returns  => 'HashRef',
+);
 
-
-        [ trends_daily => {
-            description => <<'',
+twitter_api_method trends_daily => (
+    description => <<'',
 Returns the top 20 trending topics for each hour in a given day.
 
-            path     => 'trends/daily',
-            method   => 'GET',
-            params   => [qw/date exclude/],
-            required => [qw//],
-            returns  => 'HashRef',
-        }],
+    path     => 'trends/daily',
+    method   => 'GET',
+    params   => [qw/date exclude/],
+    required => [qw//],
+    returns  => 'HashRef',
+);
 
-
-        [ trends_weekly => {
-            description => <<'',
+twitter_api_method trends_weekly => (
+    description => <<'',
 Returns the top 30 treding topics for each day in a given week.
 
-            path     => 'trends/weekly',
-            method   => 'GET',
-            params   => [qw/date exclude/],
-            required => [qw//],
-            returns  => 'HashRef',
-        }],
-    ]],
-]}
-
-no Moose;
-
-__PACKAGE__->meta->make_immutable;
+    path     => 'trends/weekly',
+    method   => 'GET',
+    params   => [qw/date exclude/],
+    required => [qw//],
+    returns  => 'HashRef',
+);
 
 1;
 
