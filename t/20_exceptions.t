@@ -12,7 +12,7 @@ my $nt = Net::Twitter::Lite->new(
     password => 'doh!',
 );
 
-my $ua = $nt->_ua;
+my $ua = $nt->ua;
 
 
 # simulate an error returned by the twitter API

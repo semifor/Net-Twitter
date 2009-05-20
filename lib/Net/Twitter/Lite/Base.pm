@@ -16,7 +16,7 @@ has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' )
 has password        => ( isa => 'Str', is => 'rw' );
 has useragent       => ( isa => 'Str', is => 'ro', default => __PACKAGE__ . "/$VERSION" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
-has _ua             => ( isa => 'Object', is => 'rw' );
+has ua              => ( isa => 'Object', is => 'rw' );
 
 sub BUILD {
     my $self = shift;
@@ -24,7 +24,7 @@ sub BUILD {
     eval "use " . $self->useragent_class;
     croak $@ if $@;
 
-    $self->_ua($self->useragent_class->new);
+    $self->ua($self->useragent_class->new);
     $self->credentials($self->username, $self->password) if $self->has_username;
 }
 

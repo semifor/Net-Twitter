@@ -12,7 +12,7 @@ my $nt = Net::Twitter::Lite->new(
     password => 'secret',
 );
 
-my $ua = $nt->_ua;
+my $ua = $nt->ua;
 
 # things that should fail
 throws_ok { $nt->relationship_exists(qw/one two three/) } qr/expected 2 args/, 'too many args';

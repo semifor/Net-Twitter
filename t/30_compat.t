@@ -9,7 +9,7 @@ use Mock::LWP::UserAgent;
 BEGIN { use_ok 'Net::Twitter::Lite::Compat' }
 
 my $nt  = Net::Twitter::Lite::Compat->new;
-my $ua  = $nt->_ua;
+my $ua  = $nt->ua;
 my $msg = 'Test failure';
 
 $ua->set_response({ code => 500, message => $msg });

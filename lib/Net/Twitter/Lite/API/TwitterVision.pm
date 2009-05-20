@@ -7,12 +7,12 @@ has tvurl         => ( isa => 'Str',  is => 'ro', default => 'http://twittervisi
 has tvhost        => ( isa => 'Str',  is => 'ro', default => 'twittervision.com:80'     );
 has tvrealm       => ( isa => 'Str',  is => 'ro', default => 'Web Password'             );
 
-requires qw/_ua username password/;
+requires qw/ua username password/;
 
 after credentials => sub {
     my $self = shift;
 
-    $self->_ua->credentials($self->tvhost, $self->tvrealm, $self->username, $self->password);
+    $self->ua->credentials($self->tvhost, $self->tvrealm, $self->username, $self->password);
 };
 
 base_url 'tvurl';

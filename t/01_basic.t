@@ -68,7 +68,7 @@ my $nt = Net::Twitter::Lite->new(
     password => 'doh!',
 );
 
-my $ua = $nt->_ua;
+my $ua = $nt->ua;
 
 # run 2 passes to ensure the first pass isn't changing internal state
 for my $pass ( 1, 2 ) {

@@ -3,7 +3,7 @@ package Net::Twitter::Lite::API::REST;
 use Moose::Role;
 use Net::Twitter::Lite::API;
 
-requires qw/_ua username password credentials/;
+requires qw/ua username password credentials/;
 
 has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.com' );
 has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80'     );
@@ -12,7 +12,7 @@ has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'     
 after credentials => sub {
     my $self = shift;
 
-    $self->_ua->credentials($self->apihost, $self->apirealm, $self->username, $self->password);
+    $self->ua->credentials($self->apihost, $self->apirealm, $self->username, $self->password);
 };
 
 base_url 'apiurl';

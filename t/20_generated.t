@@ -26,7 +26,7 @@ use Mock::LWP::UserAgent;
 }
 
 my $nt     = My::Twitter->new;
-my $ua     = $nt->_ua;
+my $ua     = $nt->ua;
 my @params = qw/twitter_id another_id/;
 
 my @api_methods =
