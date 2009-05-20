@@ -4,9 +4,11 @@ extends 'Net::Twitter::Lite::Base';
 
 use namespace::autoclean;
 
-with 'Net::Twitter::Lite::API::REST';
-with 'Net::Twitter::Lite::API::Search';
-with 'Net::Twitter::Lite::API::TwitterVision';
+with $_ for qw/
+    Net::Twitter::Lite::API::REST
+    Net::Twitter::Lite::API::Search
+    Net::Twitter::Lite::API::TwitterVision
+/;
 
 has _error  => (
     isa       => 'Net::Twitter::Lite::Error',

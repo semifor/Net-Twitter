@@ -20,7 +20,9 @@ Returns tweets that match a specified query.  You can use a variety of search op
 
 twitter_api_method trends => (
     description => <<'',
-Returns the top ten queries that are currently trending on Twitter.  The response includes the time of the request, the name of each trending topic, and the url to the Twitter Search results page for that topic.
+Returns the top ten queries that are currently trending on Twitter.  The
+response includes the time of the request, the name of each trending topic, and
+the url to the Twitter Search results page for that topic.
 
     path     => 'trends',
     method   => 'GET',

@@ -62,7 +62,17 @@ sub twitter_api_method {
         return $self->parse_result($request->($self->_ua, $uri, $args));
     };
 
-    $class->add_method($_, $code) for ( $name, @{$options{aliases} || []});
+    $class->add_method(
+        $name,
+        Net::Twitter::Lite::Meta::Method->new(
+            name => $name,
+            package_name => $caller,
+            body => $code,
+            %options,
+        ),
+    );
+
+    $class->add_method($_, $code) for @{$options{aliases} || []};
 }
 
 sub base_url {
@@ -70,5 +80,24 @@ sub base_url {
     
     Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
 }
+
+
+package Net::Twitter::Lite::Meta::Method;
+use Moose;
+extends 'Moose::Meta::Method';
+
+use namespace::clean;
+
+has description => ( isa => 'Str', is => 'ro', required => 1 );
+has aliases     => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has path        => ( isa => 'Str', is => 'ro', required => 1 );
+has method      => ( isa => 'Str', is => 'ro', default => 'GET' );
+has add_source  => ( isa => 'Bool', is => 'ro', default => 0 );
+has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
+has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
+
+sub new { shift->SUPER::wrap(@_) }
 
 1;
