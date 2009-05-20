@@ -2,7 +2,7 @@ package Net::Twitter::Lite::API::TwitterVision;
 use Moose::Role;
 use Net::Twitter::Lite::API;
 
-has twittervision => ( isa => 'Bool', is => 'ro', default => 0 );
+has twittervision => ( isa => 'Bool', is => 'rw', default => 0 );
 has tvurl         => ( isa => 'Str',  is => 'ro', default => 'http://twittervision.com' );
 has tvhost        => ( isa => 'Str',  is => 'ro', default => 'twittervision.com:80'     );
 has tvrealm       => ( isa => 'Str',  is => 'ro', default => 'Web Password'             );

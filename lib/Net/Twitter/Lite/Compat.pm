@@ -17,6 +17,30 @@ has _error  => (
     predicate => 'has_error',
 );
 
+sub BUILDARGS {
+    my ($class, %options) = @_;
+
+    if ( delete $options{identica} ) {
+        %options = (
+            apiurl => 'http://identi.ca/api',
+            apihost => 'identi.ca:80',
+            apirealm => 'Laconica API',
+            %options,
+        );
+    }
+    return $class->SUPER::BUILDARGS(%options);
+}
+
+# Legacy Net::Twitter does not make the call unless twittervision is true
+around 'update_twittervision' => sub {
+    my $next = shift;
+    my $self = shift;
+    
+    return unless $self->twittervision;
+
+    return $next->($self, @_);
+};
+
 sub http_message {
     my $self = shift;
 

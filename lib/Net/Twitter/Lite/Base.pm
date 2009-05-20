@@ -17,6 +17,9 @@ has password        => ( isa => 'Str', is => 'rw' );
 has useragent       => ( isa => 'Str', is => 'ro', default => __PACKAGE__ . "/$VERSION" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has ua              => ( isa => 'Object', is => 'rw' );
+has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
+has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
+has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
 
 sub BUILD {
     my $self = shift;
@@ -25,6 +28,10 @@ sub BUILD {
     croak $@ if $@;
 
     $self->ua($self->useragent_class->new);
+    $self->ua->default_header('X-Twitter-Client'         => $self->clientname);
+    $self->ua->default_header('X-Twitter-Client-Version' => $self->clientver);
+    $self->ua->default_header('X-Twitter-Client-URL'     => $self->clienturl);
+    $self->ua->env_proxy;
     $self->credentials($self->username, $self->password) if $self->has_username;
 }
 
