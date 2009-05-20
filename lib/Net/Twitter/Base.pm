@@ -1,10 +1,10 @@
-package Net::Twitter::Lite::Base;
+package Net::Twitter::Base;
 use 5.008;
 use Moose;
 use Carp;
 use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
-use Net::Twitter::Lite::Error;
+use Net::Twitter::Error;
 
 # use *all* digits for fBSD ports
 our $VERSION = '0.00000_01';
@@ -57,12 +57,12 @@ sub parse_result {
 
     # Twitter sometimes returns an error with status code 200
     if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
-        die Net::Twitter::Lite::Error->new(twitter_error => $obj, http_response => $res);
+        die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
     return $obj if $res->is_success && $obj;
 
-    my $error = Net::Twitter::Lite::Error->new(http_response => $res);
+    my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if $obj;
 
     die $error;

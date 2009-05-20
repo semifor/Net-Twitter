@@ -5,9 +5,9 @@ use Test::More tests => 8;
 use Test::Exception;
 use lib qw(t/lib);
 use Mock::LWP::UserAgent;
-use Net::Twitter::Lite;
+use Net::Twitter::REST;
 
-my $nt = Net::Twitter::Lite->new(
+my $nt = Net::Twitter::REST->new(
     username => 'homer',
     password => 'doh!',
 );
@@ -27,7 +27,7 @@ $ua->set_response({
 
 dies_ok { $nt->destroy_direct_message(456) } 'TwitterException';
 my $e = $@;
-isa_ok $e, 'Net::Twitter::Lite::Error';
+isa_ok $e, 'Net::Twitter::Error';
 like   $e, qr/No direct message/, 'repsonse message';
 is     $e->http_response->code, 404, "respose code";
 like   $e->twitter_error->{request}, qr/456.json/, 'twitter_error request';
@@ -42,7 +42,7 @@ $ua->set_response({
 
 dies_ok { $nt->friends_timeline({ since_id => 500_000_000 }) } 'HttpException';
 $e = $@;
-isa_ok $e, 'Net::Twitter::Lite::Error';
+isa_ok $e, 'Net::Twitter::Error';
 like    $e->http_response->content, qr/html/, 'html content';
 
 exit 0;

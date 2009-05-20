@@ -1,4 +1,4 @@
-package Net::Twitter::Lite::API;
+package Net::Twitter::API;
 use Moose ();
 use Carp;
 use Moose::Exporter;
@@ -64,7 +64,7 @@ sub twitter_api_method {
 
     $class->add_method(
         $name,
-        Net::Twitter::Lite::Meta::Method->new(
+        Net::Twitter::Meta::Method->new(
             name => $name,
             package_name => $caller,
             body => $code,
@@ -82,7 +82,7 @@ sub base_url {
 }
 
 
-package Net::Twitter::Lite::Meta::Method;
+package Net::Twitter::Meta::Method;
 use Moose;
 extends 'Moose::Meta::Method';
 

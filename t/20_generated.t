@@ -2,7 +2,6 @@
 use warnings;
 use strict;
 use Test::More;
-use Net::Twitter::Lite;
 use List::Util qw/sum/;
 
 use lib qw(t/lib);
@@ -12,14 +11,14 @@ use Mock::LWP::UserAgent;
 {
     package My::Twitter;
     use Moose;
-    extends 'Net::Twitter::Lite::Base';
+    extends 'Net::Twitter::Base';
 
     use namespace::autoclean;
 
     with $_ for qw/
-        Net::Twitter::Lite::API::REST
-        Net::Twitter::Lite::API::Search
-        Net::Twitter::Lite::API::TwitterVision
+        Net::Twitter::API::REST
+        Net::Twitter::API::Search
+        Net::Twitter::API::TwitterVision
     /;
 
     __PACKAGE__->meta->make_immutable;
@@ -30,7 +29,7 @@ my $ua     = $nt->ua;
 my @params = qw/twitter_id another_id/;
 
 my @api_methods =
-    grep { blessed $_  && $_->isa('Net::Twitter::Lite::Meta::Method') }
+    grep { blessed $_  && $_->isa('Net::Twitter::Meta::Method') }
     My::Twitter->meta->get_all_methods;
 
 plan tests => 4 * 2 * sum map 1 + @{$_->aliases}, @api_methods;

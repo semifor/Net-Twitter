@@ -1,7 +1,7 @@
-package Net::Twitter::Lite::API::REST;
+package Net::Twitter::API::REST;
 
 use Moose::Role;
-use Net::Twitter::Lite::API;
+use Net::Twitter::API;
 
 requires qw/ua username password credentials/;
 
@@ -546,18 +546,18 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Lite::API - A definition of the Twitter API in a perl data structure
+Net::Twitter::API::REST - A definition of the Twitter API in a perl data structure
 
 =head1 SYNOPSIS
 
-    use aliased 'Net::Twitter::Lite::API::REST';
+    use aliased 'Net::Twitter::API::REST';
 
     my $api_def = API->definition;
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Lite::API::REST> provides a perl data structure describing the
-Twitter REST API.  It is used by the Net::Twitter::Lite distribution to
+B<Net::Twitter::API::REST> provides a perl data structure describing the
+Twitter REST API.  It is used by the Net::Twitter distribution to
 dynamically build methods, documentation, and tests.
 
 =head1 METHODS
@@ -571,7 +571,7 @@ Returns the base URL for the Twitter REST API.
 =item definition
 
 Returns a perl data structure describing the Twitter REST API.  See
-L<Net::Twitter::Lite::API> for documentation on the data structure format.
+L<Net::Twitter::API> for documentation on the data structure format.
 
 =back
 
@@ -579,9 +579,9 @@ L<Net::Twitter::Lite::API> for documentation on the data structure format.
 
 =over 4
 
-=item L<Net::Twitter::Lite>
+=item L<Net::Twitter>
 
-Net::Twitter::Lite::API was written for the use of this module and its distribution.
+Net::Twitter::API was written for the use of this module and its distribution.
 
 =item L<http://apiwiki.twitter.com/REST+API+Documentation>
 

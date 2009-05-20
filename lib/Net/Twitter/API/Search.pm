@@ -1,7 +1,7 @@
-package Net::Twitter::Lite::API::Search;
+package Net::Twitter::API::Search;
 
 use Moose::Role;
-use Net::Twitter::Lite::API;
+use Net::Twitter::API;
 
 has search_apiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
@@ -72,18 +72,18 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Lite::API - A definition of the Twitter Search API
+Net::Twitter::API::Search - A definition of the Twitter Search API
 
 =head1 SYNOPSIS
 
-    use aliased 'Net::Twitter::Lite::API::Search';
+    use aliased 'Net::Twitter::API::Search';
 
     my $api_def = API->definition;
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Lite::API::Search> provides a perl data structure describing
-the Twitter Search API.  It is used by the Net::Twitter::Lite distribution to
+B<Net::Twitter::API::Search> provides a perl data structure describing
+the Twitter Search API.  It is used by the Net::Twitter distribution to
 dynamically build methods, documentation, and tests.
 
 =head1 METHODS
@@ -97,7 +97,7 @@ Returns the base URL for the Twitter Search API.
 =item definition
 
 Returns a perl data structure describing the Twitter Search API.  See
-L<Net::Twitter::Lite::API> for documentation on the data structure format.
+L<Net::Twitter::API> for documentation on the data structure format.
 
 =back
 
@@ -105,9 +105,9 @@ L<Net::Twitter::Lite::API> for documentation on the data structure format.
 
 =over 4
 
-=item L<Net::Twitter::Lite>
+=item L<Net::Twitter>
 
-Net::Twitter::Lite::API was written for the use of this module and its distribution.
+Net::Twitter::API::Search was written for the use of this module and its distribution.
 
 =item L<http://apiwiki.twitter.com/Search+API+Documentation>
 

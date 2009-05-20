@@ -3,8 +3,6 @@ use warnings;
 use strict;
 use Test::More;
 
-# Originally written by Marc Mims for Net::Twitter, then modified for Net::Twitter::Lite
-
 use lib qw(t/lib);
 
 use Mock::LWP::UserAgent;
@@ -61,9 +59,9 @@ my @tests = (
 
 plan tests => @tests * 2 * 4 + 1;
 
-use_ok 'Net::Twitter::Lite';
+use_ok 'Net::Twitter::REST';
 
-my $nt = Net::Twitter::Lite->new(
+my $nt = Net::Twitter::REST->new(
     username => 'homer',
     password => 'doh!',
 );

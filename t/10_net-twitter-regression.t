@@ -4,14 +4,12 @@ use strict;
 use Test::More tests => 34;
 use Test::Exception;
 
-# Originally written by Marc Mims for Net::Twitter, modifeid for Net::Twitter::Lite.
-
 use lib qw(t/lib);
 
 use Mock::LWP::UserAgent;
-use Net::Twitter::Lite;
+use Net::Twitter::REST;
 
-my $nt = Net::Twitter::Lite->new(
+my $nt = Net::Twitter::REST->new(
     username => 'homer',
     password => 'doh!',
 );

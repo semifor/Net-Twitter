@@ -1,6 +1,6 @@
-package Net::Twitter::Lite::API::TwitterVision;
+package Net::Twitter::API::TwitterVision;
 use Moose::Role;
-use Net::Twitter::Lite::API;
+use Net::Twitter::API;
 
 has twittervision => ( isa => 'Bool', is => 'rw', default => 0 );
 has tvurl         => ( isa => 'Str',  is => 'ro', default => 'http://twittervision.com' );

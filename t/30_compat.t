@@ -6,9 +6,9 @@ use Test::More tests => 5;
 use lib qw(t/lib);
 use Mock::LWP::UserAgent;
 
-BEGIN { use_ok 'Net::Twitter::Lite::Compat' }
+BEGIN { use_ok 'Net::Twitter' }
 
-my $nt  = Net::Twitter::Lite::Compat->new;
+my $nt  = Net::Twitter->new;
 my $ua  = $nt->ua;
 my $msg = 'Test failure';
 

@@ -1,4 +1,4 @@
-package Net::Twitter::Lite::Error;
+package Net::Twitter::Error;
 use Moose;
 
 use overload '""' => \&stringify;
@@ -26,7 +26,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Lite::Error - A Net::Twitter::Lite exception object
+Net::Twitter::Error - A Net::Twitter::Lite exception object
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,7 @@ Net::Twitter::Lite::Error - A Net::Twitter::Lite exception object
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Lite::Error> encapsulates the C<HTTP::Response> and Twitter
+B<Net::Twitter::Error> encapsulates the C<HTTP::Response> and Twitter
 error HASH (if any) resulting from a failed API call.
 
 =head1 METHODS
@@ -47,8 +47,6 @@ error HASH (if any) resulting from a failed API call.
 =over 4
 
 =item new(http_response => $res)
-
-This method takes the same parameters as L<Net::Twitter::Lite/new>.
 
 =item twitter_error
 
@@ -81,7 +79,7 @@ it returns the HTTP message.  =back
 
 =over 4
 
-=item L<Net::Twitter::Lite>
+=item L<Net::Twitter>
 
 =back
 

@@ -1,9 +1,6 @@
 package # hide from PAUSE
     Mock::LWP::UserAgent;
 
-# Origninally written as TestUA for Net::Twitter by Marc Mims
-# modified for Net::Twitter::Lite
-
 $INC{'LWP/UserAgent.pm'} = __FILE__;
 
 package # hide from PAUSE
@@ -14,7 +11,7 @@ use warnings;
 use strict;
 use URI;
 
-### Extracted from Net/Twitter.pm
+### Extracted from legacy Net/Twitter.pm
 
 my %_api = (
     'twitter.com' => {
