@@ -1,165 +1,87 @@
 package Net::Twitter;
+use 5.8.1;
 use Moose;
-extends 'Net::Twitter::Base';
+use Carp;
+use JSON::Any qw/XS DWIW JSON/;
+use URI::Escape;
+use Net::Twitter::Error;
 
-use namespace::autoclean;
+# use *all* digits for fBSD ports
+our $VERSION = '2.99000_01';
 
-with $_ for qw/
-    Net::Twitter::API::REST
-    Net::Twitter::API::Search
-    Net::Twitter::API::TwitterVision
-/;
+$VERSION = eval $VERSION; # numify for warning-free dev releases
 
-has _error  => (
-    isa       => 'Net::Twitter::Error',
-    is        => 'rw',
-    clearer   => '_clear_error',
-    predicate => 'has_error',
-);
+has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
+has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' );
+has password        => ( isa => 'Str', is => 'rw' );
+has useragent       => ( isa => 'Str', is => 'ro', default => __PACKAGE__ . "/$VERSION" );
+has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
+has ua              => ( isa => 'Object', is => 'rw' );
+has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
+has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
+has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
 
-sub BUILDARGS {
-    my ($class, %options) = @_;
+sub import {
+    my ($class, @args) = @_;
 
-    if ( delete $options{identica} ) {
-        %options = (
-            apiurl => 'http://identi.ca/api',
-            apihost => 'identi.ca:80',
-            apirealm => 'Laconica API',
-            %options,
-        );
+    @args = 'Legacy' unless @args;
+
+    if ( $args[0] eq 'Legacy' ) {
+        unshift @args, 'WrapError', map "API::$_", qw/REST Search TwitterVision/;
     }
-    return $class->SUPER::BUILDARGS(%options);
+
+    with "Net::Twitter::$_" for @args;
+
+    $class->meta->make_immutable;
 }
 
-# Legacy Net::Twitter does not make the call unless twittervision is true
-around 'update_twittervision' => sub {
-    my $next = shift;
-    my $self = shift;
-    
-    return unless $self->twittervision;
-
-    return $next->($self, @_);
-};
-
-sub http_message {
+sub BUILD {
     my $self = shift;
 
-    return unless $self->has_error;
-    return $self->_error->message;
+    eval "use " . $self->useragent_class;
+    croak $@ if $@;
+
+    $self->ua($self->useragent_class->new);
+    $self->ua->default_header('X-Twitter-Client'         => $self->clientname);
+    $self->ua->default_header('X-Twitter-Client-Version' => $self->clientver);
+    $self->ua->default_header('X-Twitter-Client-URL'     => $self->clienturl);
+    $self->ua->env_proxy;
+    $self->credentials($self->username, $self->password) if $self->has_username;
 }
 
-sub http_code {
-    my $self = shift;
+sub credentials {
+    my ($self, $username, $password) = @_;
 
-    return unless $self->has_error;
-    return $self->_error->code;
+    $self->username($username);
+    $self->password($password);
+
+    return $self; # make it chainable
 }
 
-sub get_error {
-    my $self = shift;
+sub from_json {
+    my ($self, $json) = @_;
 
-    return unless $self->has_error;
-
-    return $self->_error->has_twitter_error
-        ? $self->_error->twitter_error
-        : {
-            request => undef,
-            error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - "
-                       . $self->_error->message
-          }; 
+    return eval { JSON::Any->from_json($json) };
 }
 
 sub parse_result {
-    my $self = shift;
+    my ($self, $res) = @_;
 
-    $self->_clear_error;
+    my $obj = $self->from_json($res->content);
 
-    my $r = eval { $self->next::method(@_) };
-    if ( $@ ) {
-        die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Error');
-
-        $self->_error($@);
+    # Twitter sometimes returns an error with status code 200
+    if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
+        die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $r;
-};
+    return $obj if $res->is_success && $obj;
 
-__PACKAGE__->meta->make_immutable;
+    my $error = Net::Twitter::Error->new(http_response => $res);
+    $error->twitter_error($obj) if $obj;
+
+    die $error;
+}
+
+no Moose;
 
 1;
-
-__END__
-
-=head1 NAME
-
-Net::Twitter - A Net::Twitter compatibility layer
-
-=head1 SYNOPSIS
-
-    use Net::Twitter;
-
-    my $nt = Net::Twitter->new(username => $username, password => $password);
-
-    my $followers = $nt->followers;
-    if ( !followers ) {
-        warn $nt->http_message;
-    }
-
-=head1 DESCRIPTION
-
-This module provides a B<Net::Twitter> compatibility layer for
-Net::Twitter.  Net::Twitter::Base throws exceptions for Twitter API and
-network errors.  This module catches those errors returning C<undef> to the
-caller, instead.  It provides L</"get_error">, L</"http_code"> and
-L</"http_message">, like Net::Twitter, for accessing that error information.
-
-This module is provided to make it easy to test or migrate applications to
-Net::Twitter::REST.
-
-This module does not provide full compatibility with Net::Twitter.  It does not,
-for example, provided C<update_twittervision> or the Twitter Search API
-methods. (See L<Net::Twitter::Search> for Net::Twitter::Lite's answer to
-answer to the latter.
-
-=head1 METHODS
-
-=over 4
-
-=item new
-
-This method takes the same parameters as L<Net::Twitter::Base/new>.
-
-=item get_error
-
-Returns the HTTP response content for the most recent API method call if it ended in error.
-
-=item http_code
-
-Returns the HTTP response code the most recent API method call if it ended in error.
-
-=item http_message
-
-Returns the HTTP message for the most recent API method call if it ended in error.
-
-=back
-
-=head1 SEE ALSO
-
-=over 4
-
-=item L<Net::Twitter::Base>
-
-This is the base class for Net::Twitter::Compat.  See its documentation
-for more details.
-
-=back
-
-=head1 AUTHOR
-
-Marc Mims <marc@questright.com>
-
-=head1 LICENSE
-
-Copyright (c) 2009 Marc Mims
-
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

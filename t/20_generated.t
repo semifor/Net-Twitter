@@ -7,30 +7,15 @@ use List::Util qw/sum/;
 use lib qw(t/lib);
 
 use Mock::LWP::UserAgent;
+use Net::Twitter qw/API::REST API::Search API::TwitterVision/;
 
-{
-    package My::Twitter;
-    use Moose;
-    extends 'Net::Twitter::Base';
-
-    use namespace::autoclean;
-
-    with $_ for qw/
-        Net::Twitter::API::REST
-        Net::Twitter::API::Search
-        Net::Twitter::API::TwitterVision
-    /;
-
-    __PACKAGE__->meta->make_immutable;
-}
-
-my $nt     = My::Twitter->new;
+my $nt     = Net::Twitter->new;
 my $ua     = $nt->ua;
 my @params = qw/twitter_id another_id/;
 
 my @api_methods =
     grep { blessed $_  && $_->isa('Net::Twitter::Meta::Method') }
-    My::Twitter->meta->get_all_methods;
+    Net::Twitter->meta->get_all_methods;
 
 plan tests => 4 * 2 * sum map 1 + @{$_->aliases}, @api_methods;
 

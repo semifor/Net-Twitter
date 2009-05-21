@@ -59,9 +59,9 @@ my @tests = (
 
 plan tests => @tests * 2 * 4 + 1;
 
-use_ok 'Net::Twitter::REST';
+use_ok 'Net::Twitter', qw/API::REST/;
 
-my $nt = Net::Twitter::REST->new(
+my $nt = Net::Twitter->new(
     username => 'homer',
     password => 'doh!',
 );

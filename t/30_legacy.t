@@ -6,7 +6,7 @@ use Test::More tests => 5;
 use lib qw(t/lib);
 use Mock::LWP::UserAgent;
 
-BEGIN { use_ok 'Net::Twitter' }
+BEGIN { use_ok 'Net::Twitter', qw/Legacy/ }
 
 my $nt  = Net::Twitter->new;
 my $ua  = $nt->ua;

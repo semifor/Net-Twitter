@@ -5,9 +5,9 @@ use Test::More tests => 8;
 use Test::Exception;
 use lib qw(t/lib);
 use Mock::LWP::UserAgent;
-use Net::Twitter::REST;
+use Net::Twitter qw/API::REST/;
 
-my $nt = Net::Twitter::REST->new(
+my $nt = Net::Twitter->new(
     username => 'homer',
     password => 'doh!',
 );
