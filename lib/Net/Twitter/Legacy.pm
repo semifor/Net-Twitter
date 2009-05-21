@@ -3,6 +3,13 @@ use Moose::Role;
 
 use namespace::autoclean;
 
+with "Net::Twitter::$_" for qw/
+    API::REST
+    API::Search
+    API::TwitterVision
+    WrapError
+/;
+
 has arrayref_on_error => ( isa => 'Bool', is => 'rw', default => 0, trigger => \&_set_error_return_val );
 
 sub _set_error_return_val {

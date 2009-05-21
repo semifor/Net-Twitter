@@ -20,15 +20,12 @@ has ua              => ( isa => 'Object', is => 'rw' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
+has _base_url => ( is => 'rw' ); ### keeps role composition from bitching ??
 
 sub import {
     my ($class, @args) = @_;
 
     @args = 'Legacy' unless @args;
-
-    if ( $args[0] eq 'Legacy' ) {
-        unshift @args, 'WrapError', map "API::$_", qw/REST Search TwitterVision/;
-    }
 
     with "Net::Twitter::$_" for @args;
 
