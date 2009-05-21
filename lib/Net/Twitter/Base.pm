@@ -7,7 +7,7 @@ use URI::Escape;
 use Net::Twitter::Error;
 
 # use *all* digits for fBSD ports
-our $VERSION = '0.00000_01';
+our $VERSION = '2.99000_01';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
