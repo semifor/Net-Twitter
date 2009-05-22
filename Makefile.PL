@@ -19,6 +19,7 @@ requires    'Moose' => 0.78;
 requires    'MooseX::Traits';
 requires    'JSON::Any';
 requires    'URI::Escape';
+requires    'namespace::autoclean';
 recommends  'JSON::XS';
 
 no_index    directory => 'src';
