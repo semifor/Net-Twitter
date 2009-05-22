@@ -1,10 +1,8 @@
 package Net::Twitter::Search;
-use Moose;
-extends 'Net::Twitter';
+use Net::Twitter;
 
-use namespace::autoclean;
+sub new { shift; Net::Twitter->new(@_) }
 
-__PACKAGE__->meta->make_immutable;
 # Net::Twitter::Search was really just an alias for legacy Net::Twitter
 # Deprecated.
 #
