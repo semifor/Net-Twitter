@@ -29,7 +29,9 @@ has '+_trait_namespace' => ( default => __PACKAGE__ );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 
 sub new {
-    my ($class, %args) = @_;
+    my $class = shift;
+    
+    my %args = @_ == 1 && ref $_[0] eq 'HASH' ? %{$_[0]} : @_;
 
     return $class->SUPER::new(%args) if caller eq 'MooseX::Traits';
 
