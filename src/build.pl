@@ -3,27 +3,28 @@ use warnings;
 use strict;
 use Template;
 use lib qw(lib);
-use Net::Twitter::Lite::API::REST;
-use Net::Twitter::Lite::API::Search;
+use Net::Twitter;
 
-my $version = shift @ARGV;
-
-my %args_for = (
-    'src/net-twitter-pod.tt2' => [
-        'lib/Net/Twitter.pod',
-        'Net::Twitter::API::REST',
-    ],
-    'src/net-twitter-search-pod.tt2' => [
-        'lib/Net/Twitter/Search.pod',
-        'Net::Twitter::API::Search',
-    ],
-);
+my ($version, $input, $output) = @ARGV;
 
 my $tt = Template->new;
-for my $input ( keys %args_for ) {
-    my ($output, $api) = @{$args_for{$input}};
-    $tt->process($input, { VERSION => $version, api_def => $api->definition }, $output)
-        || die $tt->error;
+$tt->process($input, {
+        VERSION => $version,
+        get_methods_for => \&get_methods_for,
+    },
+    $output,
+) || die $tt->error;
+
+sub get_methods_for {
+    my $role = shift;
+
+    my $nt = Net::Twitter->new(traits => [$role]);
+
+    return 
+        sort { $a->name cmp $b->name }
+        grep {
+            blessed $_  && $_->isa('Net::Twitter::Meta::Method')
+        } $nt->meta->get_all_methods;
 }
 
 exit 0;

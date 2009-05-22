@@ -3,9 +3,9 @@ package Net::Twitter::API::Search;
 use Moose::Role;
 use Net::Twitter::API;
 
-has search_apiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
+has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
-base_url 'search_apiurl';
+base_url 'searchapiurl';
 
 twitter_api_method search => (
     description => <<'',
@@ -33,7 +33,7 @@ the url to the Twitter Search results page for that topic.
 
 twitter_api_method trends_current => (
     description => <<'',
-Returns the curret top ten trending toppics on Twitter.  The response includes
+Returns the current top ten trending topics on Twitter.  The response includes
 the time of the request, the name of each trending topic, and query used on
 Twitter Search results page for that topic.
 
@@ -57,7 +57,7 @@ Returns the top 20 trending topics for each hour in a given day.
 
 twitter_api_method trends_weekly => (
     description => <<'',
-Returns the top 30 treding topics for each day in a given week.
+Returns the top 30 trending topics for each day in a given week.
 
     path     => 'trends/weekly',
     method   => 'GET',

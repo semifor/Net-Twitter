@@ -40,7 +40,7 @@ sub get_error {
           }; 
 }
 
-around parse_result => sub {
+around _parse_result => sub {
     my $next = shift;
     my $self = shift;
 

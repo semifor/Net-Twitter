@@ -1,204 +1,398 @@
 =head1 NAME
 
-Net::Twitter::Lite - A lean Moose based perl interface to the Twitter API
+Net::Twitter - A interface to the Twitter API
 
 =head1 VERSION
 
-This document describes version [% VERSION %]
+This document describes Net::Twitter version [% VERSION %]
 
 =head1 SYNOPSIS
 
-  use Net::Twitter::Lite;
+  use Net::Twitter;
 
-  my $ntl = Net::Twitter::Lite->new(username => $user, password => $password);
+  my $nt = Net::Twitter->new(
+      traits   => [qw/API::REST/],
+      username => $user,
+      password => $password
+  );
 
-  my $result = $ntl->update('Hello, world!');
+  my $result = $nt->update('Hello, world!');
 
   eval {
-      my $feed = $ntl->friends_timeline({ since_id => $high_water, count => 100 });
-      for my $status ( @$feed ) {
-          say "$status->{user}{screen_name}: $status->{text};
+      my $statuses = $nt->friends_timeline({ since_id => $high_water, count => 100 });
+      for my $status ( @$statuses ) {
+          print "$status->{time} <$status->{user}{screen_name}> $status->{text}\n";
       }
   };
-  if ( @_ ) {
-      die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Lite::Error');
+  if ( my $err = $@ ) {
+      die $@ unless blessed $err && $err->isa('Net::Twitter::Error');
 
-      warn "$@\n";
+      warn "HTTP Response Code: ", $err->code, "\n",
+           "HTTP Message......: ", $err->message, "\n",
+           "Twitter error.....: ", $err->error, "\n";
   }
 
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Lite> attempts to provide a lean, robust, and easy to maintain
-perl interface to the Twitter API. It provides some basic compatibility with
-the L<Net::Twitter> module.  It takes a different approach in some areas,
-however, so it is not a drop-in replacement.  See
-L<Net::Twitter::Lite::Compat>, included with this distribution, for a
-Net::Twitter compatible interface.
+This module provides a perl interface to the Twitter APIs.  See
+L<http://apiwiki.twitter.com/Twitter-API-Documentation> for a full description
+of the Twitter APIs.
 
-Net::Twitter::Lite uses L<Moose>.  Some may contend Moose and Lite are
-mutually exclusive.  Moose greatly reduces the number of lines of code
-necessary to accomplish the goals of Net::Twitter::Lite, so the author finds
-the name appropriate.
-
-Most Twitter API methods take parameters.  All Net::Twitter::Lite API
-methods will accept a HASH ref of named parameters as specified in the Twitter
-API documentation.  For convenience, many Net::Twitter::Lite methods accept
-simple positional arguments as documented, below.  The positional parameter
-passing style is optional; you can always use the named parameters in a hash
-ref if you prefer.
-
-Net::Twitter::Lite does not do aggressive parameter validation. It will
-dutifully pass invalid parameters to Twitter if instructed, and if Twitter
-returns an error as a result, Net::Twitter::Lite will throw a
-L<Net::Twitter::Lite::Error> object.
-
-The lack of aggressive parameter checking has an advantage.  If Twitter adds
-new parameters to any of the API methods, you may begin using them immediately
-without warnings or errors and without any need for modification to the source
-code of this module.
-
-Net::Twitter::Lite differs from Net::Twitter significantly in its error
-handling strategy.  It throws L<Net::Twitter::Lite::Error> objects in response
-to Twitter API and network errors.  You can catch and deal with these errors
-using eval blocks in the usual way.  Throwing exceptions allows
-Net::Twitter::Lite to work well with L<LWP::UserAgent::POE> in an environment
-where there may be concurrent requests.
-
-For compatibility with Net::Twitter, this distribution includes
-L<Net::Twitter::Lite::Compat>.  It provides the same error handling strategy
-as Net::Twitter returning C<undef> on error with C<get_error>, C<http_code>,
-and C<http_message> methods to determine the nature of the error.
-
-=head1 METHODS
+=head1 METHODS AND ARGUMENTS
 
 =over 4
 
 =item new
 
-This creates a new instance of Net::Twitter::Lite.  It accepts several named
-arguments, all of them optional:
+This constructs a C<Net::Twitter> object.  It takes several named parameters,
+all of them optional:
 
 =over 4
 
+=item traits
+
+This option is an ARRAY ref of traits used to control which APIs the
+constructed C<Net::Twitter> object will support and how it handles errors.
+Possible values are:
+
+=over 4
+
+=item API::REST
+
+Provides support for the Twitter REST API methods.
+
+=item API::Search
+
+Provides support for the Twitter Search API methods.
+
+=item API::TwitterVision
+
+Provides support for the TwitterVision API.  See
+L<http://twittervision.com/api.html>.
+
+=item WrapError
+
+C<Net::Twitter> normally throws exceptions on error.  When this trait is
+included, C<Net::Twitter> returns undef when a method fails and makes the
+error available through method C<get_error>.  This is the way all errors were
+handled in Net::Twitter versions prior to version 3.00.
+
+=item Legacy
+
+This trait provides backwards compatibility to C<Net::Twitter> versions prior
+to 3.00.  It implies the traits C<API::REST>, C<API::Search>,
+C<API::TwitterVision>, and C<API::WrapError>.  It also provides additional
+functionality to ensure consistent behavior for applications written for use
+with legacy versions of C<Net::Twitter>.
+
+In the current version, this trait is automatically included if the C<traits>
+option is not specified. This ensures backwards compatibility for existing
+applications using C<Net::Twitter> versions prior to 3.00.  See section
+L</LEGACY COMPATIBILITY> for more details.
+
+=back
+
+Some examples of using the C<traits> parameter in C<new>:
+
+    # provide support for *only* the REST API; throw exceptions on error
+    $nt = Net::Twitter->new(traits => ['API::REST']);
+
+    # provide support for both the REST and Search APIs; wrap errors
+    $nt = Net::Twitter->new(traits => [qw/API::REST API::Search WrapError/]);
+
+    # ensure full legacy support
+    $nt = Net::Twitter->new(traits => ['Legacy']);
+
+    # currently, these 2 calls to new are equivalent:
+    $nt = Net::Twitter-new();
+    $nt = Net::Twitter->new(traits => ['Legacy']);
+
 =item username
 
-This is the username or email address used to authenticate with Twitter.
+This is the screen name or email used to authenticate with Twitter.
 
 =item password
 
 This is the password used to authenticate with Twitter.
 
-=item useragent
+=item clientname
 
-This is the useragent string passed in each request to twitter.  It defaults
-to C<Net::Twitter::Lite/[% VERSION %]>.
+The value for the C<X-Twitter-Client-Name> HTTP header. It defaults to "Perl
+Net::Twitter".
 
-=item source
+=item clientver
 
-This is the application source identifier passed to twitter with the L</"update">
-method.  It defaults to C<twitterpm>.
+The value for the C<X-Twitter-Client-Version> HTTP header. It defaults to
+current version of the C<Net::Twitter> module.
 
-=item apiurl
+=item clienturl
 
-This is the base URL for the Twitter API methods.  It defaults to
-C<http://twitter.com>.  You may use a different URL to specify another
-service, such as L<http://identi.ca> that provides a Twitter Compatible API.
-Also, see L</"apihost"> and L</"apirealm">, below.
-
-=item apihost
-
-This is the C<netloc> argument passed to L<LWP::UserAgent> internally as part
-of the HTTP Basic Authentication protocol.  It defaults to C<twitter.com:80>.
-
-=item apirealm
-
-This is the C<realm> argument passed to L<LWP::UserAgent> internally as port
-of the HTTP Basic Authentication protocol.  It defaults to C<Twitter API>.
+The value for the C<X-Twitter-Client-URL> HTTP header. It defaults to the
+search.cpan.org page for the C<Net::Twitter> distribution.
 
 =item useragent_class
 
-This is the name of the useragent class used internally.  It defaults to
-C<LWP::UserAgent>.  You may pass C<LWP::UserAgent::POE> or another
-LWP::UserAgent compatible class instead.
+The C<LWP::UserAgent> compatible class used internally by C<Net::Twitter>.  It
+defaults to "LWP::UserAgent".  For L<POE> based applications, consider using
+"LWP::UserAgent::POE".
+
+=item useragent_args
+
+An ARRAY ref of arguments to pass to constructor of the class specified with
+C<useragent_class>, above.  It defaults to [] (an empty ARRAY ref).
+
+=item useragent
+
+The value for C<User-Agent> HTTP header.  It defaults to
+"Net::Twitter/$VERSION (Perl)", where C<$VERSION> is the current version of
+C<Net::Twitter>.
+
+=item source
+
+The value used in the C<source> parameter of API method calls. It is currently
+only used in the C<update> method in the REST API.  It defaults to
+"twitterpm".  This results in the text "from Net::Twitter" rather than "from
+web" for status messages posted from C<Net::Twitter> when displayed via the
+Twitter web interface.  The value for this parameter is provided by Twitter
+when a Twitter application is registered.  See
+L<http://apiwiki.twitter.com/FAQ#HowdoIget%E2%80%9CfromMyApp%E2%80%9DappendedtoupdatessentfrommyAPIapplication>. 
+
+=item apiurl
+
+The URL for the Twitter API. This defaults to "http://twitter.com". This
+option is available when the C<API::REST> trait is included. 
+
+=item apihost
+
+The Twitter API host.  This defaults to "twitter.com:80".  This option is
+available when the C<API::REST> trait is included.
+
+=item apirealm
+
+The Twitter API realm used for Basic Authentication. This defaults to "Twitter
+API".  This option is available when the C<API::REST> trait is included.
+
+=item identica
+
+If set to 1, C<Net::Twitter> overrides the defaults for C<apiurl>, C<apihost>,
+and C<apirealm> to "http://identi.ca/api", "identi.ca:80", and "Laconica API"
+respectively.  It defaults to 0.  This option is available when the
+C<API::REST> trait is included.
+
+=item arrayref_on_error
+
+Deprecated. This option is only available when the C<Legacy> trait is
+included.  When set to 1, an empty ARRAY ref is returned on error, rather than
+undef.
 
 =back
 
 =item credentials($username, $password)
 
-This method can be used to set or change the L</"username"> and L</"password">
-used to authenticated with Twitter.
+Set the credentials for authentication.  This is helpful for managing multiple
+accounts.
+
+=item ua
+
+Provides access to the constructed user agent object used internally by
+C<Net::Twitter>.  Use it with caution.
 
 =back
 
-=head1 API METHODS
+=head1 API METHODS AND ARGUMENTS
 
-[% FOREACH section IN api_def;
-   title = section.0;
-   methods = section.1  -%]
-=head2 [% title %]
+Most Twitter API methods take parameters.  All Net::Twitter API
+methods will accept a HASH ref of named parameters as specified in the Twitter
+API documentation.  For convenience, many Net::Twitter methods accept
+simple positional arguments as documented, below.  The positional parameter
+passing style is optional; you can always use the named parameters in a hash
+ref if you prefer.
 
-=over 4
+For example, the REST API method C<update> has one required parameter,
+C<status>.  You can call C<update> with a HASH ref argument:
 
-[% FOREACH method IN methods;
-   name = method.0;
-   def  = method.1;
-   NEXT IF def.deprecated -%]
-=item B<[% name %]>
+    $nt->update({ status => 'Hello world!' });
 
-[% IF def.required.size > 0;
-       pos_params = def.required;
-   ELSIF def.params.size == 1;
-       pos_params = def.params;
-   END;
-   IF pos_params.size -%]
-=item B<[% name %]([% pos_params.join(", ") %])>
+Or, you can use the convenient form:
 
-[% END -%]
+    $nt->update('Hello world!');
 
-[% FOREACH alias IN def.aliases -%]
-=item alias: [% alias %]
+The C<update> method also has an optional parameter, C<in_reply_to_status_id>.
+To use it, you B<must> use the HASH ref form:
 
-[% END -%]
-=over 4
+    $nt->update({ status => 'Hello world!', in_reply_to_status_id => $reply_to });
 
-=item Parameters: [% IF def.params.size %][% def.params.join(", ") %][% ELSE %]I<none>[% END %]
+Convenience form is provided for the required parameters of all API methods.
+So, these two calls are equivalent:
 
-=item Required: [% IF def.required.size %][% def.required.join(", ") %][% ELSE %]I<none>[% END %]
+    $nt->friendship_exists({ user_a => $fred, user_b => $barney });
+    $nt->friendship_exists($fred, $barney);
 
-=back
+Many API methods have aliases.  You can use the API method name, or any of its
+aliases, as you prefer.  For example, these calls are all equivalent:
 
-[% def.description %]
+    $nt->friendship_exists($fred, $barney);
+    $nt->relationship_exists($fred, $barney);
+    $nt->follows($fred, $barney);
 
-Returns: [% def.returns %]
+Aliases support both the HASH ref and convenient forms:
 
-[% END -%]
-=back
+    $nt->follows({ user_a => $fred, user_b => $barney });
 
-[% END -%]
+=head1 REST API Methods
 
+These methods are provided when trait C<API::REST> is included in the C<traits>
+option to C<new>.
+
+Several of these methods accept a user ID as the C<id> parameter.  The user ID
+can be either a screen name, or the users numeric ID.  To disambiguate, use
+the C<screen_name> or C<user_id> parameters, instead.
+
+For example, These calls are equivalent:
+
+    $nt->create_friend('net_twitter'); # screen name
+    $nt->create_friend(1564061);       # numeric ID
+    $nt->create_friend({ id => 'net_twitter' });
+    $nt->create_friend({ screen_name => 'net_twitter' });
+    $nt->create_friend({ user_id     => 1564061 });
+
+However user_id 911 and screen_name 911 are separate Twitter accounts.  These
+calls are NOT equivalent:
+
+    $nt->create_friend(911); # interpreted as screen name
+    $nt->create_friend({ user_id => 911 }); # screen name: richellis
+
+Whenever the C<id> parameter is required and C<user_id> and C<screen_name> are
+also parameters, using any one of them satisfies the requirement.
+
+[% INCLUDE APIDOC class='API::REST' %]
+
+=head1 Search API Methods
+
+These methods are provided when trait C<API::Search> is included in the C<traits>
+option to C<new>.
+
+[% INCLUDE APIDOC class='API::Search' %]
+
+=head1 TwitterVision API Methods
+
+These methods are provided when trait C<API::TwitterVision> is included in the
+C<traits> option to C<new>.
+
+[% INCLUDE APIDOC class='API::TwitterVision' %]
+
+=head1 LEGACY COMPATIBILITY
+
+This version of C<Net::Twitter> automatically includes the C<Legacy> trait if
+no C<traits> option is provided to C<new>.  Therefore, these 2 calls are
+currently equivalent:
+
+    $nt = Net::Twitter->new(username => $user, password => $passwd);
+    $nt = Net::Twitter->new(
+        username => $user,
+        password => $passwd,
+        traits   => ['Legacy'],
+    );
+
+Thus, existing applications written for a prior version of C<Net::Twitter>
+should continue to run, without modification, with this version.
+
+In a future release, the default traits may change.  Prior to that change,
+however, a nearer future version will add a warning if no C<traits> option is
+provided to C<new>.  To avoid this warning, add an appropriate C<traits>
+option to your existing application code.
+
+=head1 ERROR HANDLING
+
+There are currently two strategies for handling errors: throwing exceptions and
+wrapping errors.  Exception handling is the newer, recommended strategy.
+
+=head2 Wrapping Errors
+
+When trait C<WrapError> is specified (or C<Legacy>, which includes trait
+C<WrapError>), C<Net::Twitter> return undef on error.  To retrieve information
+about the error, use methods C<http_code>, C<http_message>, and C<get_error>.
+(These methods are described in the C</WrapError> section, above.
+
+Since an error is stored in the object instance, this error handling strategy
+is problematic when using a user agent like C<LWP::UserAgent::POE> that
+provides concurrent requests.  The error for one request can be overwritten by
+a concurrent request before you have an opportunity to access it.
+
+=head2 Exception Handling
+
+When C<Net::Twitter> encounters a Twitter API error or a network error, it
+throws a C<Net::Twitter::Error> object.  You can catch and process these
+exceptions by using C<eval> blocks and testing $@:
+
+    eval {
+        my $statuses = $nt->friends_timeline(); # this might die!
+
+        for my $status ( @$statuses ) {
+            #... 
+        }
+    };
+    if ( $@ ) {
+        # friends_timeline encountered an error
+
+        if ( blessed $@ && $@->isa('Net::Twitter::Error' ) {
+            #... use the thrown error obj
+            warn $@->error;
+        }
+        else {
+            # something bad happened!
+            die $@;
+        }
+    }
+
+C<Net::Twitter::Error> stringifies to something reasonable, so if you don't need
+detailed error information, you can simply treat $@ as a string:
+
+    eval { $nt->update($status) };
+    if ( $@ ) {
+        warn "update failed because: $@\n";
+    }
 
 =head1 SEE ALSO
 
 =over 4
 
-=item L<http://apiwiki.twitter.com/REST+API+Documentation>
+=item L<Net::Twitter::Error>
+
+The C<Net::Twitter> exception object.
+
+=item L<http://apiwiki.twitter.com/Twitter-API-Documentation>
 
 This is the official Twitter API documentation. It describes the methods and their
 parameters in more detail and may be more current than the documentation provided
 with this module.
 
-=item L<Net::Twitter>
-
-This is the original perl interface to the Twitter API and inspiration for this
-module.
-
 =item L<LWP::UserAgent::POE>
 
 This LWP::UserAgent compatible class can be used in L<POE> based application
-along with Net::Twitter::Lite to provide concurrent, non-blocking requests.
+along with Net::Twitter to provide concurrent, non-blocking requests.
 
 =back
+
+=head1 SUPPORT
+
+Please report bugs to C<bug-net-twitter@rt.cpan.org>, or through the web
+interface at L<https://rt.cpan.org/Dist/Display.html?Queue=Net-Twitter>.
+
+Join the Net::Twitter IRC channel at L<irc://irc.perl.org/net-twitter>.
+
+Follow net_twitter: L<http://twitter.com/net_twitter>.
+
+Track Net::Twitter development at L<http://github.com/semifor/Net-Twitter>.
+
+=head1 ACKNOWLEDGEMENTS
+
+Many thanks to Chris Thompson <cpan@cthompson.com>, the original author of
+C<Net::Twitter> and all versions prior to 3.00.
+
+Also, thanks to Chris Prather (perigrin) for answering many design and
+implementation questions, especially with regards to Moose.
 
 =head1 AUTHOR
 
@@ -213,3 +407,67 @@ The Twitter API itself, and the description text used in this module is:
 Copyright (c) 2009 Twitter
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=head1 DISCLAIMER OF WARRANTY
+
+BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENSE, BE
+LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
+OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
+
+[% BLOCK APIDOC %]
+
+=over 4
+
+[% FOREACH method IN get_methods_for(class);
+   NEXT IF method.deprecated -%]
+=item B<[% method.name %]>
+
+[% IF method.required.size > 0;
+       pos_params = method.required;
+   ELSIF method.params.size == 1;
+       pos_params = method.params;
+   END;
+   IF pos_params.size -%]
+=item B<[% method.name %]([% pos_params.join(", ") %])>
+
+[% END -%]
+
+[% FOREACH alias IN method.aliases -%]
+=item alias: [% alias %]
+
+[% END -%]
+
+=over 4
+
+=item Parameters: [% IF method.params.size %][% method.params.join(", ") %][% ELSE %]I<none>[% END %]
+
+=item Required: [% IF method.required.size %][% method.required.join(", ") %][% ELSE %]I<none>[% END %]
+
+=back
+
+[% method.description %]
+
+Returns: [% method.returns %]
+
+[% END -%]
+
+=back
+
+[% END %]

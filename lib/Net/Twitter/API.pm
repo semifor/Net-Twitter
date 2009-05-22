@@ -59,7 +59,7 @@ sub twitter_api_method {
         my $local_path = $modify_path->($path, $args);
         
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
-        return $self->parse_result($request->($self->ua, $uri, $args));
+        return $self->_parse_result($request->($self->ua, $uri, $args));
     };
 
     $class->add_method(

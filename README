@@ -1,0 +1,917 @@
+NAME
+    Net::Twitter - A interface to the Twitter API
+
+VERSION
+    This document describes Net::Twitter version 2.99000_01
+
+SYNOPSIS
+      use Net::Twitter;
+
+      my $nt = Net::Twitter->new(
+          traits   => [qw/API::REST/],
+          username => $user,
+          password => $password
+      );
+
+      my $result = $nt->update('Hello, world!');
+
+      eval {
+          my $statuses = $nt->friends_timeline({ since_id => $high_water, count => 100 });
+          for my $status ( @$statuses ) {
+              print "$status->{time} <$status->{user}{screen_name}> $status->{text}\n";
+          }
+      };
+      if ( my $err = $@ ) {
+          die $@ unless blessed $err && $err->isa('Net::Twitter::Error');
+
+          warn "HTTP Response Code: ", $err->code, "\n",
+               "HTTP Message......: ", $err->message, "\n",
+               "Twitter error.....: ", $err->error, "\n";
+      }
+
+DESCRIPTION
+    This module provides a perl interface to the Twitter APIs. See
+    <http://apiwiki.twitter.com/Twitter-API-Documentation> for a full
+    description of the Twitter APIs.
+
+METHODS AND ARGUMENTS
+    new This constructs a "Net::Twitter" object. It takes several named
+        parameters, all of them optional:
+
+        traits
+            This option is an ARRAY ref of traits used to control which APIs
+            the constructed "Net::Twitter" object will support and how it
+            handles errors. Possible values are:
+
+            API::REST
+                Provides support for the Twitter REST API methods.
+
+            API::Search
+                Provides support for the Twitter Search API methods.
+
+            API::TwitterVision
+                Provides support for the TwitterVision API. See
+                <http://twittervision.com/api.html>.
+
+            WrapError
+                "Net::Twitter" normally throws exceptions on error. When
+                this trait is included, "Net::Twitter" returns undef when a
+                method fails and makes the error available through method
+                "get_error". This is the way all errors were handled in
+                Net::Twitter versions prior to version 3.00.
+
+            Legacy
+                This trait provides backwards compatibility to
+                "Net::Twitter" versions prior to 3.00. It implies the traits
+                "API::REST", "API::Search", "API::TwitterVision", and
+                "API::WrapError". It also provides additional functionality
+                to ensure consistent behavior for applications written for
+                use with legacy versions of "Net::Twitter".
+
+                In the current version, this trait is automatically included
+                if the "traits" option is not specified. This ensures
+                backwards compatibility for existing applications using
+                "Net::Twitter" versions prior to 3.00. See section "LEGACY
+                COMPATIBILITY" for more details.
+
+            Some examples of using the "traits" parameter in "new":
+
+                # provide support for *only* the REST API; throw exceptions on error
+                $nt = Net::Twitter->new(traits => ['API::REST']);
+
+                # provide support for both the REST and Search APIs; wrap errors
+                $nt = Net::Twitter->new(traits => [qw/API::REST API::Search WrapError/]);
+
+                # ensure full legacy support
+                $nt = Net::Twitter->new(traits => ['Legacy']);
+
+                # currently, these 2 calls to new are equivalent:
+                $nt = Net::Twitter-new();
+                $nt = Net::Twitter->new(traits => ['Legacy']);
+
+        username
+            This is the screen name or email used to authenticate with
+            Twitter.
+
+        password
+            This is the password used to authenticate with Twitter.
+
+        clientname
+            The value for the "X-Twitter-Client-Name" HTTP header. It
+            defaults to "Perl Net::Twitter".
+
+        clientver
+            The value for the "X-Twitter-Client-Version" HTTP header. It
+            defaults to current version of the "Net::Twitter" module.
+
+        clienturl
+            The value for the "X-Twitter-Client-URL" HTTP header. It
+            defaults to the search.cpan.org page for the "Net::Twitter"
+            distribution.
+
+        useragent_class
+            The "LWP::UserAgent" compatible class used internally by
+            "Net::Twitter". It defaults to "LWP::UserAgent". For POE based
+            applications, consider using "LWP::UserAgent::POE".
+
+        useragent_args
+            An ARRAY ref of arguments to pass to constructor of the class
+            specified with "useragent_class", above. It defaults to [] (an
+            empty ARRAY ref).
+
+        useragent
+            The value for "User-Agent" HTTP header. It defaults to
+            "Net::Twitter/$VERSION (Perl)", where $VERSION is the current
+            version of "Net::Twitter".
+
+        source
+            The value used in the "source" parameter of API method calls. It
+            is currently only used in the "update" method in the REST API.
+            It defaults to "twitterpm". This results in the text "from
+            Net::Twitter" rather than "from web" for status messages posted
+            from "Net::Twitter" when displayed via the Twitter web
+            interface. The value for this parameter is provided by Twitter
+            when a Twitter application is registered. See
+            <http://apiwiki.twitter.com/FAQ#HowdoIget%E2%80%9CfromMyApp%E2%8
+            0%9DappendedtoupdatessentfrommyAPIapplication>.
+
+        apiurl
+            The URL for the Twitter API. This defaults to
+            "http://twitter.com". This option is available when the
+            "API::REST" trait is included.
+
+        apihost
+            The Twitter API host. This defaults to "twitter.com:80". This
+            option is available when the "API::REST" trait is included.
+
+        apirealm
+            The Twitter API realm used for Basic Authentication. This
+            defaults to "Twitter API". This option is available when the
+            "API::REST" trait is included.
+
+        identica
+            If set to 1, "Net::Twitter" overrides the defaults for "apiurl",
+            "apihost", and "apirealm" to "http://identi.ca/api",
+            "identi.ca:80", and "Laconica API" respectively. It defaults to
+            0. This option is available when the "API::REST" trait is
+            included.
+
+        arrayref_on_error
+            Deprecated. This option is only available when the "Legacy"
+            trait is included. When set to 1, an empty ARRAY ref is returned
+            on error, rather than undef.
+
+    credentials($username, $password)
+        Set the credentials for authentication. This is helpful for managing
+        multiple accounts.
+
+    ua  Provides access to the constructed user agent object used internally
+        by "Net::Twitter". Use it with caution.
+
+API METHODS AND ARGUMENTS
+    Most Twitter API methods take parameters. All Net::Twitter API methods
+    will accept a HASH ref of named parameters as specified in the Twitter
+    API documentation. For convenience, many Net::Twitter methods accept
+    simple positional arguments as documented, below. The positional
+    parameter passing style is optional; you can always use the named
+    parameters in a hash ref if you prefer.
+
+    For example, the REST API method "update" has one required parameter,
+    "status". You can call "update" with a HASH ref argument:
+
+        $nt->update({ status => 'Hello world!' });
+
+    Or, you can use the convenient form:
+
+        $nt->update('Hello world!');
+
+    The "update" method also has an optional parameter,
+    "in_reply_to_status_id". To use it, you must use the HASH ref form:
+
+        $nt->update({ status => 'Hello world!', in_reply_to_status_id => $reply_to });
+
+    Convenience form is provided for the required parameters of all API
+    methods. So, these two calls are equivalent:
+
+        $nt->friendship_exists({ user_a => $fred, user_b => $barney });
+        $nt->friendship_exists($fred, $barney);
+
+    Many API methods have aliases. You can use the API method name, or any
+    of its aliases, as you prefer. For example, these calls are all
+    equivalent:
+
+        $nt->friendship_exists($fred, $barney);
+        $nt->relationship_exists($fred, $barney);
+        $nt->follows($fred, $barney);
+
+    Aliases support both the HASH ref and convenient forms:
+
+        $nt->follows({ user_a => $fred, user_b => $barney });
+
+REST API Methods
+    These methods are provided when trait "API::REST" is included in the
+    "traits" option to "new".
+
+    Several of these methods accept a user ID as the "id" parameter. The
+    user ID can be either a screen name, or the users numeric ID. To
+    disambiguate, use the "screen_name" or "user_id" parameters, instead.
+
+    For example, These calls are equivalent:
+
+        $nt->create_friend('net_twitter'); # screen name
+        $nt->create_friend(1564061);       # numeric ID
+        $nt->create_friend({ id => 'net_twitter' });
+        $nt->create_friend({ screen_name => 'net_twitter' });
+        $nt->create_friend({ user_id     => 1564061 });
+
+    However user_id 911 and screen_name 911 are separate Twitter accounts.
+    These calls are NOT equivalent:
+
+        $nt->create_friend(911); # interpreted as screen name
+        $nt->create_friend({ user_id => 911 }); # screen name: richellis
+
+    Whenever the "id" parameter is required and "user_id" and "screen_name"
+    are also parameters, using any one of them satisfies the requirement.
+
+    block_exists
+    block_exists(id)
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        Returns if the authenticating user is blocking a target user. Will
+        return the blocked user's object if a block exists, and error with
+        HTTP 404 response code otherwise.
+
+        Returns: BasicUser
+
+    blocking
+    blocking(page)
+
+        Parameters: page
+        Required: *none*
+
+        Returns an array of user objects that the authenticating user is
+        blocking.
+
+        Returns: ArrayRef[BasicUser]
+
+    blocking_ids
+    blocking_ids(page)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns an array of numeric user ids the authenticating user is
+        blocking.
+
+        Returns: ArrayRef[Int]
+
+    create_block
+    create_block(id)
+
+        Parameters: id
+        Required: id
+
+        Blocks the user specified in the ID parameter as the authenticating
+        user. Returns the blocked user when successful. You can find out
+        more about blocking in the Twitter Support Knowledge Base.
+
+        Returns: BasicUser
+
+    create_favorite
+    create_favorite(id)
+
+        Parameters: id
+        Required: id
+
+        Favorites the status specified in the ID parameter as the
+        authenticating user. Returns the favorite status when successful.
+
+        Returns: Status
+
+    create_friend
+    create_friend(id)
+
+        Parameters: id, user_id, screen_name, follow
+        Required: id
+
+        Befriends the user specified in the ID parameter as the
+        authenticating user. Returns the befriended user in the requested
+        format when successful. Returns a string describing the failure
+        condition when unsuccessful.
+
+        Returns: BasicUser
+
+    destroy_block
+    destroy_block(id)
+
+        Parameters: id
+        Required: id
+
+        Un-blocks the user specified in the ID parameter as the
+        authenticating user. Returns the un-blocked user when successful.
+
+        Returns: BasicUser
+
+    destroy_direct_message
+    destroy_direct_message(id)
+
+        Parameters: id
+        Required: id
+
+        Destroys the direct message specified in the required ID parameter.
+        The authenticating user must be the recipient of the specified
+        direct message.
+
+        Returns: DirectMessage
+
+    destroy_favorite
+    destroy_favorite(id)
+
+        Parameters: id
+        Required: id
+
+        Un-favorites the status specified in the ID parameter as the
+        authenticating user. Returns the un-favorited status.
+
+        Returns: Status
+
+    destroy_friend
+    destroy_friend(id)
+    alias: unfollow
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        Discontinues friendship with the user specified in the ID parameter
+        as the authenticating user. Returns the un-friended user when
+        successful. Returns a string describing the failure condition when
+        unsuccessful.
+
+        Returns: BasicUser
+
+    destroy_status
+    destroy_status(id)
+
+        Parameters: id
+        Required: id
+
+        Destroys the status specified by the required ID parameter. The
+        authenticating user must be the author of the specified status.
+
+        Returns: Status
+
+    direct_messages
+    direct_messages(id)
+
+        Parameters: since_id, max_id, count, page
+        Required: *none*
+
+        Returns a list of the 20 most recent direct messages sent to the
+        authenticating user including detailed information about the sending
+        and recipient users.
+
+        Returns: ArrayRef[DirectMessage]
+
+    disable_notifications
+    disable_notifications(id)
+
+        Parameters: id
+        Required: id
+
+        Disables notifications for updates from the specified user to the
+        authenticating user. Returns the specified user when successful.
+
+        Returns: BasicUser
+
+    enable_notifications
+    enable_notifications(id)
+
+        Parameters: id
+        Required: id
+
+        Enables notifications for updates from the specified user to the
+        authenticating user. Returns the specified user when successful.
+
+        Returns: BasicUser
+
+    end_session
+    end_session(id)
+
+        Parameters: *none*
+        Required: *none*
+
+        Ends the session of the authenticating user, returning a null
+        cookie. Use this method to sign users out of client-facing
+        applications like widgets.
+
+        Returns: Error
+
+    favorites
+    favorites(id)
+
+        Parameters: id, page
+        Required: *none*
+
+        Returns the 20 most recent favorite statuses for the authenticating
+        user or user specified by the ID parameter.
+
+        Returns: ArrayRef[Status]
+
+    followers
+    followers(id)
+
+        Parameters: id, user_id, screen_name, page
+        Required: *none*
+
+        Returns the authenticating user's followers, each with current
+        status inline. They are ordered by the order in which they joined
+        Twitter (this is going to be changed).
+
+        Returns: ArrayRef[BasicUser]
+
+    followers_ids
+    followers_ids(id)
+
+        Parameters: id, user_id, screen_name, page
+        Required: id
+
+        Returns an array of numeric IDs for every user is followed by.
+
+        Returns: ArrayRef[Int]
+
+    friends
+    friends(id)
+    alias: following
+
+        Parameters: id, user_id, screen_name, page
+        Required: *none*
+
+        Returns the authenticating user's friends, each with current status
+        inline. They are ordered by the order in which they were added as
+        friends. It's also possible to request another user's recent friends
+        list via the id parameter.
+
+        Returns: ArrayRef[BasicUser]
+
+    friends_ids
+    friends_ids(id)
+    alias: following_ids
+
+        Parameters: id, user_id, screen_name, page
+        Required: id
+
+        Returns an array of numeric IDs for every user the specified user is
+        following.
+
+        Returns: ArrayRef[Int]
+
+    friends_timeline
+    friends_timeline(id)
+    alias: following_timeline
+
+        Parameters: since_id, max_id, count, page
+        Required: *none*
+
+        Returns the 20 most recent statuses posted by the authenticating
+        user and that user's friends. This is the equivalent of /home on the
+        Web.
+
+        Returns: ArrayRef[Status]
+
+    friendship_exists
+    friendship_exists(user_a, user_b)
+    alias: relationship_exists
+    alias: follows
+
+        Parameters: user_a, user_b
+        Required: user_a, user_b
+
+        Tests if a friendship exists between two users.
+
+        Returns: Bool
+
+    mentions
+    mentions(user_a, user_b)
+    alias: replies
+
+        Parameters: since_id, max_id, count, page
+        Required: *none*
+
+        Returns the 20 most recent mentions (statuses containing @username)
+        for the authenticating user.
+
+        Returns: ArrayRef[Status]
+
+    new_direct_message
+    new_direct_message(user, text)
+
+        Parameters: user, text
+        Required: user, text
+
+        Sends a new direct message to the specified user from the
+        authenticating user. Requires both the user and text parameters.
+        Returns the sent message in the requested format when successful.
+
+        Returns: DirectMessage
+
+    public_timeline
+    public_timeline(user, text)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the 20 most recent statuses from non-protected users who
+        have set a custom user icon. Does not require authentication. Note
+        that the public timeline is cached for 60 seconds so requesting it
+        more often than that is a waste of resources.
+
+        Returns: ArrayRef[Status]
+
+    rate_limit_status
+    rate_limit_status(user, text)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the remaining number of API requests available to the
+        requesting user before the API limit is reached for the current
+        hour. Calls to rate_limit_status do not count against the rate
+        limit. If authentication credentials are provided, the rate limit
+        status for the authenticating user is returned. Otherwise, the rate
+        limit status for the requester's IP address is returned.
+
+        Returns: RateLimitStatus
+
+    sent_direct_messages
+    sent_direct_messages(user, text)
+
+        Parameters: since_id, max_id, page
+        Required: *none*
+
+        Returns a list of the 20 most recent direct messages sent by the
+        authenticating user including detailed information about the sending
+        and recipient users.
+
+        Returns: ArrayRef[DirectMessage]
+
+    show_status
+    show_status(id)
+
+        Parameters: id
+        Required: id
+
+        Returns a single status, specified by the id parameter. The status's
+        author will be returned inline.
+
+        Returns: Status
+
+    show_user
+    show_user(id)
+
+        Parameters: id
+        Required: id
+
+        Returns extended information of a given user, specified by ID or
+        screen name as per the required id parameter. This information
+        includes design settings, so third party developers can theme their
+        widgets according to a given user's preferences. You must be
+        properly authenticated to request the page of a protected user.
+
+        Returns: ExtendedUser
+
+    test
+    test(id)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the string "ok" status code.
+
+        Returns: Str
+
+    update
+    update(status)
+
+        Parameters: status, in_reply_to_status_id
+        Required: status
+
+        Updates the authenticating user's status. Requires the status
+        parameter specified. A status update with text identical to the
+        authenticating user's current status will be ignored.
+
+        Returns: Status
+
+    update_delivery_device
+    update_delivery_device(device)
+
+        Parameters: device
+        Required: device
+
+        Sets which device Twitter delivers updates to for the authenticating
+        user. Sending none as the device parameter will disable IM or SMS
+        updates.
+
+        Returns: BasicUser
+
+    update_profile
+    update_profile(device)
+
+        Parameters: name, email, url, location, description
+        Required: *none*
+
+        Sets values that users are able to set under the "Account" tab of
+        their settings page. Only the parameters specified will be updated;
+        to only update the "name" attribute, for example, only include that
+        parameter in your request.
+
+        Returns: ExtendedUser
+
+    update_profile_background_image
+    update_profile_background_image(image)
+
+        Parameters: image
+        Required: image
+
+        Updates the authenticating user's profile background image. Expects
+        raw multipart data, not a URL to an image.
+
+        Returns: ExtendedUser
+
+    update_profile_colors
+    update_profile_colors(image)
+
+        Parameters: profile_background_color, profile_text_color,
+        profile_link_color, profile_sidebar_fill_color,
+        profile_sidebar_border_color
+        Required: *none*
+
+        Sets one or more hex values that control the color scheme of the
+        authenticating user's profile page on twitter.com. These values are
+        also returned in the /users/show API method.
+
+        Returns: ExtendedUser
+
+    update_profile_image
+    update_profile_image(image)
+
+        Parameters: image
+        Required: image
+
+        Updates the authenticating user's profile image. Expects raw
+        multipart data, not a URL to an image.
+
+        Returns: ExtendedUser
+
+    user_timeline
+    user_timeline(image)
+
+        Parameters: id, user_id, screen_name, since_id, max_id, count, page
+        Required: *none*
+
+        Returns the 20 most recent statuses posted from the authenticating
+        user. It's also possible to request another user's timeline via the
+        id parameter. This is the equivalent of the Web /archive page for
+        your own user, or the profile page for a third party.
+
+        Returns: ArrayRef[Status]
+
+    verify_credentials
+    verify_credentials(image)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns an HTTP 200 OK response code and a representation of the
+        requesting user if authentication was successful; returns a 401
+        status code and an error message if not. Use this method to test if
+        supplied user credentials are valid.
+
+        Returns: ExtendedUser
+
+Search API Methods
+    These methods are provided when trait "API::Search" is included in the
+    "traits" option to "new".
+
+    search
+    search(q)
+
+        Parameters: q, callback, lang, rpp, page, since_id, geocode,
+        show_user
+        Required: q
+
+        Returns tweets that match a specified query. You can use a variety
+        of search operators in your query.
+
+        Returns: ArrayRef[Status]
+
+    trends
+    trends(q)
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the top ten queries that are currently trending on Twitter.
+        The response includes the time of the request, the name of each
+        trending topic, and the url to the Twitter Search results page for
+        that topic.
+
+        Returns: ArrayRef[Query]
+
+    trends_current
+    trends_current(exclude)
+
+        Parameters: exclude
+        Required: *none*
+
+        Returns the current top ten trending topics on Twitter. The response
+        includes the time of the request, the name of each trending topic,
+        and query used on Twitter Search results page for that topic.
+
+        Returns: HashRef
+
+    trends_daily
+    trends_daily(exclude)
+
+        Parameters: date, exclude
+        Required: *none*
+
+        Returns the top 20 trending topics for each hour in a given day.
+
+        Returns: HashRef
+
+    trends_weekly
+    trends_weekly(exclude)
+
+        Parameters: date, exclude
+        Required: *none*
+
+        Returns the top 30 trending topics for each day in a given week.
+
+        Returns: HashRef
+
+TwitterVision API Methods
+    These methods are provided when trait "API::TwitterVision" is included
+    in the "traits" option to "new".
+
+    current_status
+    current_status(id)
+
+        Parameters: id, callback
+        Required: id
+
+        Get the current location and status of a user.
+
+        Returns: HashRef
+
+    update_twittervision
+    update_twittervision(location)
+
+        Parameters: location
+        Required: location
+
+        Updates the location for the authenticated user.
+
+        Returns: HashRef
+
+LEGACY COMPATIBILITY
+    This version of "Net::Twitter" automatically includes the "Legacy" trait
+    if no "traits" option is provided to "new". Therefore, these 2 calls are
+    currently equivalent:
+
+        $nt = Net::Twitter->new(username => $user, password => $passwd);
+        $nt = Net::Twitter->new(
+            username => $user,
+            password => $passwd,
+            traits   => ['Legacy'],
+        );
+
+    Thus, existing applications written for a prior version of
+    "Net::Twitter" should continue to run, without modification, with this
+    version.
+
+    In a future release, the default traits may change. Prior to that
+    change, however, a nearer future version will add a warning if no
+    "traits" option is provided to "new". To avoid this warning, add an
+    appropriate "traits" option to your existing application code.
+
+ERROR HANDLING
+    There are currently two strategies for handling errors: throwing
+    exceptions and wrapping errors. Exception handling is the newer,
+    recommended strategy.
+
+  Wrapping Errors
+    When trait "WrapError" is specified (or "Legacy", which includes trait
+    "WrapError"), "Net::Twitter" return undef on error. To retrieve
+    information about the error, use methods "http_code", "http_message",
+    and "get_error". (These methods are described in the "/WrapError"
+    section, above.
+
+    Since an error is stored in the object instance, this error handling
+    strategy is problematic when using a user agent like
+    "LWP::UserAgent::POE" that provides concurrent requests. The error for
+    one request can be overwritten by a concurrent request before you have
+    an opportunity to access it.
+
+  Exception Handling
+    When "Net::Twitter" encounters a Twitter API error or a network error,
+    it throws a "Net::Twitter::Error" object. You can catch and process
+    these exceptions by using "eval" blocks and testing $@:
+
+        eval {
+            my $statuses = $nt->friends_timeline(); # this might die!
+
+            for my $status ( @$statuses ) {
+                #... 
+            }
+        };
+        if ( $@ ) {
+            # friends_timeline encountered an error
+
+            if ( blessed $@ && $@->isa('Net::Twitter::Error' ) {
+                #... use the thrown error obj
+                warn $@->error;
+            }
+            else {
+                # something bad happened!
+                die $@;
+            }
+        }
+
+    "Net::Twitter::Error" stringifies to something reasonable, so if you
+    don't need detailed error information, you can simply treat $@ as a
+    string:
+
+        eval { $nt->update($status) };
+        if ( $@ ) {
+            warn "update failed because: $@\n";
+        }
+
+SEE ALSO
+    Net::Twitter::Error
+        The "Net::Twitter" exception object.
+
+    <http://apiwiki.twitter.com/Twitter-API-Documentation>
+        This is the official Twitter API documentation. It describes the
+        methods and their parameters in more detail and may be more current
+        than the documentation provided with this module.
+
+    LWP::UserAgent::POE
+        This LWP::UserAgent compatible class can be used in POE based
+        application along with Net::Twitter to provide concurrent,
+        non-blocking requests.
+
+SUPPORT
+    Please report bugs to "bug-net-twitter@rt.cpan.org", or through the web
+    interface at <https://rt.cpan.org/Dist/Display.html?Queue=Net-Twitter>.
+
+    Join the Net::Twitter IRC channel at <irc://irc.perl.org/net-twitter>.
+
+    Follow net_twitter: <http://twitter.com/net_twitter>.
+
+    Track Net::Twitter development at
+    <http://github.com/semifor/Net-Twitter>.
+
+ACKNOWLEDGEMENTS
+    Many thanks to Chris Thompson <cpan@cthompson.com>, the original author
+    of "Net::Twitter" and all versions prior to 3.00.
+
+    Also, thanks to Chris Prather (perigrin) for answering many design and
+    implementation questions, especially with regards to Moose.
+
+AUTHOR
+    Marc Mims <marc@questright.com>
+
+LICENSE
+    Copyright (c) 2009 Marc Mims
+
+    The Twitter API itself, and the description text used in this module is:
+
+    Copyright (c) 2009 Twitter
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+DISCLAIMER OF WARRANTY
+    BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+    FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+    OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+    PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+    EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+    ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+    YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+    NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+    IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+    WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+    REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENSE, BE LIABLE
+    TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR
+    CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE
+    SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+    RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+    FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+    SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+    DAMAGES.
+
