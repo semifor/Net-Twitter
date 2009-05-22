@@ -6,6 +6,10 @@ use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
 use Net::Twitter::Error;
 
+use namespace::autoclean;
+
+with 'MooseX::Traits';
+
 # use *all* digits for fBSD ports
 our $VERSION = '2.99000_01';
 
@@ -20,16 +24,16 @@ has ua              => ( isa => 'Object', is => 'rw' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
-has _base_url => ( is => 'rw' ); ### keeps role composition from bitching ??
+has '+_trait_namespace' => ( default => 'Net::Twitter' );
+has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 
-sub import {
-    my ($class, @args) = @_;
+sub new {
+    my ($class, %args) = @_;
 
-    @args = 'Legacy' unless @args;
+    return $class->SUPER::new(%args) if caller eq 'MooseX::Traits';
 
-    with "Net::Twitter::$_" for @args;
-
-    $class->meta->make_immutable;
+    my $traits = delete $args{traits} || [qw/Legacy/];
+    $class->new_with_traits(traits => $traits, %args);
 }
 
 sub BUILD {
@@ -79,6 +83,6 @@ sub parse_result {
     die $error;
 }
 
-no Moose;
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 
 1;

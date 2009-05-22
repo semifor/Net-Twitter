@@ -1,9 +1,8 @@
 use inc::Module::Install;
 
 all_from    'lib/Net/Twitter/Base.pm';
-requires    'aliased';
 requires    'Moose' => 0.78;
-requires    'Moose::Role';
+requires    'MooseX::Traits';
 requires    'JSON::Any';
 requires    'URI::Escape';
 recommends  'JSON::XS';

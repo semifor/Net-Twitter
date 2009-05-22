@@ -10,15 +10,15 @@ __PACKAGE__->meta->make_immutable;
 #
 # Suggest:
 #
-#   use Net::Twitter qw/API::Search/;
+#   $nt = Net::Twitter->new(traits => [qw/API::Search/]);
 #
 # Or, for code that relies on the legacy Net::Twitter error handling:
 #
-#   use Net::Twitter qw/API::Search WrapError/;
+#   $nt = Net::Twitter->new(traits => [qw/API::Search WrapError/]);
 #
 # For code that relied on other API methods:
 #
-#   use Net::Twitter qw/Legacy/;
+#   $nt = Net::Twitter->new(traits => [qw/Legacy/]);
 #
 
 1;

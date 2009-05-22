@@ -7,9 +7,10 @@ use Test::Exception;
 use lib qw(t/lib);
 
 use Mock::LWP::UserAgent;
-use Net::Twitter qw/API::REST/;
+use Net::Twitter;
 
 my $nt = Net::Twitter->new(
+    traits => [qw/API::REST/],
     username => 'homer',
     password => 'doh!',
 );

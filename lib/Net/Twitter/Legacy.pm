@@ -3,7 +3,7 @@ use Moose::Role;
 
 use namespace::autoclean;
 
-with "Net::Twitter::$_" for qw/
+with map "Net::Twitter::$_", qw/
     API::REST
     API::Search
     API::TwitterVision
