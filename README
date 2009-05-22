@@ -803,7 +803,7 @@ ERROR HANDLING
 
   Wrapping Errors
     When trait "WrapError" is specified (or "Legacy", which includes trait
-    "WrapError"), "Net::Twitter" return undef on error. To retrieve
+    "WrapError"), "Net::Twitter" returns undef on error. To retrieve
     information about the error, use methods "http_code", "http_message",
     and "get_error". (These methods are described in the "/WrapError"
     section, above.

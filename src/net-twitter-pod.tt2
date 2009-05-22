@@ -311,7 +311,7 @@ wrapping errors.  Exception handling is the newer, recommended strategy.
 =head2 Wrapping Errors
 
 When trait C<WrapError> is specified (or C<Legacy>, which includes trait
-C<WrapError>), C<Net::Twitter> return undef on error.  To retrieve information
+C<WrapError>), C<Net::Twitter> returns undef on error.  To retrieve information
 about the error, use methods C<http_code>, C<http_message>, and C<get_error>.
 (These methods are described in the C</WrapError> section, above.
 

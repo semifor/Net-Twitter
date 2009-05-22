@@ -19,8 +19,10 @@ ACKNOWLEDGEMENTS
 API
 APIs
 BasicUser
+CPAN
 DirectMessage
 ExtendedUser
+Identi
 IM
 IP
 IRC
@@ -39,12 +41,14 @@ WrapError
 apihost
 apirealm
 apiurl
+blogging
 clientname
 clienturl
 clientver
 favorited
 friended
 geocode
+identi
 identica
 inline
 lang
@@ -56,7 +60,11 @@ requester's
 rpp
 stringifies
 timeline
+tvhost
+tvrealm
+tvurl
 twitterpm
+twittervision
 ua
 un
 unfollow

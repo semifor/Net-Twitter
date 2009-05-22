@@ -72,48 +72,20 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::API::Search - A definition of the Twitter Search API
+Net::Twitter::API::Search - A definition of the Twitter Search API as a Moose role
 
 =head1 SYNOPSIS
 
-    use aliased 'Net::Twitter::API::Search';
-
-    my $api_def = API->definition;
+  package My::Twitter;
+  use Moose;
+  with 'Net::Twitter::API::Search';
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::API::Search> provides a perl data structure describing
-the Twitter Search API.  It is used by the Net::Twitter distribution to
-dynamically build methods, documentation, and tests.
+B<Net::Twitter::API::Search> provides definitions for all the Twitter Search API
+methods.  Applying this role to any class provides methods for all of the
+Twitter Search API methods.
 
-=head1 METHODS
-
-=over 4
-
-=item base_url
-
-Returns the base URL for the Twitter Search API.
-
-=item definition
-
-Returns a perl data structure describing the Twitter Search API.  See
-L<Net::Twitter::API> for documentation on the data structure format.
-
-=back
-
-=head1 SEE ALSO
-
-=over 4
-
-=item L<Net::Twitter>
-
-Net::Twitter::API::Search was written for the use of this module and its distribution.
-
-=item L<http://apiwiki.twitter.com/Search+API+Documentation>
-
-The Twitter Search API documentation
-
-=back
 
 =head1 AUTHOR
 
@@ -128,3 +100,26 @@ The Twitter API itself, and the description text used in this module is:
 Copyright (c) 2009 Twitter
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=head1 DISCLAIMER OF WARRANTY
+
+BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENSE, BE
+LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
+OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
