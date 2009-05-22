@@ -9,6 +9,23 @@ has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.co
 has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80'     );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'        );
 
+around BUILDARGS => sub {
+    my $next    = shift;
+    my $class   = shift;
+    my %options = @_;
+
+    if ( delete $options{identica} ) {
+        %options = (
+            apiurl => 'http://identi.ca/api',
+            apihost => 'identi.ca:80',
+            apirealm => 'Laconica API',
+            %options,
+        );
+    }
+
+    return $next->($class, %options);
+};
+
 after credentials => sub {
     my $self = shift;
 

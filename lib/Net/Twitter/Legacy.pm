@@ -18,23 +18,6 @@ sub _set_error_return_val {
     $self->_error_return_val($self->arrayref_on_error ? [] : undef);
 }
 
-around BUILDARGS => sub {
-    my $next    = shift;
-    my $class   = shift;
-    my %options = @_;
-
-    if ( delete $options{identica} ) {
-        %options = (
-            apiurl => 'http://identi.ca/api',
-            apihost => 'identi.ca:80',
-            apirealm => 'Laconica API',
-            %options,
-        );
-    }
-
-    return $next->($class, %options);
-};
-
 # Legacy Net::Twitter does not make the call unless twittervision is true.
 # Bug or feature?
 around 'update_twittervision' => sub {
