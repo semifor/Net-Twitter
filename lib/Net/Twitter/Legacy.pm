@@ -42,7 +42,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter - A Net::Twitter legacy compatibility layer as a Moose role
+Net::Twitter::Legacy - A Net::Twitter legacy compatibility layer as a Moose role
 
 =head1 SYNOPSIS
 

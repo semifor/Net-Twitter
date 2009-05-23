@@ -1,4 +1,4 @@
-package Net::Twitter::Identica;
+package Net::Identica;
 use Net::Twitter;
 
 sub new { shift; Net::Twitter->new(identica => 1, @_) }
