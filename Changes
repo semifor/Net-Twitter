@@ -1,3 +1,7 @@
+2.99000_02 2009-05-22
+    - Corrected POD NAME sections and module naming
+    - Temporarily removed lib/Net/Twitter/Search.pm from MANIFEST
+
 2.99000_01 2009-05-22
     - Initial dev release of 3.00 candidate
     - Moose based replacement for Net::Twitter

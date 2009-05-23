@@ -11,7 +11,7 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '2.99000_01';
+our $VERSION = '2.99000_02';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
