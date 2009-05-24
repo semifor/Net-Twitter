@@ -1,8 +1,8 @@
 NAME
-    Net::Twitter - A interface to the Twitter API
+    Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 2.99000_01
+    This document describes Net::Twitter version 2.99000_03
 
 SYNOPSIS
       use Net::Twitter;
@@ -39,8 +39,8 @@ METHODS AND ARGUMENTS
         parameters, all of them optional:
 
         traits
-            This option is an ARRAY ref of traits used to control which APIs
-            the constructed "Net::Twitter" object will support and how it
+            An ARRAY ref of traits used to control which APIs the
+            constructed "Net::Twitter" object will support and how it
             handles errors. Possible values are:
 
             API::REST
@@ -141,13 +141,14 @@ METHODS AND ARGUMENTS
             "API::REST" trait is included.
 
         apihost
-            The Twitter API host. This defaults to "twitter.com:80". This
-            option is available when the "API::REST" trait is included.
+            A string containing the Twitter API host. It defaults to
+            "twitter.com:80". This option is available when the "API::REST"
+            trait is included.
 
         apirealm
-            The Twitter API realm used for Basic Authentication. This
-            defaults to "Twitter API". This option is available when the
-            "API::REST" trait is included.
+            A string containing the Twitter API realm used for Basic
+            Authentication. It defaults to "Twitter API". This option is
+            available when the "API::REST" trait is included.
 
         identica
             If set to 1, "Net::Twitter" overrides the defaults for "apiurl",
@@ -155,11 +156,6 @@ METHODS AND ARGUMENTS
             "identi.ca:80", and "Laconica API" respectively. It defaults to
             0. This option is available when the "API::REST" trait is
             included.
-
-        arrayref_on_error
-            Deprecated. This option is only available when the "Legacy"
-            trait is included. When set to 1, an empty ARRAY ref is returned
-            on error, rather than undef.
 
     credentials($username, $password)
         Set the credentials for authentication. This is helpful for managing
@@ -805,8 +801,17 @@ ERROR HANDLING
     When trait "WrapError" is specified (or "Legacy", which includes trait
     "WrapError"), "Net::Twitter" returns undef on error. To retrieve
     information about the error, use methods "http_code", "http_message",
-    and "get_error". (These methods are described in the "/WrapError"
-    section, above.
+    and "get_error". These methods are described in the
+    Net::Twitter::WrapError.
+
+        if ( my $followers = $nt->followers ) {
+            for my $follower ( @$followers ) {
+                #...
+            }
+        }
+        else {
+            warn "HTTP message: ", $nt->http_message, "\n";
+        }
 
     Since an error is stored in the object instance, this error handling
     strategy is problematic when using a user agent like

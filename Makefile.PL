@@ -28,9 +28,10 @@ no_index    directory => 'src';
 repository 'git://github.com/semifor/Net-Twitter.git';
 homepage   'http://github.com/semifor/Net-Twitter';
 
-
 eval {
     system 'pod2text lib/Net/Twitter.pod > README';
 };
+
+auto_install;
 
 WriteAll;

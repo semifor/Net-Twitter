@@ -101,14 +101,7 @@ throw exceptions, now.
 
 =head1 SEE ALSO
 
-=over 4
-
-=item L<Net::Twitter::Base>
-
-This is the base class for Net::Twitter::Compat.  See its documentation
-for more details.
-
-=back
+L<Net::Twitter>
 
 =head1 AUTHOR
 

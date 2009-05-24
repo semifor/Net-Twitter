@@ -78,19 +78,13 @@ Net::Twitter::WrapError - Wraps Net::Twitter exceptions
 
 =head1 DESCRIPTION
 
-This module provides a B<Net::Twitter> compatibility layer for
-Net::Twitter.  Net::Twitter::Base throws exceptions for Twitter API and
-network errors.  This module catches those errors returning C<undef> to the
-caller, instead.  It provides L</"get_error">, L</"http_code"> and
-L</"http_message">, like Net::Twitter, for accessing that error information.
+This module provides an alternate error handling strategy for C<Net::Twitter>.
+Rather than throwing exceptions, API methods return C<undef> and error
+information is available through method calls on the C<Net::Twitter> object.
 
-This module is provided to make it easy to test or migrate applications to
-Net::Twitter::REST.
-
-This module does not provide full compatibility with Net::Twitter.  It does not,
-for example, provided C<update_twittervision> or the Twitter Search API
-methods. (See L<Net::Twitter::Search> for Net::Twitter::Lite's answer to
-answer to the latter.
+This is the error handling strategy used when C<trait> C<Legacy> is used.  It
+was the error handling strategy employed by C<Net::Twitter> prior to version
+3.00.
 
 =head1 METHODS
 
@@ -98,7 +92,7 @@ answer to the latter.
 
 =item new
 
-This method takes the same parameters as L<Net::Twitter::Base/new>.
+This method takes the same parameters as L<Net::Twitter/new>.
 
 =item get_error
 
@@ -116,14 +110,8 @@ Returns the HTTP message for the most recent API method call if it ended in erro
 
 =head1 SEE ALSO
 
-=over 4
+L<Net::Twitter>
 
-=item L<Net::Twitter::Base>
-
-This is the base class for Net::Twitter::Compat.  See its documentation
-for more details.
-
-=back
 
 =head1 AUTHOR
 

@@ -9,7 +9,7 @@ use Net::Twitter;
 
 my $nt = Net::Twitter->new(
     traits   => [qw/API::REST/],
-    username => 'NTLite',
+    username => 'just_me',
     password => 'secret',
 );
 

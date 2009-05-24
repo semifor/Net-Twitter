@@ -1,3 +1,6 @@
+2.99000_03 2009-05-22
+    - Broke MANIFEST on the prior dist (fixed)
+
 2.99000_02 2009-05-22
     - Corrected POD NAME sections and module naming
     - Temporarily removed lib/Net/Twitter/Search.pm from MANIFEST
