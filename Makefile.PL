@@ -1,7 +1,7 @@
 use inc::Module::Install;
 
-version_from      'lib/Net/Twitter.pm';
-perl_version_from 'lib/Net/Twitter.pm';
+version_from      'lib/Net/Twitter/Core.pm';
+perl_version_from 'lib/Net/Twitter/Core.pm';
 
 # MAINTAINER only exists in the repository (i.e., development) version of the
 # project. This eliminates the need for a "require 'Template'".  TT2 is only

@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 2.99000_03
+    This document describes Net::Twitter version 2.99000_04
 
 SYNOPSIS
       use Net::Twitter;
@@ -88,6 +88,26 @@ METHODS AND ARGUMENTS
                 # currently, these 2 calls to new are equivalent:
                 $nt = Net::Twitter-new();
                 $nt = Net::Twitter->new(traits => ['Legacy']);
+
+        legacy
+            A boolean. If set to 0, "new" constructs a "Net::Twitter" object
+            implementing the REST API and throws exceptions on API method
+            errors.
+
+                Net::Twitter->new(legacy => 0);
+
+            Is a shortcut for:
+
+                Net::Twitter->new(traits => ['API::REST']);
+
+            If set to 1, "new" constructs a "Net::Twitter" object with the
+            "Legacy" trait.
+
+                Net::Twitter->new(legacy => 1);
+
+            is a shortcut for:
+
+                Net::Twitter->new(traits => ['Legacy']);
 
         username
             This is the screen name or email used to authenticate with
@@ -828,7 +848,7 @@ ERROR HANDLING
             my $statuses = $nt->friends_timeline(); # this might die!
 
             for my $status ( @$statuses ) {
-                #... 
+                #...
             }
         };
         if ( $@ ) {

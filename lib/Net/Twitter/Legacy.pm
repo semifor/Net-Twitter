@@ -10,8 +10,23 @@ with map "Net::Twitter::$_", qw/
     WrapError
 /;
 
-has arrayref_on_error => ( isa => 'Bool', is => 'rw', default => 0, trigger => \&_set_error_return_val );
+has arrayref_on_error => ( isa => 'Bool', is => 'rw', default => 0,
+                           trigger => sub { shift->_set_error_return_val } );
 has twittervision     => ( isa => 'Bool', is => 'rw', default => 0 );
+
+=begin comment
+
+# TODO: MOP is not picking up UNIVERSAL methods; waiting for a fix
+# For transparent legacy support, we need ->isa('Net::Twitter') to succeed
+around isa => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    return 1 if $_[0] eq 'Net::Twitter';
+    return $self->$orig(@_);
+};
+
+=cut
 
 sub _set_error_return_val {
     my $self = shift;
@@ -24,7 +39,7 @@ sub _set_error_return_val {
 around 'update_twittervision' => sub {
     my $next = shift;
     my $self = shift;
-    
+
     return unless $self->twittervision;
 
     return $next->($self, @_);
@@ -89,7 +104,7 @@ When set to 1, enables the C<upade_twittervision> call.  Defaults to 0.
 
 =item clone
 
-Creates a shallow copy of the C<Net::Twitter> object.  This was useful, in legacy 
+Creates a shallow copy of the C<Net::Twitter> object.  This was useful, in legacy
 versions of C<Net::Twitter> for handling concurrent requests (for instance with
 L<LWP::UserAgent::POE>).  Since errors are wrapped in the C<Net::Twitter> concurrent
 requests each needed their own object.  C<clone> served that purpose.

@@ -108,6 +108,25 @@ Some examples of using the C<traits> parameter in C<new>:
     $nt = Net::Twitter-new();
     $nt = Net::Twitter->new(traits => ['Legacy']);
 
+=item legacy
+
+A boolean.  If set to 0, C<new> constructs a C<Net::Twitter> object
+implementing the REST API and throws exceptions on API method errors.
+
+    Net::Twitter->new(legacy => 0);
+
+Is a shortcut for:
+
+    Net::Twitter->new(traits => ['API::REST']);
+
+If set to 1, C<new> constructs a C<Net::Twitter> object with the C<Legacy> trait.
+
+    Net::Twitter->new(legacy => 1);
+
+is a shortcut for:
+
+    Net::Twitter->new(traits => ['Legacy']);
+
 =item username
 
 This is the screen name or email used to authenticate with Twitter.

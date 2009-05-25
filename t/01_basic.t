@@ -57,11 +57,15 @@ my @tests = (
     [ verify_credentials     => [],                        GET  => "/account/verify_credentials.json"     ],
 );
 
-plan tests => @tests * 2 * 4 + 1;
+plan tests => @tests * 2 * 4 + 2;
 
-use_ok 'Net::Twitter', qw/API::REST/;
+use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(
+my $nt = Net::Twitter->new(legacy => 1);
+isa_ok $nt, 'Net::Twitter';
+
+$nt = Net::Twitter->new(
+    legacy   => 0,
     username => 'homer',
     password => 'doh!',
 );

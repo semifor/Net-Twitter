@@ -14,4 +14,7 @@ plan skip_all => 'Test::Pod::Coverage 1.04 required' if $@;
 plan skip_all => 'set TEST_POD to enable this test'
   unless ($ENV{TEST_POD} || -e 'MANIFEST.SKIP');
 
-all_pod_coverage_ok({ trustme => [qw/API BUILD REST/] });
+all_pod_coverage_ok({
+    also_private => [qr/^BUILD(:?ARGS)?$/],
+    trustme => [qr/^credentials|isa$/], # Core::credentials
+});
