@@ -72,7 +72,11 @@ sub _from_json {
 sub _parse_result {
     my ($self, $res) = @_;
 
-    my $obj = $self->_from_json($res->content);
+    # workaround for Laconica API returning bools as strings
+    my $content = $res->content;
+    $content =~ s/^"(true|false)"$/$1/;
+
+    my $obj = $self->_from_json($content);
 
     # Twitter sometimes returns an error with status code 200
     if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {

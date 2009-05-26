@@ -75,13 +75,16 @@ your own user, or the profile page for a third party.
     returns => 'ArrayRef[Status]',
 );
 
+# TODO: URL should be 'mentions', not 'replies', but the Laconica API doesn't
+# recognize 'mentions' yet, so we'll cheat, as long as Twitter plays along and
+# keeps 'replies' active or until Laconica/Identica is fixed.
 twitter_api_method mentions => (
     description => <<'',
 Returns the 20 most recent mentions (statuses containing @username) for the
 authenticating user.
 
     aliases => [qw/replies/],
-    path    => 'statuses/mentions',
+    path    => 'statuses/replies',
     method  => 'GET',
     params  => [qw/since_id max_id count page/],
     required => [],
