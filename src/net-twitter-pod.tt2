@@ -466,6 +466,8 @@ SUCH DAMAGES.
        pos_params = method.required;
    ELSIF method.params.size == 1;
        pos_params = method.params;
+   ELSE;
+       pos_params = [];
    END;
    IF pos_params.size -%]
 =item B<[% method.name %]([% pos_params.join(", ") %])>
