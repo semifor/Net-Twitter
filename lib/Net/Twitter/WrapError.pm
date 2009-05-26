@@ -3,55 +3,41 @@ use Moose::Role;
 
 use namespace::autoclean;
 
-has _error  => (
-    isa       => 'Net::Twitter::Error',
-    is        => 'rw',
-    clearer   => '_clear_error',
-    predicate => 'has_error',
-);
+has _http_response => ( isa => 'HTTP::Response', is => 'rw',
+                        handles => {
+                            http_message => 'message',
+                            http_code    => 'code',
+                        }
+                      );
+has _twitter_error => ( isa => 'HashRef', is => 'rw', predicate => 'has_error',
+                        clearer => '_clear_error' );
 
 has _error_return_val => ( isa => 'Maybe[ArrayRef]', is => 'rw', default => undef );
-
-sub http_message {
-    my $self = shift;
-
-    return unless $self->has_error;
-    return $self->_error->message;
-}
-
-sub http_code {
-    my $self = shift;
-
-    return unless $self->has_error;
-    return $self->_error->code;
-}
 
 sub get_error {
     my $self = shift;
 
     return unless $self->has_error;
 
-    return $self->_error->has_twitter_error
-        ? $self->_error->twitter_error
-        : {
-            request => undef,
-            error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - "
-                       . $self->_error->message
-          }; 
+    return $self->_twitter_error;
 }
 
 around _parse_result => sub {
-    my $next = shift;
-    my $self = shift;
+    my ($next, $self, $res) = @_;
 
     $self->_clear_error;
+    $self->_http_response($res);
 
-    my $r = eval { $next->($self, @_) };
+    my $r = eval { $next->($self, $res) };
     if ( $@ ) {
         die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Error');
 
-        $self->_error($@);
-        return $self->_error_return_val;
+        $self->_twitter_error($@->has_twitter_error
+            ? $@->twitter_error
+            : { error => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - "
+                         . $res->message }
+        );
+        $r = $self->_error_return_val;
     }
 
     return $r;
@@ -96,7 +82,14 @@ This method takes the same parameters as L<Net::Twitter/new>.
 
 =item get_error
 
-Returns the HTTP response content for the most recent API method call if it ended in error.
+Returns undef if there was no error or a HASH ref containing the Twitter error
+response.  Occasionally, a Twitter API call results in an error with no error
+content returned from Twitter.  When that occurs, get_error returns a simulated
+error HASH ref.
+
+NOTE: Versions of C<Net::Twitter> prior to 3.0 sometimes returned a string
+rather than a HASH ref, on error.  This was a bug.  Always expect undef on
+success and a HASH ref on error.
 
 =item http_code
 

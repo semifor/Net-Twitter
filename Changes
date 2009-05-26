@@ -1,3 +1,7 @@
+2.99000_05 2009-05-26
+    - Fixed useragent_args type. (Christopher Biggs)
+    - Store HTTP::Response even on success in WrapError for legacy support (Christopher Biggs)
+
 2.99000_04 2009-05-25
     - Moved Net::Twitter to Net::Twitter::Core; Net::Twitter provides new -> new_with_traits
     - Added legacy => [0|1] shortcut option

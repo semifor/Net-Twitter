@@ -115,7 +115,7 @@ implementing the REST API and throws exceptions on API method errors.
 
     Net::Twitter->new(legacy => 0);
 
-Is a shortcut for:
+is a shortcut for:
 
     Net::Twitter->new(traits => ['API::REST']);
 
@@ -158,8 +158,8 @@ defaults to "LWP::UserAgent".  For L<POE> based applications, consider using
 
 =item useragent_args
 
-An ARRAY ref of arguments to pass to constructor of the class specified with
-C<useragent_class>, above.  It defaults to [] (an empty ARRAY ref).
+An HASH ref of arguments to pass to constructor of the class specified with
+C<useragent_class>, above.  It defaults to {} (an empty HASH ref).
 
 =item useragent
 

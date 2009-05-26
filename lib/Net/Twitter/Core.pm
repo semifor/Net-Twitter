@@ -11,14 +11,15 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '2.99000_04';
+our $VERSION = '2.99000_05';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
 # For transparent legacy support, we need ->isa('Net::Twitter') to succeed.
 # TODO: MOP is not picking up UNIVERSAL methods. When it does, this code needs
 # to be removed and the around isa => sub {...} uncommented in Legacy.
-sub isa { my ($class, $isa) = @_;
+sub isa {
+    my ($class, $isa) = @_;
 
     return 1 if $isa && !ref $isa && $isa eq 'Net::Twitter';
 
@@ -26,7 +27,7 @@ sub isa { my ($class, $isa) = @_;
 }
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
-has useragent_args  => ( isa => 'ArrayRef', is => 'ro', default => sub { [] } );
+has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
 has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' );
 has password        => ( isa => 'Str', is => 'rw' );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
@@ -44,7 +45,7 @@ sub BUILD {
     eval "use " . $self->useragent_class;
     croak $@ if $@;
 
-    $self->ua($self->useragent_class->new(@{$self->useragent_args}));
+    $self->ua($self->useragent_class->new($self->useragent_args));
     $self->ua->agent($self->useragent);
     $self->ua->default_header('X-Twitter-Client'         => $self->clientname);
     $self->ua->default_header('X-Twitter-Client-Version' => $self->clientver);
