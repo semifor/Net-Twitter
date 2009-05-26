@@ -45,7 +45,7 @@ sub BUILD {
     eval "use " . $self->useragent_class;
     croak $@ if $@;
 
-    $self->ua($self->useragent_class->new($self->useragent_args));
+    $self->ua($self->useragent_class->new(%{$self->useragent_args}));
     $self->ua->agent($self->useragent);
     $self->ua->default_header('X-Twitter-Client'         => $self->clientname);
     $self->ua->default_header('X-Twitter-Client-Version' => $self->clientver);
