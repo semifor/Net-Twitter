@@ -1,0 +1,280 @@
+package Net::Twitter::OAuth;
+use Moose::Role;
+
+use namespace::autoclean;
+
+use Net::OAuth::Simple;
+use Net::Twitter::OAuth::UserAgent;
+
+has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
+has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
+has oauth_urls      => ( isa => 'HashRef[Str]', is => 'ro', default => sub { {
+        request_token_url => "http://twitter.com/oauth/request_token",
+        authorization_url => "http://twitter.com/oauth/authorize",
+        access_token_url  => "http://twitter.com/oauth/access_token",
+    } } );
+
+has oauth => ( isa => 'Net::OAuth::Simple', is => 'ro', lazy_build => 1,
+        handles => [qw/
+            authorized
+            request_access_token
+            get_authorizaton_url
+            access_token
+            access_token_secret
+            request_token
+            request_token_secret
+        /] );
+
+sub _build_oauth {
+    my $self = shift;
+
+    my $ua = $self->ua;
+
+    my $oauth = Net::OAuth::Simple->new(
+        tokens => {
+            consumer_key    => $self->consumer_key,
+            consumer_secret => $self->consumer_secret,
+        },
+        urls => $self->oauth_urls,
+    );
+
+    # use our configured ua
+    $oauth->{browser} = $ua;
+
+    # override UserAgent
+    $self->ua(Net::Twitter::OAuth::UserAgent->new($oauth));
+
+    return $oauth;
+}
+
+# shortcuts defined in early releases
+# DEPRECATED
+sub oauth_token {
+    my($self, @tokens) = @_;
+    $self->{oauth}->access_token($tokens[0]);
+    $self->{oauth}->access_token_secret($tokens[1]);
+    return @tokens;
+}
+
+# DEPRECATED
+sub is_authorized { shift->oauth->authorized(@_) }
+
+# DEPRECATED
+sub oauth_auhorization_url { shift->oauth->get_authorization_url }
+
+1;
+
+__END__
+
+=encoding utf-8
+
+=for stopwords
+
+=head1 NAME
+
+Net::Twitter::OAuth - Net::Twitter role that provides OAuth instead of Basic Auth
+
+=head1 SYNOPSIS
+
+  use Net::Twitter;
+
+  my $nt = Net::Twitter->new(
+      traits          => ['API::REST', 'OAuth'],
+      consumer_key    => "YOUR-CONSUMER-KEY",
+      consumer_secret => "YOUR-CONSUMER-SECRET",
+  );
+
+  # Do some Authentication work. See EXAMPLES
+
+  my $tweets = $nt->friends_timeline;
+  my $res    = $nt->update({ status => "I CAN HAZ OAUTH!" });
+
+=head1 DESCRIPTION
+
+Net::Twitter::OAuth is a Net::Twitter role that provides OAuth
+authentication instead of the default Basic Authentication.
+
+Note that this client only works with APIs that are compatible to OAuth authentication.
+
+=head1 EXAMPLES
+
+Here's how to authorize users as a desktop app mode:
+
+  use Net::Twitter;
+
+  my $nt = Net::Twitter>new(
+      traits          => ['API::REST', 'OAuth'],
+      consumer_key    => "YOUR-CONSUMER-KEY",
+      consumer_secret => "YOUR-CONSUMER-SECRET",
+  );
+
+  # You'll save the token and secret in cookie, config file or session database
+  my($access_token, $access_token_secret) = restore_tokens();
+  if ($access_token && $access_token_secret) {
+      $nt->access_token($access_token);
+      $nt->>access_token_secret($access_token_secret);
+  }
+
+  unless ( $nt->is_authorized ) {
+      # The client is not yet authorized: Do it now
+      print "Authorize this app at ", $nt->get_authorization_url, " and hit RET\n";
+
+      <STDIN>; # wait for input
+
+      my($access_token, $access_token_secret) = $nt->request_access_token;
+      save_tokens($access_token, $access_token_secret); # if necessary
+  }
+
+  # Everything's ready
+
+In a web application mode, you need to save the oauth_token and
+oauth_token_secret somewhere when you redirect the user to the OAuth
+authorization URL.
+
+  sub twitter_authorize : Local {
+      my($self, $c) = @_;
+
+      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
+      my $url = $nt->get_authorization_url;
+
+      $c->response->cookies->{oauth} = {
+          value => {
+              token => $nt->request_token,
+              token_secret => $nt->request_token_secret,
+          },
+      };
+
+      $c->response->redirect($url);
+  }
+
+And when the user returns back, you'll reset those request token and
+secret to upgrade the request token to access token.
+
+  sub twitter_auth_callback : Local {
+      my($self, $c) = @_;
+
+      my %cookie = $c->request->cookies->{oauth}->value;
+
+      my $nt = Net::Twitter::OAuth->new(traits => [qw/API::REST OAuth/], %param);
+      $nt->request_token($cookie{token});
+      $nt->request_token_secret($cookie{token_secret});
+
+      my($access_token, $access_token_secret)
+          = $nt->request_access_token;
+
+      # Save $access_token and $access_token_secret in the database associated with $c->user
+  }
+
+Later on, you can retrieve and reset those access token and secret
+before calling any Twitter API methods.
+
+  sub make_tweet : Local {
+      my($self, $c) = @_;
+
+      my($access_token, $access_token_secret) = ...;
+
+      my $nt = Net::Twitter::OAuth->new(traits => [qw/API::REST OAuth/], %param);
+      $nt->access_token($access_token);
+      $nt->access_token_secret($access_token_secret);
+
+      # Now you can call any Net::Twitter API methods on $nt
+      my $status = $c->req->param('status');
+      my $res = $nt->update({ status => $status });
+  }
+
+=head1 METHODS
+
+=over 4
+
+=item oauth
+
+  $nt->oauth;
+
+Returns Net::OAuth::Simple object to deal with getting and setting
+OAuth tokens. See L<Net::OAuth::Simple> for details.
+
+=back
+
+=head1 DELEGATED METHODS
+
+The following method calls ar delegated to the internal C<Net::OAuth::Simple>
+object.  I.e., these calls are identical:
+
+    $nt->authorized;
+    $nt->oauth->authorized;
+
+See L<Net::OAuth::Simple> for full documentation.
+
+=over 4
+
+=item authorized
+
+Whether the client has the necessary credentials to be authorized.
+
+Note tha the credentials may be wrong and so the request may fail.
+
+=item request_access_token
+
+Get or set the current access token.
+
+=item get_authorization_url
+
+Get the URL uset to authorize the user.  Returns a C<URI> object.
+
+=item access_token
+
+Get or set the access token.
+
+=item access_token_secret
+
+Get or set the access token secret.
+
+=item request_token
+
+Get or set the request token.
+
+=item request_token_secret
+
+Get or set the request token secret.
+
+=back
+
+=head1 DEPRECATED METHODS
+
+=over 4
+
+=item is_authorized
+
+DEPRECATED. Use C<authorized> instead.
+
+=item oauth_authorize_url
+
+DEPRECATED. Use C<get_authorized_url> instead.
+
+=item oauth_token
+
+   $nt->oauth_token($access_token, $access_token_secret);
+
+DEPRECATED.  Use C<access_token> and C<access_token_seccret> instead:
+
+   $nt->access_token($access_token);
+   $nt->access_token_secret($access_token_secret);
+
+=back
+
+=head1 AUTHORS
+
+Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
+Marc Mims E<lt>marc@questright.comE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<Net::Twitter>, L<Net::OAuth::Simple>
+
+=cut
+
