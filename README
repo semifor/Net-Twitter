@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 2.99000_04
+    This document describes Net::Twitter version 2.99000_05
 
 SYNOPSIS
       use Net::Twitter;
@@ -60,6 +60,12 @@ METHODS AND ARGUMENTS
                 "get_error". This is the way all errors were handled in
                 Net::Twitter versions prior to version 3.00.
 
+            OAuth
+                The "OAuth" trait provides OAuth authentication rather than
+                the default Basic Authentication for Twitter API method
+                calls. See the "Authentication" section and
+                Net::Twitter::Role::OAuth for full documentation.
+
             Legacy
                 This trait provides backwards compatibility to
                 "Net::Twitter" versions prior to 3.00. It implies the traits
@@ -96,7 +102,7 @@ METHODS AND ARGUMENTS
 
                 Net::Twitter->new(legacy => 0);
 
-            Is a shortcut for:
+            is a shortcut for:
 
                 Net::Twitter->new(traits => ['API::REST']);
 
@@ -135,9 +141,9 @@ METHODS AND ARGUMENTS
             applications, consider using "LWP::UserAgent::POE".
 
         useragent_args
-            An ARRAY ref of arguments to pass to constructor of the class
-            specified with "useragent_class", above. It defaults to [] (an
-            empty ARRAY ref).
+            An HASH ref of arguments to pass to constructor of the class
+            specified with "useragent_class", above. It defaults to {} (an
+            empty HASH ref).
 
         useragent
             The value for "User-Agent" HTTP header. It defaults to
@@ -177,12 +183,35 @@ METHODS AND ARGUMENTS
             0. This option is available when the "API::REST" trait is
             included.
 
+        consumer_key
+            A string containing the OAuth consumer key provided by Twitter
+            when an application is registered. This option is available when
+            the "OAuth" trait is included.
+
+        consumer_secret
+            A string containing the OAuth consumer secret. This option is
+            available when the "OAuth" trait is included.
+
     credentials($username, $password)
-        Set the credentials for authentication. This is helpful for managing
-        multiple accounts.
+        Set the credentials for Basic Authentication. This is helpful for
+        managing multiple accounts.
 
     ua  Provides access to the constructed user agent object used internally
         by "Net::Twitter". Use it with caution.
+
+AUTHENTICATION
+    Twitter currently provides authentication strategies: Basic
+    Authentication and OAuth. OAuth is officially in beta, however, Twitter
+    has expressed a desire to deprecate Basic Authentication in the future,
+    so consider using OAuth in your applications.
+
+    To set up Basic Authentication in "Net::Twitter", provide the "username"
+    and "password" options to "new" or call the "credentials" method.
+
+    To set up OAuth, include the "OAuth" trait and include the
+    "consumer_key" and "consumer_secret" options to "new". See
+    Net::Twitter::Role::OAuth for more information on using OAuth, including
+    examples.
 
 API METHODS AND ARGUMENTS
     Most Twitter API methods take parameters. All Net::Twitter API methods
@@ -822,7 +851,7 @@ ERROR HANDLING
     "WrapError"), "Net::Twitter" returns undef on error. To retrieve
     information about the error, use methods "http_code", "http_message",
     and "get_error". These methods are described in the
-    Net::Twitter::WrapError.
+    Net::Twitter::Role::WrapError.
 
         if ( my $followers = $nt->followers ) {
             for my $follower ( @$followers ) {

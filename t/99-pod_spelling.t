@@ -30,10 +30,15 @@ JSON
 Laconica
 Marc
 Mims
+Miyagawa
+OAuth
+oauth
 Prather
 RateLimitStatus
+refactored
 SMS
 Str
+Tatsuhiko
 Twitter
 TwitterVision
 Un

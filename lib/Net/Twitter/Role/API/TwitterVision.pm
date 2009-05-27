@@ -1,4 +1,4 @@
-package Net::Twitter::API::TwitterVision;
+package Net::Twitter::Role::API::TwitterVision;
 use Moose::Role;
 use Net::Twitter::API;
 
@@ -44,7 +44,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::API::TwitterVision - A definition of the TwitterVision API as a Moose role
+Net::Twitter::Role::API::TwitterVision - A definition of the TwitterVision API as a Moose role
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,7 @@ Net::Twitter::API::TwitterVision - A definition of the TwitterVision API as a Mo
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::API::Search> provides definitions for all the Twitter Search API
+B<Net::Twitter::Role::API::Search> provides definitions for all the Twitter Search API
 methods.  Applying this role to any class provides methods for all of the
 Twitter Search API methods.
 

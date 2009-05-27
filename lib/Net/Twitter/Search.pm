@@ -33,10 +33,10 @@ This module is deprecated.  Use L<Net::Twitter> instead.
     use Net::Twitter;
 
     # Just the Search API; exceptions thrown on error
-    $nt = Net::Twitter->new(traits => [qw/Search/]);
+    $nt = Net::Twitter->new(traits => [qw/API::Search/]);
 
     # Just the Search API; errors wrapped - use $nt->get_error
-    $nt = Net::Twitter->new(traits => [qw/Search WrapError/]);
+    $nt = Net::Twitter->new(traits => [qw/API::Search WrapError/]);
 
     # Or, for code that uses legacy Net::Twitter idioms
     $nt = Net::Twitter->new(traits => [qw/Legacy/]);
@@ -64,9 +64,11 @@ Full documentation.
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Marc Mims <marc@questright.com>
+Chris Thompson <cpan@cthompson.com>
+Brenda Wallace <brenda@wallace.net.nz>
 
 =head1 LICENSE
 

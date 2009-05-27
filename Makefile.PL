@@ -20,6 +20,8 @@ requires    'MooseX::Traits';
 requires    'JSON::Any';
 requires    'URI::Escape';
 requires    'namespace::autoclean';
+requires    'Net::OAuth::Simple';
+requires    'LWP::UserAgent';
 recommends  'JSON::XS';
 
 no_index    directory => 'src';

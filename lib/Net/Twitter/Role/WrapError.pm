@@ -1,4 +1,4 @@
-package Net::Twitter::WrapError;
+package Net::Twitter::Role::WrapError;
 use Moose::Role;
 
 use namespace::autoclean;
@@ -49,7 +49,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::WrapError - Wraps Net::Twitter exceptions
+Net::Twitter::Role::WrapError - Wraps Net::Twitter exceptions
 
 =head1 SYNOPSIS
 
