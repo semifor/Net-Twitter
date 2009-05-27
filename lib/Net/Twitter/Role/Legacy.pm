@@ -1,9 +1,9 @@
-package Net::Twitter::Legacy;
+package Net::Twitter::Role::Legacy;
 use Moose::Role;
 
 use namespace::autoclean;
 
-with map "Net::Twitter::$_", qw/
+with map "Net::Twitter::Role::$_", qw/
     API::REST
     API::Search
     API::TwitterVision
@@ -57,7 +57,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Legacy - A Net::Twitter legacy compatibility layer as a Moose role
+Net::Twitter::Role::Legacy - A Net::Twitter legacy compatibility layer as a Moose role
 
 =head1 SYNOPSIS
 

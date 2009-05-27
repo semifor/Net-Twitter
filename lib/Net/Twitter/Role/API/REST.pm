@@ -1,4 +1,4 @@
-package Net::Twitter::API::REST;
+package Net::Twitter::Role::API::REST;
 
 use Moose::Role;
 use Net::Twitter::API;
@@ -84,7 +84,7 @@ Returns the 20 most recent mentions (statuses containing @username) for the
 authenticating user.
 
     aliases => [qw/replies/],
-    path    => 'statuses/replies',
+    path    => 'statuses/mentions',
     method  => 'GET',
     params  => [qw/since_id max_id count page/],
     required => [],
@@ -566,7 +566,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::API::REST - A definition of the Twitter REST API as a Moose role
+Net::Twitter::Role::API::REST - A definition of the Twitter REST API as a Moose role
 
 =head1 SYNOPSIS
 
@@ -576,7 +576,7 @@ Net::Twitter::API::REST - A definition of the Twitter REST API as a Moose role
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::API::REST> provides definitions for all the Twitter REST API
+B<Net::Twitter::Role::API::REST> provides definitions for all the Twitter REST API
 methods.  Applying this role to any class provides methods for all of the
 Twitter REST API methods.
 

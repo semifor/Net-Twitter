@@ -1,4 +1,4 @@
-package Net::Twitter::API::Search;
+package Net::Twitter::Role::API::Search;
 
 use Moose::Role;
 use Net::Twitter::API;
@@ -72,7 +72,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::API::Search - A definition of the Twitter Search API as a Moose role
+Net::Twitter::Role::API::Search - A definition of the Twitter Search API as a Moose role
 
 =head1 SYNOPSIS
 
@@ -82,7 +82,7 @@ Net::Twitter::API::Search - A definition of the Twitter Search API as a Moose ro
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::API::Search> provides definitions for all the Twitter Search API
+B<Net::Twitter::Role::API::Search> provides definitions for all the Twitter Search API
 methods.  Applying this role to any class provides methods for all of the
 Twitter Search API methods.
 

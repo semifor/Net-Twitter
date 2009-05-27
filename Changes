@@ -1,4 +1,6 @@
-2.99000_05 2009-05-26
+2.99000_05 2009-05-27
+    - Restructured module hierarchy: all roles/traits moved to Net/Twitter/Role/
+    - Itegrated Tatsuhiko Miyagawa's OAuth support as a trait
     - Identica fixes: strings '"true"' and '"false"' to bools; mentions => replies
     - Fixed useragent_args type. (Christopher Biggs)
     - Store HTTP::Response even on success in WrapError for legacy support (Christopher Biggs)

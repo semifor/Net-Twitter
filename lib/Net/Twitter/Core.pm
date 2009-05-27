@@ -36,7 +36,7 @@ has ua              => ( isa => 'Object', is => 'rw' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
-has '+_trait_namespace' => ( default => 'Net::Twitter' );
+has '+_trait_namespace' => ( default => 'Net::Twitter::Role' );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 
 sub BUILD {

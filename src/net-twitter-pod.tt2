@@ -78,6 +78,12 @@ included, C<Net::Twitter> returns undef when a method fails and makes the
 error available through method C<get_error>.  This is the way all errors were
 handled in Net::Twitter versions prior to version 3.00.
 
+=item OAuth
+
+The C<OAuth> trait provides OAuth authentication rather than the default Basic
+Authentication for Twitter API method calls.  See the L</Authentication>
+section and L<Net::Twitter::Role::OAuth> for full documentation.
+
 =item Legacy
 
 This trait provides backwards compatibility to C<Net::Twitter> versions prior
@@ -200,12 +206,22 @@ and C<apirealm> to "http://identi.ca/api", "identi.ca:80", and "Laconica API"
 respectively.  It defaults to 0.  This option is available when the
 C<API::REST> trait is included.
 
+=item consumer_key
+
+A string containing the OAuth consumer key provided by Twitter when an application
+is registered.  This option is available when the C<OAuth> trait is included.
+
+=item consumer_secret
+
+A string containing the OAuth consumer secret.  This option is available when
+the C<OAuth> trait is included.
+
 =back
 
 =item credentials($username, $password)
 
-Set the credentials for authentication.  This is helpful for managing multiple
-accounts.
+Set the credentials for Basic Authentication.  This is helpful for managing
+multiple accounts.
 
 =item ua
 
@@ -213,6 +229,20 @@ Provides access to the constructed user agent object used internally by
 C<Net::Twitter>.  Use it with caution.
 
 =back
+
+=head1 AUTHENTICATION
+
+Twitter currently provides authentication strategies: Basic Authentication and
+OAuth.  OAuth is officially in beta, however, Twitter has expressed a desire to
+deprecate Basic Authentication in the future, so consider using OAuth in your
+applications.
+
+To set up Basic Authentication in C<Net::Twitter>, provide the C<username> and
+C<password> options to L</new> or call the L</credentials> method.
+
+To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
+C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
+more information on using OAuth, including examples.
 
 =head1 API METHODS AND ARGUMENTS
 
@@ -327,7 +357,7 @@ wrapping errors.  Exception handling is the newer, recommended strategy.
 When trait C<WrapError> is specified (or C<Legacy>, which includes trait
 C<WrapError>), C<Net::Twitter> returns undef on error.  To retrieve information
 about the error, use methods C<http_code>, C<http_message>, and C<get_error>.
-These methods are described in the L<Net::Twitter::WrapError>.
+These methods are described in the L<Net::Twitter::Role::WrapError>.
 
     if ( my $followers = $nt->followers ) {
         for my $follower ( @$followers ) {
