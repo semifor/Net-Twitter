@@ -112,7 +112,7 @@ Here's how to authorize users as a desktop app mode:
   my($access_token, $access_token_secret) = restore_tokens();
   if ($access_token && $access_token_secret) {
       $nt->access_token($access_token);
-      $nt->>access_token_secret($access_token_secret);
+      $nt->access_token_secret($access_token_secret);
   }
 
   unless ( $nt->is_authorized ) {

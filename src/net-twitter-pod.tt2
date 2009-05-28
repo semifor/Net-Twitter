@@ -111,7 +111,7 @@ Some examples of using the C<traits> parameter in C<new>:
     $nt = Net::Twitter->new(traits => ['Legacy']);
 
     # currently, these 2 calls to new are equivalent:
-    $nt = Net::Twitter-new();
+    $nt = Net::Twitter->new();
     $nt = Net::Twitter->new(traits => ['Legacy']);
 
 =item legacy
