@@ -57,7 +57,7 @@ my %_api = (
                 "source"                => 0,
             },
         },
-        "/statuses/mentions" => {
+        "/statuses/replies" => {
             "blankargs" => 1,
             "post"      => 0,
             "args"      => {

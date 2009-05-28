@@ -92,7 +92,7 @@ METHODS AND ARGUMENTS
                 $nt = Net::Twitter->new(traits => ['Legacy']);
 
                 # currently, these 2 calls to new are equivalent:
-                $nt = Net::Twitter-new();
+                $nt = Net::Twitter->new();
                 $nt = Net::Twitter->new(traits => ['Legacy']);
 
         legacy
