@@ -526,7 +526,8 @@ REST API Methods
         Parameters: user_a, user_b
         Required: user_a, user_b
 
-        Tests if a friendship exists between two users.
+        Tests for the existance of friendship between two users. Will return
+        true if user_a follows user_b, otherwise will return false.
 
         Returns: Bool
 
