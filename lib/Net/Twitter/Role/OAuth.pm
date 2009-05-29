@@ -18,7 +18,7 @@ has oauth => ( isa => 'Net::OAuth::Simple', is => 'ro', lazy_build => 1,
         handles => [qw/
             authorized
             request_access_token
-            get_authorizaton_url
+            get_authorization_url
             access_token
             access_token_secret
             request_token
