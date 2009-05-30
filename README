@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 2.99000_05
+    This document describes Net::Twitter version 3.00000
 
 SYNOPSIS
       use Net::Twitter;
@@ -526,7 +526,7 @@ REST API Methods
         Parameters: user_a, user_b
         Required: user_a, user_b
 
-        Tests for the existance of friendship between two users. Will return
+        Tests for the existence of friendship between two users. Will return
         true if user_a follows user_b, otherwise will return false.
 
         Returns: Bool

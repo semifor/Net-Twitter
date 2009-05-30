@@ -3,7 +3,6 @@ use Moose ();
 use Carp;
 use Moose::Exporter;
 use URI::Escape;
-use utf8;
 
 use namespace::autoclean;
 

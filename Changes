@@ -1,4 +1,5 @@
-    - UTF-8 encode get/post parameters
+3.00000 2009-05-30
+    - upgrade get/put parms so Latin-1 can be handled as UTF-8
 
 2.99000_05 2009-05-27
     - Restructured module hierarchy: all roles/traits moved to Net/Twitter/Role/
