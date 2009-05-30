@@ -4,6 +4,11 @@ use strict;
 use Carp;
 use Net::Twitter::Core;
 
+# use *all* digits for fBSD ports
+our $VERSION = '3.00000';
+
+$VERSION = eval $VERSION; # numify for warning-free dev releases
+
 # See Net/Twitter.pod for documentation, Net/Twitter/Core.pm for implementation.
 #
 # For transparent back compat, Net::Twitter->new() creates a Net::Twitter::Core
