@@ -254,7 +254,7 @@ Returns a string describing the failure condition when unsuccessful.
 twitter_api_method friendship_exists => (
     aliases     => [qw/relationship_exists follows/], # Net::Twitter
     description => <<'',
-Tests for the existance of friendship between two users. Will return true if
+Tests for the existence of friendship between two users. Will return true if
 user_a follows user_b, otherwise will return false.
 
     path     => 'friendships/exists',

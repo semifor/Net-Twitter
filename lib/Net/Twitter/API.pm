@@ -3,6 +3,7 @@ use Moose ();
 use Carp;
 use Moose::Exporter;
 use URI::Escape;
+use Encode ();
 
 use namespace::autoclean;
 
@@ -61,6 +62,10 @@ sub twitter_api_method {
         my $local_path = $modify_path->($path, $args);
         
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
+
+        # UTF-8 encode get/post parameters
+        @{$args}{keys %$args} = map { Encode::encode('UTF-8', $_) } values %$args;
+
         return $self->_parse_result($request->($self->ua, $uri, $args));
     };
 
