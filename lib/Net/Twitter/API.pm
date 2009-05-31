@@ -49,7 +49,7 @@ sub twitter_api_method {
 
         my $args = {};
         if ( ref $_[0] ) {
-            UNIVERSAL::isa($_[0], 'HASH') && @_ == 1 || croak "$name expected a single HASH ref argument";
+            ref $_[0] eq 'HASH' && @_ == 1 || croak "$name expected a single HASH ref argument";
             $args = { %{shift()} }; # copy callers args since we may add ->{source}
         }
         elsif ( @_ ) {
