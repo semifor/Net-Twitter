@@ -17,11 +17,11 @@ name        'Net-Twitter';
 all_from    'lib/Net/Twitter.pod';
 requires    'Moose' => 0.78;
 requires    'MooseX::Traits';
-requires    'JSON::Any';
+requires    'JSON::Any' => 1.19;
 requires    'URI::Escape';
 requires    'namespace::autoclean';
 requires    'Net::OAuth::Simple';
-requires    'LWP::UserAgent';
+requires    'LWP::UserAgent' => 2.032;
 recommends  'JSON::XS';
 
 no_index    directory => 'src';
@@ -29,6 +29,7 @@ no_index    directory => 'src';
 # resources
 repository 'git://github.com/semifor/Net-Twitter.git';
 homepage   'http://github.com/semifor/Net-Twitter';
+bugtracker 'http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter';
 
 eval {
     system 'pod2text lib/Net/Twitter.pod > README';

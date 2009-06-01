@@ -1,3 +1,9 @@
+3.00002 not yet released
+    - Updated version requirements in Makefile.PL
+
+3.00001 2009-05-30
+    - povided version numbers for modules that already existed on CPAN
+
 3.00000 2009-05-30
     - upgrade get/put parms so Latin-1 can be handled as UTF-8
 
@@ -22,3 +28,6 @@
 2.99000_01 2009-05-22
     - Initial dev release of 3.00 candidate
     - Moose based replacement for Net::Twitter
+
+This is a complete rewrite of Net::Twitter. For earlier versions, see:
+http://cpansearch.perl.org/src/CTHOM/Net-Twitter-2.12/Changes
