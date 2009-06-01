@@ -131,11 +131,14 @@ authenticating user must be the author of the specified status.
 );
 
 twitter_api_method friends => (
-    description => <<'',
+    description => <<'EOT',
 Returns the authenticating user's friends, each with current status
 inline. They are ordered by the order in which they were added as
 friends. It's also possible to request another user's recent friends
 list via the id parameter.
+
+Returns 100 friends per page.
+EOT
 
     aliases  => [qw/following/],
     path     => 'statuses/friends',
@@ -146,10 +149,13 @@ list via the id parameter.
 );
 
 twitter_api_method followers => (
-    description => <<'',
+    description => <<'EOT',
 Returns the authenticating user's followers, each with current status
 inline.  They are ordered by the order in which they joined Twitter
 (this is going to be changed).
+
+Returns 100 followers per page.
+EOT
 
     path     => 'statuses/followers',
     method   => 'GET',
@@ -266,8 +272,12 @@ user_a follows user_b, otherwise will return false.
 );
 
 twitter_api_method friends_ids => (
-    description => <<'',
+    description => <<'EOT',
 Returns an array of numeric IDs for every user the specified user is following.
+
+Currently, Twitter returns IDs ordered from most recently followed to least
+recently followed.  This order may change at any time.
+EOT
 
     aliases  => [qw/following_ids/],
     path     => 'friends/ids/id',

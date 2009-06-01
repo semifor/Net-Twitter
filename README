@@ -253,6 +253,10 @@ API METHODS AND ARGUMENTS
 
         $nt->follows({ user_a => $fred, user_b => $barney });
 
+    Methods that support the "page" parameter expect page numbers > 0.
+    Twitter silently ignores invalid "page" values. So "{ page => 0 }"
+    produces the same result as "{ page => 1 }".
+
 REST API Methods
     These methods are provided when trait "API::REST" is included in the
     "traits" option to "new".
@@ -469,6 +473,8 @@ REST API Methods
         status inline. They are ordered by the order in which they joined
         Twitter (this is going to be changed).
 
+        Returns 100 followers per page.
+
         Returns: ArrayRef[BasicUser]
 
     followers_ids
@@ -492,6 +498,8 @@ REST API Methods
         friends. It's also possible to request another user's recent friends
         list via the id parameter.
 
+        Returns 100 friends per page.
+
         Returns: ArrayRef[BasicUser]
 
     friends_ids
@@ -503,6 +511,9 @@ REST API Methods
 
         Returns an array of numeric IDs for every user the specified user is
         following.
+
+        Currently, Twitter returns IDs ordered from most recently followed
+        to least recently followed. This order may change at any time.
 
         Returns: ArrayRef[Int]
 

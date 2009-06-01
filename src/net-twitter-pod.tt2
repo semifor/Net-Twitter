@@ -284,6 +284,10 @@ Aliases support both the HASH ref and convenient forms:
 
     $nt->follows({ user_a => $fred, user_b => $barney });
 
+Methods that support the C<page> parameter expect page numbers E<gt> 0.  Twitter silently
+ignores invalid C<page> values.  So C<< { page => 0 } >> produces the same result
+as C<< { page => 1 } >>.
+
 =head1 REST API Methods
 
 These methods are provided when trait C<API::REST> is included in the C<traits>
