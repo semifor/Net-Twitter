@@ -2,7 +2,7 @@
     - Updated version requirements in Makefile.PL
 
 3.00001 2009-05-30
-    - povided version numbers for modules that already existed on CPAN
+    - Provided version numbers for modules that already existed on CPAN
 
 3.00000 2009-05-30
     - upgrade get/put parms so Latin-1 can be handled as UTF-8

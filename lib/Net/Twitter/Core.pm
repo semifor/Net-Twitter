@@ -73,6 +73,7 @@ sub _parse_result {
     my ($self, $res) = @_;
 
     # workaround for Laconica API returning bools as strings
+    # (Fixed in Laconi.ca 0.7.4)
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 

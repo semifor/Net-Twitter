@@ -78,6 +78,7 @@ your own user, or the profile page for a third party.
 # TODO: URL should be 'mentions', not 'replies', but the Laconica API doesn't
 # recognize 'mentions' yet, so we'll cheat, as long as Twitter plays along and
 # keeps 'replies' active or until Laconica/Identica is fixed.
+# (Fixed in Laconi.ca 0.7.4.)
 twitter_api_method mentions => (
     description => <<'',
 Returns the 20 most recent mentions (statuses containing @username) for the
