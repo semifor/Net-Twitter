@@ -19,7 +19,7 @@ sub stringify {
 sub error {
     my $self = shift;
 
-    $self->has_twitter_error ? $self->twitter_error->{error} : '[unkown]';
+    $self->has_twitter_error ? $self->twitter_error->{error} : '[unknown]';
 }
 
 no Moose;

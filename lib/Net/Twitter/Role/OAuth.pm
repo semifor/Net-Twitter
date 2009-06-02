@@ -273,6 +273,7 @@ documentation.
 =head1 AUTHORS
 
 Marc Mims E<lt>marc@questright.comE<gt>
+
 Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>
 
 =head1 LICENSE
