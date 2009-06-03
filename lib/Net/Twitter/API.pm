@@ -83,7 +83,7 @@ sub twitter_api_method {
 
 sub base_url {
     my ($caller, $name, %options) = @_;
-    
+
     Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
 }
 

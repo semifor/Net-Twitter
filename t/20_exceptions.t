@@ -1,7 +1,7 @@
 #!perl
 use warnings;
 use strict;
-use Test::More tests => 8;
+use Test::More tests => 10;
 use Test::Exception;
 use lib qw(t/lib);
 use Mock::LWP::UserAgent;
@@ -29,9 +29,12 @@ $ua->set_response({
 dies_ok { $nt->destroy_direct_message(456) } 'TwitterException';
 my $e = $@;
 isa_ok $e, 'Net::Twitter::Error';
-like   $e, qr/No direct message/, 'repsonse message';
+like   $e, qr/No direct message/,    'error stringifies';
 is     $e->http_response->code, 404, "respose code";
+is     $e->code, 404,                'http_response handles code';
 like   $e->twitter_error->{request}, qr/456.json/, 'twitter_error request';
+is     $e, $e->error,                'stringifies to $@->error';
+
 
 
 # simulate a 500 response returned by LWP::UserAgent when it can't make a connection

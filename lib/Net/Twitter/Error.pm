@@ -1,25 +1,18 @@
 package Net::Twitter::Error;
 use Moose;
 
-use overload '""' => \&stringify;
+use overload '""' => \&error;
 
 has twitter_error   => ( isa => 'HashRef', is => 'rw', predicate => 'has_twitter_error' );
 has http_response   => ( isa => 'HTTP::Response', is => 'rw', required => 1, handles => [qw/code message/] );
 
-sub stringify {
+sub error {
     my $self = shift;
 
     # We MUST stringyfy to something that evaluates to true, or testing $@ will fail!
     $self->has_twitter_error && $self->twitter_error->{error}
-        || $self->message
-        || $self->code
+        || ( $self->message . ": " . $self->code )
         || '[unknown]';
-}
-
-sub error {
-    my $self = shift;
-
-    $self->has_twitter_error ? $self->twitter_error->{error} : '[unknown]';
 }
 
 no Moose;
