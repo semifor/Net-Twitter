@@ -541,7 +541,7 @@ twitter_api_method blocking_ids => (
     description => <<'',
 Returns an array of numeric user ids the authenticating user is blocking.
 
-    path     => 'blocks/ids',
+    path     => 'blocks/blocking/ids',
     method   => 'GET',
     params   => [qw//],
     required => [qw//],

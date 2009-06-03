@@ -284,7 +284,7 @@ my %_api = (
             "post"      => 0,
             "args"      => {},
         },
-        "/blocks/ids" => {
+        "/blocks/blocking/ids" => {
             "has_id"    => 0,
             "blankargs" => 1,
             "post"      => 0,
