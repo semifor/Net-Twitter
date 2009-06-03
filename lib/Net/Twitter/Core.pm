@@ -1,5 +1,5 @@
 package Net::Twitter::Core;
-use 5.8.1;
+use 5.008001;
 use Moose;
 use Carp;
 use JSON::Any qw/XS DWIW JSON/;
@@ -11,7 +11,7 @@ use namespace::autoclean;
 with 'MooseX::Traits';
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.00002';
+our $VERSION = '3.00003';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -77,7 +77,11 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = $self->_from_json($content);
+    # some JSON backends don't handle booleans correctly
+    # TODO: move this fix to JSON::Any
+    my $obj = $content eq 'true'  ? 1
+            : $content eq 'false' ? ''
+            : $self->_from_json($content);
 
     # Twitter sometimes returns an error with status code 200
     if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
