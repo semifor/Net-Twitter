@@ -393,7 +393,7 @@ exceptions by using C<eval> blocks and testing $@:
     if ( $@ ) {
         # friends_timeline encountered an error
 
-        if ( blessed $@ && $@->isa('Net::Twitter::Error' ) {
+        if ( blessed $@ && $@->isa('Net::Twitter::Error') ) {
             #... use the thrown error obj
             warn $@->error;
         }
