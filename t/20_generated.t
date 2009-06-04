@@ -28,6 +28,10 @@ for my $pass ( 1, 2 ) {
         $pos_params = $entry->params if @$pos_params == 0 && @{$entry->params} == 1;
 
         my $has_id = $path =~ s|/id$|/$params[0]|;
+        if ( $has_id && @$pos_params == 0 ) {
+            @$pos_params = 'id';
+        }
+
         $path = "/$path.json";
 
         for my $call ( $entry->name, @{$entry->aliases} ) {

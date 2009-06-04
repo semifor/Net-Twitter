@@ -340,14 +340,14 @@ REST API Methods
 
     create_friend
     create_friend(id)
+    alias: follow_new
 
         Parameters: id, user_id, screen_name, follow
         Required: id
 
         Befriends the user specified in the ID parameter as the
-        authenticating user. Returns the befriended user in the requested
-        format when successful. Returns a string describing the failure
-        condition when unsuccessful.
+        authenticating user. Returns the befriended user when successful.
+        Returns a string describing the failure condition when unsuccessful.
 
         Returns: BasicUser
 
@@ -561,7 +561,7 @@ REST API Methods
 
         Sends a new direct message to the specified user from the
         authenticating user. Requires both the user and text parameters.
-        Returns the sent message in the requested format when successful.
+        Returns the sent message when successful.
 
         Returns: DirectMessage
 
@@ -876,7 +876,7 @@ ERROR HANDLING
         if ( $@ ) {
             # friends_timeline encountered an error
 
-            if ( blessed $@ && $@->isa('Net::Twitter::Error' ) {
+            if ( blessed $@ && $@->isa('Net::Twitter::Error') ) {
                 #... use the thrown error obj
                 warn $@->error;
             }

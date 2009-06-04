@@ -141,7 +141,7 @@ Returns 100 friends per page.
 EOT
 
     aliases  => [qw/following/],
-    path     => 'statuses/friends',
+    path     => 'statuses/friends/id',
     method   => 'GET',
     params   => [qw/id user_id screen_name page/],
     required => [qw//],
@@ -157,7 +157,7 @@ inline.  They are ordered by the order in which they joined Twitter
 Returns 100 followers per page.
 EOT
 
-    path     => 'statuses/followers',
+    path     => 'statuses/followers/id',
     method   => 'GET',
     params   => [qw/id user_id screen_name page/],
     required => [qw//],
@@ -429,7 +429,7 @@ twitter_api_method favorites => (
 Returns the 20 most recent favorite statuses for the authenticating
 user or user specified by the ID parameter.
 
-    path     => 'favorites',
+    path     => 'favorites/id',
     method   => 'GET',
     params   => [qw/id page/],
     required => [qw//],

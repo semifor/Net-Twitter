@@ -83,6 +83,7 @@ my %_api = (
             },
         },
         "/statuses/followers" => {
+            "has_id"    => 1,
             "blankargs" => 1,
             "post"      => 0,
             "args"      => {
@@ -229,6 +230,7 @@ my %_api = (
             "args"      => {},
         },
         "/favorites" => {
+            "has_id"    => 1,
             "blankargs" => 1,
             "post"      => 0,
             "args"      => {
