@@ -47,12 +47,11 @@ sub twitter_api_method {
     my $code = sub {
         my $self = shift;
 
-        my $args = {};
-        if ( ref $_[0] ) {
-            ref $_[0] eq 'HASH' && @_ == 1 || croak "$name expected a single HASH ref argument";
-            $args = { %{shift()} }; # copy callers args since we may add ->{source}
-        }
-        elsif ( @_ ) {
+        # copy callers args since we may add ->{source}
+        my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
+
+        if ( @_ ) {
+            ref $_[$_] && croak "arg $_ must not be a reference" for 0..$#_;
             @_ == @$arg_names || croak "$name expected @{[ scalar @$arg_names ]} args";
             @{$args}{@$arg_names} = @_;
         }

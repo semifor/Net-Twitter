@@ -36,6 +36,7 @@ t/02_fails.t
 t/10_net-twitter-regression.t
 t/11_useragent.t
 t/12_identica.t
+t/13_search.t
 t/20_exceptions.t
 t/20_generated.t
 t/21_wraperror.t

@@ -20,8 +20,8 @@ throws_ok { $nt->relationship_exists(qw/one two three/) } qr/expected 2 args/, '
 throws_ok {
     Net::Twitter->new(useragent_class => 'NoSuchModule::Test7701')
 } qr/Can't locate NoSuchModule/, 'bad useragent_class';
-throws_ok { $nt->show_status([ 123 ]) } qr/expected a single HASH ref/, 'wrong ref type';
+throws_ok { $nt->show_status([ 123 ]) } qr/must not be a reference/, 'wrong type';
 throws_ok { $nt->friends({ count => 30, page => 4 }, 'extra') }
-        qr/expected a single HASH ref/, 'extra args';
+        qr/must not be a reference/, 'extra args';
 
 exit 0;

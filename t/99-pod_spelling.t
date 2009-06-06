@@ -3,7 +3,8 @@ use strict;
 use warnings;
 use Test::More;
 
-plan skip_all => 'set TEST_AUTHOR to enable this test' unless $ENV{TEST_AUTHOR};
+plan skip_all => 'set TEST_POD to enable this test'
+  unless ($ENV{TEST_POD} || -e 'MANIFEST.SKIP');
 
 eval 'use Test::Spelling 0.11';
 plan skip_all => 'Test::Spelling 0.11 not installed' if $@;

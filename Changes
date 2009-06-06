@@ -1,3 +1,6 @@
+3.00004 2009-06-06
+    - Fixed: accept extra args as a hashref (search behaved this way in 2.12)
+
 3.00003 2009-06-03
     - Added a workaround for JSON backends that don't handle booleans properly
 
