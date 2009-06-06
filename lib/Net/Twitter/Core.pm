@@ -88,7 +88,7 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $obj if $res->is_success && $obj;
+    return $obj if $res->is_success && defined $obj;
 
     my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if $obj;

@@ -32,7 +32,7 @@ ok       $r = $nt->relationship_exists({ user_a => 'homer', user_b => 'marge' })
             'relationship_exists hashref';
 
 # back compat: 1.23 returns bool
-cmp_ok   $r, '==', 1, 'relationship_exists returns bool';
+ok      $r, 'relationship_exists returns true';
 $nt->ua->clear_response;
 
 
