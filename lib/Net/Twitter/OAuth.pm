@@ -2,7 +2,7 @@ package Net::Twitter::OAuth;
 use Net::Twitter;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.00004';
+our $VERSION = '3.01000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

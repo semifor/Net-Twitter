@@ -1,3 +1,6 @@
+3.01000 2009-06-07
+    - Added support for the saved_search API methods.
+
 3.00004 2009-06-06
     - Fixed: accept extra args as a hashref (search behaved this way in 2.12)
 

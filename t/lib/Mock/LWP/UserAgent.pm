@@ -298,9 +298,31 @@ my %_api = (
             "args"      => {},
         },
         "/help/downtime_schedule" => {
-            "blankargs" => 100,
+            "blankargs" => 1,
             "post"      => 0,
             "args"      => {},
+        },
+        '/saved_searches' => {
+            blankargs => 1,
+            post      => 0,
+            args      => {},
+        },
+        '/saved_searches/show' => {
+            blankargs => 0,
+            post      => 0,
+            args      => { id => 1 },
+            has_id    => 1,
+        },
+        '/saved_searches/create', => {
+            blankargs => 0,
+            post      => 1,
+            args      => { query => 1 },
+        },
+        '/saved_searches/destroy', => {
+            blankargs => 0,
+            post      => 1,
+            args      => { id => 1 },
+            has_id    => 1,
         },
     },
 

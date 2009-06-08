@@ -571,6 +571,62 @@ maintenance window is scheduled.
     returns  => 'Str',
 );
 
+twitter_api_method saved_searches => (
+    description => <<'',
+Returns the authenticated user's saved search queries.
+
+    path     => 'saved_searches',
+    method   => 'GET',
+    params   => [],
+    required => [],
+    returns  => 'ArrayRef[SavedSearch]',
+);
+
+twitter_api_method show_saved_search => (
+    description => <<'',
+Retrieve the data for a saved search, by C<id>, owned by the authenticating user.
+
+    path     => 'saved_searches/show/id',
+    method   => 'GET',
+    params   => [qw/id/],
+    required => [qw/id/],
+    returns  => 'SavedSearch',
+);
+
+twitter_api_method show_saved_search => (
+    description => <<'',
+Retrieve the data for a saved search, by ID, owned by the authenticating user.
+
+    path     => 'saved_searches/show/id',
+    method   => 'GET',
+    params   => [qw/id/],
+    required => [qw/id/],
+    returns  => 'SavedSearch',
+);
+
+twitter_api_method create_saved_search => (
+    description => <<'',
+Creates a saved search for the authenticated user.
+
+    path     => 'saved_searches/create',
+    method   => 'POST',
+    params   => [qw/query/],
+    required => [qw/query/],
+    returns  => 'SavedSearch',
+);
+
+twitter_api_method destroy_saved_search => (
+    description => <<'',
+Destroys a saved search. The search, specified by C<id>, must be owned
+by the authenticating user.
+
+    path     => 'saved_searches/destroy/id',
+    method   => 'POST',
+    params   => [qw/id/],
+    required => [qw/id/],
+    returns  => 'SavedSearch',
+);
+
 1;
 
 __END__

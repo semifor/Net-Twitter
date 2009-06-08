@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.00004
+    This document describes Net::Twitter version 3.01000
 
 SYNOPSIS
       use Net::Twitter;
@@ -351,6 +351,16 @@ REST API Methods
 
         Returns: BasicUser
 
+    create_saved_search
+    create_saved_search(query)
+
+        Parameters: query
+        Required: query
+
+        Creates a saved search for the authenticated user.
+
+        Returns: SavedSearch
+
     destroy_block
     destroy_block(id)
 
@@ -398,6 +408,17 @@ REST API Methods
         unsuccessful.
 
         Returns: BasicUser
+
+    destroy_saved_search
+    destroy_saved_search(id)
+
+        Parameters: id
+        Required: id
+
+        Destroys a saved search. The search, specified by "id", must be
+        owned by the authenticating user.
+
+        Returns: SavedSearch
 
     destroy_status
     destroy_status(id)
@@ -591,6 +612,15 @@ REST API Methods
 
         Returns: RateLimitStatus
 
+    saved_searches
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the authenticated user's saved search queries.
+
+        Returns: ArrayRef[SavedSearch]
+
     sent_direct_messages
 
         Parameters: since_id, max_id, page
@@ -601,6 +631,17 @@ REST API Methods
         and recipient users.
 
         Returns: ArrayRef[DirectMessage]
+
+    show_saved_search
+    show_saved_search(id)
+
+        Parameters: id
+        Required: id
+
+        Retrieve the data for a saved search, by ID, owned by the
+        authenticating user.
+
+        Returns: SavedSearch
 
     show_status
     show_status(id)

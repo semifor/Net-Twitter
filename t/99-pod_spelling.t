@@ -37,6 +37,7 @@ oauth
 Prather
 RateLimitStatus
 refactored
+SavedSearch
 SMS
 Str
 Tatsuhiko
