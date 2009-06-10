@@ -34,6 +34,18 @@ DESCRIPTION
     <http://apiwiki.twitter.com/Twitter-API-Documentation> for a full
     description of the Twitter APIs.
 
+OMG! THE MOOSE!
+    Net::Twitter is Moose based. Moose provides some advantages, including
+    the ability for the maintainer of this module to respond quickly to
+    Twitter API changes.
+
+    See Net::Twitter::Lite if you need an alternative without Moose and its
+    dependencies.
+
+    Net::Twitter::Lite's API method definitions and documentation are
+    generated from Net::Twitter. It is a related module, but does not depend
+    on Net::Twitter or Moose for installation.
+
 METHODS AND ARGUMENTS
     new This constructs a "Net::Twitter" object. It takes several named
         parameters, all of them optional:
@@ -200,7 +212,7 @@ METHODS AND ARGUMENTS
         by "Net::Twitter". Use it with caution.
 
 AUTHENTICATION
-    Twitter currently provides authentication strategies: Basic
+    Twitter currently provides two authentication strategies: Basic
     Authentication and OAuth. OAuth is officially in beta, however, Twitter
     has expressed a desire to deprecate Basic Authentication in the future,
     so consider using OAuth in your applications.
