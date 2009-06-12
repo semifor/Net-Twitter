@@ -5,7 +5,7 @@ use namespace::autoclean;
 
 extends qw/LWP::UserAgent Moose::Object/;
 
-has oauth => ( isa => 'Net::OAuth::Simple', is => 'ro', required => 1,
+has oauth => ( isa => 'Net::Twitter::OAuth::Simple', is => 'ro', required => 1,
                handles => [qw/make_restricted_request/] );
 
 sub new {

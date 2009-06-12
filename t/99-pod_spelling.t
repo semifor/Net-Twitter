@@ -23,6 +23,7 @@ BasicUser
 CPAN
 DirectMessage
 ExtendedUser
+Grennan
 Identi
 IM
 IP

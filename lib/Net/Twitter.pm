@@ -5,7 +5,7 @@ use Carp;
 use Net::Twitter::Core;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.01000';
+our $VERSION = '3.01000_01';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

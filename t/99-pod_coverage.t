@@ -20,5 +20,8 @@ plan tests => all_modules() - keys %excluded;
 
 pod_coverage_ok($_, {
     also_private => [qr/^BUILD(:?ARGS)?$/],
-    trustme      => [qr/^credentials|isa$/], # Core::credentials
+    trustme      => [
+        qr/^credentials|isa$/,                  # Core::credentials
+        qr/^allow_extra_params|sign_message$/,  # OAuth::AccessTokenRequest
+    ],
 }) for grep { !$excluded{$_} } all_modules();

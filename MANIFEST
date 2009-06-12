@@ -17,6 +17,8 @@ lib/Net/Twitter/API.pm
 lib/Net/Twitter/Core.pm
 lib/Net/Twitter/Error.pm
 lib/Net/Twitter/OAuth.pm
+lib/Net/Twitter/OAuth/AccessTokenRequest.pm
+lib/Net/Twitter/OAuth/Simple.pm
 lib/Net/Twitter/OAuth/UserAgent.pm
 lib/Net/Twitter/Role/API/REST.pm
 lib/Net/Twitter/Role/API/Search.pm

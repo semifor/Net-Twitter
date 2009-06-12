@@ -3,7 +3,7 @@ use Moose::Role;
 
 use namespace::autoclean;
 
-use Net::OAuth::Simple;
+use Net::Twitter::OAuth::Simple;
 use Net::Twitter::OAuth::UserAgent;
 
 has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
@@ -14,7 +14,7 @@ has oauth_urls      => ( isa => 'HashRef[Str]', is => 'ro', default => sub { {
         access_token_url  => "http://twitter.com/oauth/access_token",
     } } );
 
-has oauth => ( isa => 'Net::OAuth::Simple', is => 'ro', lazy_build => 1,
+has oauth => ( isa => 'Net::Twitter::OAuth::Simple', is => 'ro', lazy_build => 1,
         handles => [qw/
             authorized
             request_access_token
@@ -30,16 +30,14 @@ sub _build_oauth {
 
     my $ua = $self->ua;
 
-    my $oauth = Net::OAuth::Simple->new(
+    my $oauth = Net::Twitter::OAuth::Simple->new(
+        useragent => $ua,
         tokens => {
             consumer_key    => $self->consumer_key,
             consumer_secret => $self->consumer_secret,
         },
         urls => $self->oauth_urls,
     );
-
-    # use our configured ua
-    $oauth->{browser} = $ua;
 
     # override UserAgent
     $self->ua(Net::Twitter::OAuth::UserAgent->new($oauth));
@@ -117,11 +115,12 @@ Here's how to authorize users as a desktop app mode:
 
   unless ( $nt->is_authorized ) {
       # The client is not yet authorized: Do it now
-      print "Authorize this app at ", $nt->get_authorization_url, " and hit RET\n";
+      print "Authorize this app at ", $nt->get_authorization_url, " and enter the PIN#\n";
 
-      <STDIN>; # wait for input
+      my $pin = <STDIN>; # wait for input
+      chomp $pin;
 
-      my($access_token, $access_token_secret) = $nt->request_access_token;
+      my($access_token, $access_token_secret) = $nt->request_access_token($pin);
       save_tokens($access_token, $access_token_secret); # if necessary
   }
 
@@ -190,20 +189,20 @@ before calling any Twitter API methods.
 
   $nt->oauth;
 
-Returns Net::OAuth::Simple object to deal with getting and setting
-OAuth tokens. See L<Net::OAuth::Simple> for details.
+Returns Net::Twitter::OAuth::Simple object to deal with getting and setting
+OAuth tokens.
 
 =back
 
 =head1 DELEGATED METHODS
 
-The following method calls are delegated to the internal C<Net::OAuth::Simple>
+The following method calls are delegated to the internal C<Net::Twitter::OAuth::Simple>
 object.  I.e., these calls are identical:
 
     $nt->authorized;
     $nt->oauth->authorized;
 
-See L<Net::OAuth::Simple> for full documentation.
+See L<Net::OAuth::Simple> and L<Net::Twitter::OAuth::Simple> for full documentation.
 
 =over 4
 
@@ -213,9 +212,19 @@ Whether the client has the necessary credentials to be authorized.
 
 Note that the credentials may be wrong and so the request may fail.
 
-=item request_access_token
+=item request_access_token [PIN]
 
-Get or set the current access token.
+Request the access token and access token secret for this user.
+
+The user must have authorized this app at the url given by C<get_authorization_url> first.
+
+For desktop applications, the Twitter authorization page will present the user
+with a PIN number.  Prompt the user for the PIN number, and pass it as an
+argument to request_access_token.
+
+Returns the access token and access token secret but also sets them internally
+so that after calling this method, you can immediately call API methods
+requiring authentication.
 
 =item get_authorization_url
 
@@ -283,7 +292,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Net::Twitter>, L<Net::OAuth::Simple>
+L<Net::Twitter>, L<Net::Twitter::OAuth::Simple>, L<Net::OAuth::Simple>
 
 =cut
 
