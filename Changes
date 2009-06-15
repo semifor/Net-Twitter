@@ -1,3 +1,5 @@
+    - Added init_args user/pass for compat with NT 2.12
+
 3.01000 2009-06-07
     - Added support for the saved_search API methods.
 
