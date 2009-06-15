@@ -102,7 +102,7 @@ Here's how to authorize users as a desktop app mode:
 
   use Net::Twitter;
 
-  my $nt = Net::Twitter>new(
+  my $nt = Net::Twitter->new(
       traits          => ['API::REST', 'OAuth'],
       consumer_key    => "YOUR-CONSUMER-KEY",
       consumer_secret => "YOUR-CONSUMER-SECRET",
