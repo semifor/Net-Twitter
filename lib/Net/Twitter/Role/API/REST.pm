@@ -1,6 +1,8 @@
 package Net::Twitter::Role::API::REST;
-
 use Moose::Role;
+
+requires qw/credentials/;
+
 use Net::Twitter::API;
 
 requires qw/ua username password credentials/;

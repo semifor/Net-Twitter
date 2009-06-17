@@ -1,6 +1,8 @@
 package Net::Twitter::Role::OAuth;
 use Moose::Role;
 
+requires qw/ua/;
+
 use namespace::autoclean;
 
 use Net::OAuth::Simple;
