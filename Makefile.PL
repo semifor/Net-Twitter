@@ -22,6 +22,7 @@ requires    'URI::Escape';
 requires    'namespace::autoclean';
 requires    'Net::OAuth::Simple';
 requires    'LWP::UserAgent' => 2.032;
+requires    'MooseX::MultiInitArg';
 recommends  'JSON::XS';
 
 no_index    directory => 'src';

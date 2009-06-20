@@ -1,6 +1,8 @@
 package Net::Twitter::Role::WrapError;
 use Moose::Role;
 
+requires qw/_parse_result/;
+
 use namespace::autoclean;
 
 has _http_response => ( isa => 'HTTP::Response', is => 'rw',

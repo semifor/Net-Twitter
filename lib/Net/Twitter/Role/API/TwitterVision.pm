@@ -1,5 +1,8 @@
 package Net::Twitter::Role::API::TwitterVision;
 use Moose::Role;
+
+requires qw/credentials/;
+
 use Net::Twitter::API;
 
 has tvurl         => ( isa => 'Str',  is => 'ro', default => 'http://twittervision.com' );
@@ -50,13 +53,13 @@ Net::Twitter::Role::API::TwitterVision - A definition of the TwitterVision API a
 
   package My::Twitter;
   use Moose;
-  with 'Net::Twitter::API::Search';
+  with 'Net::Twitter::API::TwitterVision';
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Role::API::Search> provides definitions for all the Twitter Search API
+B<Net::Twitter::Role::API::TwitterVision> provides definitions for all the TwitterVision API
 methods.  Applying this role to any class provides methods for all of the
-Twitter Search API methods.
+TwitterVision API methods.
 
 =head1 METHODS
 

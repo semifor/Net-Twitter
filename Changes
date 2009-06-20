@@ -1,3 +1,5 @@
+    - Added init_args user/pass for compat with NT 2.12
+
 3.01000_01 2009-06-12
     - Updated OAuth support for desktop app PIN numbers (oauth_verifier)
 
