@@ -6,18 +6,19 @@ use List::Util qw/sum/;
 
 use lib qw(t/lib);
 
-use Mock::LWP::UserAgent;
-use Net::Twitter;
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
-my $nt     = Net::Twitter->new(traits => [qw/API::REST API::Search API::TwitterVision/]);
-my $ua     = $nt->ua;
+use Net::Twitter;
+my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search API::TwitterVision/]);
+my $t  = TestUA->new($nt->ua);
 my @params = qw/twitter_id another_id/;
 
 my @api_methods =
     grep { blessed $_  && $_->isa('Net::Twitter::Meta::Method') }
     $nt->meta->get_all_methods;
 
-plan tests => 4 * 2 * sum map 1 + @{$_->aliases}, @api_methods;
+plan tests => 5 * 2 * sum map 1 + @{$_->aliases}, @api_methods;
 
 # 2 passes to ensure nothing on the first pass changes internal state affecting the 2nd
 for my $pass ( 1, 2 ) {
@@ -43,10 +44,18 @@ for my $pass ( 1, 2 ) {
 
             my $r = eval { $nt->$call(@local_params) };
             diag "$@\n" if $@;
-            ok $r,                                 "[$pass] $call(@{[ join ', ' => @$pos_params ]})";
-            is_deeply $ua->input_args, \%expected, "[$pass] $call args";
-            is $ua->input_uri->path, $path,        "[$pass] $call path";
-            is $ua->input_method, $entry->method,  "[$pass] $call method";
+            ok $r,                          "[$pass] $call(@{[ join ', ' => @$pos_params ]})";
+
+            # horrible kludge
+            my $args = $t->args;
+            ok !$has_id || (
+                    delete $expected{id} &&
+                    $t->path =~ /\/twitter_id\.json/
+                ), "id test";
+
+            is_deeply $args, \%expected,    "[$pass] $call args";
+            is $t->path, $path,             "[$pass] $call path";
+            is $t->method, $entry->method,  "[$pass] $call method";
         }
     }
 }

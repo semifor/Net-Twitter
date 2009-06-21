@@ -4,8 +4,10 @@ use strict;
 use Test::More tests => 4;
 use Test::Exception;
 use lib qw(t/lib);
-use Mock::LWP::UserAgent;
 use Net::Twitter;
+
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
 my $nt = Net::Twitter->new(
     traits   => [qw/API::REST/],
@@ -13,7 +15,7 @@ my $nt = Net::Twitter->new(
     password => 'secret',
 );
 
-my $ua = $nt->ua;
+my $t = TestUA->new($nt->ua);
 
 # things that should fail
 throws_ok { $nt->relationship_exists(qw/one two three/) } qr/expected 2 args/, 'too many args';

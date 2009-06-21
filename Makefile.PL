@@ -20,12 +20,13 @@ requires    'MooseX::Traits';
 requires    'JSON::Any' => 1.19;
 requires    'URI::Escape';
 requires    'namespace::autoclean';
-requires    'Net::OAuth::Simple';
+requires    'Net::OAuth'     => 0.16;
 requires    'LWP::UserAgent' => 2.032;
 requires    'MooseX::MultiInitArg';
 recommends  'JSON::XS';
 
 no_index    directory => 'src';
+no_index    directory => 'examples';
 
 # resources
 repository 'git://github.com/semifor/Net-Twitter.git';

@@ -1,12 +1,13 @@
 #!perl
 use Carp;
 use strict;
-use Test::More tests => 34;
+use Test::More tests => 32;
 use Test::Exception;
-
 use lib qw(t/lib);
 
-use Mock::LWP::UserAgent;
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
+
 use Net::Twitter;
 
 my $nt = Net::Twitter->new(
@@ -15,14 +16,14 @@ my $nt = Net::Twitter->new(
     password => 'doh!',
 );
 
-$nt->ua->print_diags(1);
+my $t = TestUA->new($nt->ua);
 
 ok      $nt->friends_timeline,                        'friends_timeline no args';
 ok      $nt->create_friend('flanders'),               'create_friend scalar arg';
 ok      $nt->create_friend({ id => 'flanders' }),     'create_friend hashref';
 ok      $nt->destroy_friend('flanders'),              'destroy_friend scalar arg';
 
-$nt->ua->set_response({ content => 'true' });
+$t->response->content('true');
 my $r;
 
 # back compat: 1.23 accepts scalar args
@@ -33,14 +34,12 @@ ok       $r = $nt->relationship_exists({ user_a => 'homer', user_b => 'marge' })
 
 # back compat: 1.23 returns bool
 ok      $r, 'relationship_exists returns true';
-$nt->ua->clear_response;
-
+$t->reset_response;
 
 # Net::Twitter calls used by POE::Component::Server::Twirc
-$nt->{die_on_validation} = 0;
 ok      $nt->new_direct_message({ user => 'marge', text => 'hello, world' }), 'new_direct_message';
 ok      $nt->friends({page => 2}), 'friends';
-ok      exists $nt->ua->input_args->{page} && $nt->ua->input_args->{page} == 2, 'page argument passed';
+cmp_ok  $t->arg('page'), '==', 2, 'page argument passed';
 ok      $nt->followers({page => 2}), 'followers';
 ok      $nt->direct_messages, 'direct_messages';
 ok      $nt->direct_messages({ since_id => 1 }), 'direct_messages since_id';
@@ -59,20 +58,16 @@ ok      $nt->rate_limit_status, 'rate_limit_status';
 
 ### Regression: broken in 2.03
 ok      $nt->show_status('flanders'),           'show_status string arg';
-my $id = $nt->ua->input_args->{id};
-ok      $id && $id eq 'flanders',               'show_status ID set';
+$t->add_id_arg('flanders');
+is      $t->arg('id'),    'flanders',               'show_status ID set';
 
 ok      $nt->show_user('marge'),     'show_user string arg';
-        $id = $nt->ua->input_args->{id};
-ok      $id && $id eq 'marge',       'show_user ID set';
+$t->add_id_arg('marge');
+is      $t->arg('id'), 'marge',         'show_user ID set';
 
 ok      $nt->show_user({ id => 'homer' }),     'show_user hashref';
-        $id = $nt->ua->input_args->{id};
-ok      $id && $id eq 'homer',                  'show_user ID set 2';
-
-ok      $nt->show_user({ email => 'fred@bedrock.com' }), 'show_user by email';
-        $id = $nt->ua->input_args->{email};
-is      $id, 'fred@bedrock.com',                'passed email';
+$t->add_id_arg('homer');
+is      $t->arg('id'), 'homer',                    'show_user ID set 2';
 
 ok      $nt->public_timeline, 'public_timeline blankargs';
 exit 0;

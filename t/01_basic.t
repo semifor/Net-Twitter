@@ -2,10 +2,10 @@
 use warnings;
 use strict;
 use Test::More;
-
 use lib qw(t/lib);
 
-use Mock::LWP::UserAgent;
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
 my $screen_name = 'net_twitter';
 my $message_id  = 1234;
@@ -71,7 +71,7 @@ $nt = Net::Twitter->new(
     password => 'doh!',
 );
 
-my $ua = $nt->ua;
+my $t = TestUA->new($nt->ua);
 
 # run 2 passes to ensure the first pass isn't changing internal state
 for my $pass ( 1, 2 ) {
@@ -92,10 +92,16 @@ for my $test ( @tests ) {
         %args = ref $args->[0] ? %{$args->[0]} : ( id => $args->[0] );
     }
 
-    ok $nt->$api_call(@$args),         "[$pass] $api_call call";
-    is_deeply $ua->input_args, \%args, "[$pass] $api_call args";
-    is $ua->input_uri->path, $path,    "[$pass] $api_call path";
-    is $ua->input_method, $method,     "[$pass] $api_call method";
+    ok $nt->$api_call(@$args),           "[$pass] $api_call call";
+
+    # kludge: add the screen_name or message_id to the $t's arguments if either
+    # exists in the path
+    $t->add_id_arg($screen_name);
+    $t->add_id_arg($message_id);
+
+    is_deeply $t->args,         \%args,  "[$pass] $api_call args";
+    is $t->path,                $path,   "[$pass] $api_call path";
+    is $t->method,              $method, "[$pass] $api_call method";
 }
 }
 

@@ -4,8 +4,10 @@ use strict;
 use Test::More tests => 10;
 use Test::Exception;
 use lib qw(t/lib);
-use Mock::LWP::UserAgent;
 use Net::Twitter;
+
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
 my $nt = Net::Twitter->new(
     traits   => [qw/API::REST/],
@@ -13,18 +15,14 @@ my $nt = Net::Twitter->new(
     password => 'doh!',
 );
 
-my $ua = $nt->ua;
+my $t = TestUA->new($nt->ua);
 
-
-# simulate an error returned by the twitter API
-$ua->set_response({
-    code    => 404,
-    message => 'Not Found',
-    content => {
-        request => '/direct_messages/destroy/456.json',
-        error   => 'No direct message with that ID found.',
-    },
-});
+my $response = HTTP::Response->new(404, 'Not Found');
+$response->content(JSON::Any->to_json({
+    request => '/direct_messages/destroy/456.json',
+    error   => 'No direct message with that ID found.',
+}));
+$t->response($response);
 
 dies_ok { $nt->destroy_direct_message(456) } 'TwitterException';
 my $e = $@;
@@ -38,11 +36,9 @@ is     $e, $e->error,                'stringifies to $@->error';
 
 
 # simulate a 500 response returned by LWP::UserAgent when it can't make a connection
-$ua->set_response({
-    code    => 500,
-    message => "Can't connect to twitter.com:80",
-    content => "<html>foo</html>",
-});
+$response = HTTP::Response->new(500, "Can't connect to twitter.com:80");
+$response->content("<html>foo</html>");
+$t->response($response);
 
 dies_ok { $nt->friends_timeline({ since_id => 500_000_000 }) } 'HttpException';
 $e = $@;

@@ -10,17 +10,6 @@ Moose::Exporter->setup_import_methods(
     with_caller => [ 'base_url', 'twitter_api_method' ],
 );
 
-my $post_request = sub {
-    my ($ua, $uri, $args) = @_;
-    return $ua->post($uri, $args);
-};
-
-my $get_request = sub {
-    my ($ua, $uri, $args) = @_;
-    $uri->query_form($args);
-    return $ua->get($uri);
-};
-
 my $with_url_arg = sub {
     my ($path, $args) = @_;
 
@@ -40,7 +29,6 @@ sub twitter_api_method {
 
     my ($arg_names, $path) = @options{qw/required path/};
     $arg_names = $options{params} if @$arg_names == 0 && @{$options{params}} == 1;
-    my $request = $options{method} eq 'POST' ? $post_request : $get_request;
 
     my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : sub { $_[0] };
 
@@ -64,7 +52,7 @@ sub twitter_api_method {
         # upgrade params to UTF-8 so latin-1 literals can be handled as UTF-8 too
         utf8::upgrade $_ for values %$args;
 
-        return $self->_parse_result($request->($self->ua, $uri, $args));
+        return $self->_parse_result($self->_authenticated_request($options{method}, $uri, $args));
     };
 
     $class->add_method(

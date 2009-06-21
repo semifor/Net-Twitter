@@ -1,12 +1,14 @@
 package Net::Twitter::Role::OAuth;
 use Moose::Role;
+use HTTP::Request::Common;
+use Carp;
 
-requires qw/ua/;
+requires qw/_authenticated_request ua/;
 
 use namespace::autoclean;
 
-use Net::Twitter::OAuth::Simple;
-use Net::Twitter::OAuth::UserAgent;
+use Net::OAuth;
+$Net::OAuth::PROTOCOL_VERSION = Net::OAuth::PROTOCOL_VERSION_1_0A;
 
 has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
 has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
@@ -16,51 +18,174 @@ has oauth_urls      => ( isa => 'HashRef[Str]', is => 'ro', default => sub { {
         access_token_url  => "http://twitter.com/oauth/access_token",
     } } );
 
-has oauth => ( isa => 'Net::Twitter::OAuth::Simple', is => 'ro', lazy_build => 1,
-        handles => [qw/
-            authorized
-            request_access_token
-            get_authorization_url
-            access_token
-            access_token_secret
-            request_token
-            request_token_secret
-        /] );
+# token accessors
+has access_token           => ( isa => 'Str', is => 'rw', init_arg => undef,
+                                clearer   => 'clear_access_token',
+                                predicate => 'has_access_token' );
+has access_token_secret    => ( isa => 'Str', is => 'rw', init_arg => undef,
+                                clearer   => 'clear_access_token_secret',
+                                predicate => 'has_access_token_secret' );
+has request_token          => ( isa => 'Str', is => 'rw', init_arg => undef,
+                                clearer   => 'clear_request_token',
+                                predicate => 'has_request_token' );
+has request_token_secret   => ( isa => 'Str', is => 'rw', init_arg => undef,
+                                clearer   => 'clear_request_token_secret',
+                                predicate => 'has_request_token_secret' );
 
-sub _build_oauth {
+# url accessors
+for my $method ( qw/authorization_url request_token_url access_token_url/ ) {
+    __PACKAGE__->meta->add_method($method => sub {
+        my $self = shift;
+
+        $self->oauth_urls->{$method} = shift if @_;
+        return URI->new($self->oauth_urls->{$method});
+    })
+}
+
+# simple check to see if we have access tokens; does not check to see if they are valid
+sub authorized {
     my $self = shift;
 
-    my $ua = $self->ua;
+    return defined $self->{access_token} && $self->{access_token_secret};
+}
 
-    my $oauth = Net::Twitter::OAuth::Simple->new(
-        useragent => $ua,
-        tokens => {
-            consumer_key    => $self->consumer_key,
-            consumer_secret => $self->consumer_secret,
-        },
-        urls => $self->oauth_urls,
+# get the authorization URL from Twitter
+sub get_authorization_url {
+    my ($self, %params) = @_;
+
+    $self->_request_request_token(%params) unless $self->request_token;
+    
+    my $uri = $self->authorization_url;
+    $uri->query_form(oauth_token => $self->request_token);
+    return $uri;
+}
+
+# common portion of all oauth requests
+sub _make_oauth_request {
+    my ($self, $type, %params) = @_;
+
+    my $request = Net::OAuth->request($type)->new(
+        version          => '1.0',
+        consumer_key     => $self->{consumer_key},
+        consumer_secret  => $self->{consumer_secret},
+        request_method   => 'GET',
+        signature_method => 'HMAC-SHA1',
+        timestamp        => time,
+        nonce            => join('', map { ('0'..'9','A'..'Z','a'..'z')[rand(26*2+10)] } 1..16),
+        %params,
     );
 
-    # override UserAgent
-    $self->ua(Net::Twitter::OAuth::UserAgent->new($oauth));
+    $request->sign;
 
-    return $oauth;
+    return $request;
 }
+
+# called by get_authorization_url to obtain request tokens
+sub _request_request_token {
+    my ($self, %params) = @_;
+
+    my $uri = $self->request_token_url;
+    $params{callback} ||= 'oob';
+    my $request = $self->_make_oauth_request(
+        'request token',
+        request_url => $uri,
+        %params,
+    );
+
+    my $res = $self->ua->get($request->to_url);
+    die "GET $uri failed: ".$res->status_line
+        unless $res->is_success;
+
+    # reuse $uri to extract parameters from the response content
+    $uri->query($res->content);
+    my %res_param = $uri->query_form;
+
+    $self->request_token($res_param{oauth_token});
+    $self->request_token_secret($res_param{oauth_token_secret});
+}
+
+# exchange request tokens for access tokens; call with (verifier => $verifier)
+sub request_access_token {
+    my ($self, %params ) = @_;
+
+    my $uri = $self->access_token_url;
+    my $request = $self->_make_oauth_request(
+        'access token',
+        request_url => $uri,
+        token       => $self->request_token,
+        token_secret => $self->request_token_secret,
+        %params, # verifier => $verifier
+    );
+
+    my $res = $self->ua->get($request->to_url);
+    die "GET $uri failed: ".$res->status_line
+        unless $res->is_success;
+
+    # discard request tokens, they're no longer valid
+    $self->clear_request_token;
+    $self->clear_request_token_secret;
+
+    # reuse $uri to extract parameters from content
+    $uri->query($res->content);
+    my %res_param = $uri->query_form;
+
+    return (
+        $self->access_token($res_param{oauth_token}),
+        $self->access_token_secret($res_param{oauth_token_secret}),
+    );
+}
+
+override _authenticated_request => sub {
+    my ($self, $http_method, $uri, $args) = @_;
+
+    my $request = $self->_make_oauth_request(
+        'protected resource',
+        request_url    => $uri,
+        request_method => $http_method,
+        token          => $self->access_token,
+        token_secret   => $self->access_token_secret,
+    );
+
+    my $msg;
+
+    if ( $http_method eq 'GET' ) {
+        $uri->query_form($args);
+        $msg = GET($uri, Authorization => $request->to_authorization_header);
+    }
+    elsif ( $http_method eq 'POST' ) {
+        delete $args->{source}; # no necessary with OAuth requests
+        $msg = POST($request->request_url, $args, Authorization => $request->to_authorization_header);
+    }
+
+    return $self->ua->request($msg);
+};
 
 # shortcuts defined in early releases
 # DEPRECATED
+
 sub oauth_token {
     my($self, @tokens) = @_;
-    $self->{oauth}->access_token($tokens[0]);
-    $self->{oauth}->access_token_secret($tokens[1]);
+
+    carp "DEPRECATED: use access_token and access_token_secret instead";
+    $self->access_token($tokens[0]);
+    $self->access_token_secret($tokens[1]);
     return @tokens;
 }
 
-# DEPRECATED
-sub is_authorized { shift->oauth->authorized(@_) }
+sub is_authorized {
+    carp "DEPRECATED: use authorized instead";
+    shift->authorized(@_)
+}
 
-# DEPRECATED
-sub oauth_authorization_url { shift->oauth->get_authorization_url(@_) }
+sub oauth_authorization_url {
+    carp "DEPRECATED: use get_authorization_url instead";
+    shift->get_authorization_url(@_)
+}
+
+sub oauth {
+    carp "DEPRECATED: call this method on Net::Twitter itself, rather than through the oauth accessor";
+    shift
+}
 
 1;
 
@@ -98,6 +223,9 @@ Note that this client only works with APIs that are compatible to OAuth authenti
 
 =head1 EXAMPLES
 
+See the C<examples> directory in this distribution for working examples of both
+desktop and web applications.
+
 Here's how to authorize users as a desktop app mode:
 
   use Net::Twitter;
@@ -122,7 +250,7 @@ Here's how to authorize users as a desktop app mode:
       my $pin = <STDIN>; # wait for input
       chomp $pin;
 
-      my($access_token, $access_token_secret) = $nt->request_access_token($pin);
+      my($access_token, $access_token_secret) = $nt->request_access_token(verifier => $pin);
       save_tokens($access_token, $access_token_secret); # if necessary
   }
 
@@ -155,13 +283,14 @@ secret to upgrade the request token to access token.
       my($self, $c) = @_;
 
       my %cookie = $c->request->cookies->{oauth}->value;
+      my $verifier = $c->req->params->{ouath_verifier};
 
       my $nt = Net::Twitter::OAuth->new(traits => [qw/API::REST OAuth/], %param);
       $nt->request_token($cookie{token});
       $nt->request_token_secret($cookie{token_secret});
 
       my($access_token, $access_token_secret)
-          = $nt->request_access_token;
+          = $nt->request_access_token(verifier => $verifier);
 
       # Save $access_token and $access_token_secret in the database associated with $c->user
   }
@@ -187,42 +316,19 @@ before calling any Twitter API methods.
 
 =over 4
 
-=item oauth
-
-  $nt->oauth;
-
-Returns Net::Twitter::OAuth::Simple object to deal with getting and setting
-OAuth tokens.
-
-=back
-
-=head1 DELEGATED METHODS
-
-The following method calls are delegated to the internal C<Net::Twitter::OAuth::Simple>
-object.  I.e., these calls are identical:
-
-    $nt->authorized;
-    $nt->oauth->authorized;
-
-See L<Net::OAuth::Simple> and L<Net::Twitter::OAuth::Simple> for full documentation.
-
-=over 4
-
 =item authorized
 
 Whether the client has the necessary credentials to be authorized.
 
 Note that the credentials may be wrong and so the request may fail.
 
-=item request_access_token [PIN]
+=item request_access_token(verifier => $verifier)
 
-Request the access token and access token secret for this user.
+Request the access token and access token secret for this user. You must pass
+the PIN# (for desktop applications) or the C<ouath_verifier> value, provided as
+a parameter to the oauth callback (for web applications) as C<$verifier>.
 
 The user must have authorized this app at the url given by C<get_authorization_url> first.
-
-For desktop applications, the Twitter authorization page will present the user
-with a PIN number.  Prompt the user for the PIN number, and pass it as an
-argument to request_access_token.
 
 Returns the access token and access token secret but also sets them internally
 so that after calling this method, you can immediately call API methods
@@ -253,6 +359,15 @@ Get or set the request token secret.
 =head1 DEPRECATED METHODS
 
 =over 4
+
+=item oauth
+
+Prior versions used Net::OAuth::Simple.  This method provided access to the
+contained Net::OAuth::Simple object. Beginning with Net::Twitter 3.00, the
+OAuth methods were delegated to Net::OAuth::Simple.  They have since made first
+class methods.  Net::Simple::OAuth is no longer used.  A warning will be
+displayed when accessing OAuth methods via the <oauth> method.  The C<oauth>
+method will be removed in a future release.
 
 =item is_authorized
 

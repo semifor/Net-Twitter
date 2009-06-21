@@ -1,4 +1,6 @@
 Changes
+examples/oauth_desktop.pl
+examples/oauth_webapp.pl
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -17,9 +19,6 @@ lib/Net/Twitter/API.pm
 lib/Net/Twitter/Core.pm
 lib/Net/Twitter/Error.pm
 lib/Net/Twitter/OAuth.pm
-lib/Net/Twitter/OAuth/AccessTokenRequest.pm
-lib/Net/Twitter/OAuth/Simple.pm
-lib/Net/Twitter/OAuth/UserAgent.pm
 lib/Net/Twitter/Role/API/REST.pm
 lib/Net/Twitter/Role/API/Search.pm
 lib/Net/Twitter/Role/API/TwitterVision.pm
@@ -47,4 +46,4 @@ t/30_legacy.t
 t/99-pod_coverage.t
 t/99-pod_spelling.t
 t/99-pod_syntax.t
-t/lib/Mock/LWP/UserAgent.pm
+t/lib/TestUA.pm
