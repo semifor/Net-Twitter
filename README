@@ -948,6 +948,15 @@ ERROR HANDLING
             warn "update failed because: $@\n";
         }
 
+FAQ
+    Why does "->followers({ screen_name => $friend })" return *my* followers
+    instead of $friends's?
+        First, check carefully to make sure you've spelled "screen_name"
+        correctly. Twitter sometimes discards parameters it doesn't
+        recognize. In this case, the result is a list of your own
+        followers---the same thing that would happen if you called
+        "followers" without the "screen_name" parameter.
+
 SEE ALSO
     Net::Twitter::Error
         The "Net::Twitter" exception object.
