@@ -69,7 +69,7 @@ sub credentials {
     return $self; # make it chainable
 }
 
-# Basic Auth, overrided by Role::OAuth, if included
+# Basic Auth, overridden by Role::OAuth, if included
 sub _authenticated_request {
     my ($self, $http_method, $uri, $args) = @_;
 

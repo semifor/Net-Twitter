@@ -1,4 +1,6 @@
-3.02000
+    - Added FAQ section to pod
+
+3.02000 2009-06-21
     - Added OAuth 1.0a support
     - Added init_args user/pass for compat with NT 2.12
 
