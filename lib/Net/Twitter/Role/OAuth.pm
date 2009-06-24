@@ -2,6 +2,7 @@ package Net::Twitter::Role::OAuth;
 use Moose::Role;
 use HTTP::Request::Common;
 use Carp;
+use URI;
 
 requires qw/_authenticated_request ua/;
 
@@ -10,36 +11,39 @@ use namespace::autoclean;
 use Net::OAuth;
 $Net::OAuth::PROTOCOL_VERSION = Net::OAuth::PROTOCOL_VERSION_1_0A;
 
-has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
-has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
-has oauth_urls      => ( isa => 'HashRef[Str]', is => 'ro', default => sub { {
+# flatten oauth_urls with defaults
+around BUILDARGS => sub {
+    my $orig  = shift;
+    my $class = shift;
+
+    my $args = $class->$orig(@_);
+    my $oauth_urls = delete $args->{oauth_urls} || {
         request_token_url => "http://twitter.com/oauth/request_token",
         authorization_url => "http://twitter.com/oauth/authorize",
         access_token_url  => "http://twitter.com/oauth/access_token",
-    } } );
+    };
 
-# token accessors
-has access_token           => ( isa => 'Str', is => 'rw', init_arg => undef,
-                                clearer   => 'clear_access_token',
-                                predicate => 'has_access_token' );
-has access_token_secret    => ( isa => 'Str', is => 'rw', init_arg => undef,
-                                clearer   => 'clear_access_token_secret',
-                                predicate => 'has_access_token_secret' );
-has request_token          => ( isa => 'Str', is => 'rw', init_arg => undef,
-                                clearer   => 'clear_request_token',
-                                predicate => 'has_request_token' );
-has request_token_secret   => ( isa => 'Str', is => 'rw', init_arg => undef,
-                                clearer   => 'clear_request_token_secret',
-                                predicate => 'has_request_token_secret' );
+    return { %$oauth_urls, %$args };
+};
 
-# url accessors
-for my $method ( qw/authorization_url request_token_url access_token_url/ ) {
-    __PACKAGE__->meta->add_method($method => sub {
-        my $self = shift;
+has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
+has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
 
-        $self->oauth_urls->{$method} = shift if @_;
-        return URI->new($self->oauth_urls->{$method});
-    })
+# url attributes
+for my $attribute ( qw/authorization_url request_token_url access_token_url/ ) {
+    has $attribute => (
+        isa    => 'Str', is => 'rw', required => 1,
+        # inflate urls to URI objects when read
+        reader => { $attribute => sub { URI->new(shift->{$attribute}) } },
+    );
+}
+
+# token attributes
+for my $attribute ( qw/access_token access_token_secret request_token request_token_secret/ ) {
+    has $attribute => ( isa => 'Str', is => 'rw', init_arg => undef,
+                        clearer   => "clear_$attribute",
+                        predicate => "has_$attribute",
+    );
 }
 
 # simple check to see if we have access tokens; does not check to see if they are valid
@@ -53,8 +57,8 @@ sub authorized {
 sub get_authorization_url {
     my ($self, %params) = @_;
 
-    $self->_request_request_token(%params) unless $self->request_token;
-    
+    $self->_request_request_token(%params) unless $self->has_request_token;
+
     my $uri = $self->authorization_url;
     $uri->query_form(oauth_token => $self->request_token);
     return $uri;
