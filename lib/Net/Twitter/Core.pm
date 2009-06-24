@@ -82,6 +82,9 @@ sub _authenticated_request {
     elsif ( $http_method eq 'POST' ) {
         $msg = POST($uri, $args);
     }
+    else {
+        croak "unexpected HTTP method: $http_method";
+    }
 
     if ( $self->has_username && $self->has_password ) {
         $msg->headers->authorization_basic($self->username, $self->password);
