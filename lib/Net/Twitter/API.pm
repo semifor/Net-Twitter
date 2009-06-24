@@ -86,6 +86,7 @@ sub twitter_api_method {
 
 package Net::Twitter::Meta::Method;
 use Moose;
+use Carp;
 extends 'Moose::Meta::Method';
 
 use namespace::clean;
@@ -101,7 +102,19 @@ has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
 has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
 has authenticate => ( isa => 'Bool', is => 'ro', predicate => 'has_authenticate' );
 
-sub new { shift->SUPER::wrap(@_) }
+# TODO: can MooseX::StrictConstructor be made to work here?
+my %valid_attribute_names = map { $_->init_arg => 1 }
+                            __PACKAGE__->meta->get_all_attributes;
+
+sub new {
+    my $class = shift;
+    my %args  = @_;
+
+    my @invalid_attributes = grep { !$valid_attribute_names{$_} } keys %args;
+    croak "unexpected argument(s): @invalid_attributes" if @invalid_attributes;
+
+    $class->SUPER::wrap(@_);
+}
 
 1;
 
