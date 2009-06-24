@@ -5,7 +5,8 @@ use Net::Twitter::API;
 
 has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
-base_url 'searchapiurl';
+base_url     'searchapiurl';
+authenticate 0;
 
 twitter_api_method search => (
     description => <<'',

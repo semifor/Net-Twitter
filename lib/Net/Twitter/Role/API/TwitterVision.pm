@@ -17,7 +17,8 @@ after credentials => sub {
     $self->ua->credentials($self->tvhost, $self->tvrealm, $self->username, $self->password);
 };
 
-base_url 'tvurl';
+base_url     'tvurl';
+authenticate 1;
 
 twitter_api_method current_status => (
     description => <<'',

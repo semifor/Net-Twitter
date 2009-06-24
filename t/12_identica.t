@@ -11,7 +11,7 @@ plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
 use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(legacy => 0, identica => 1);
+my $nt = Net::Twitter->new(legacy => 0, identica => 1, username => 'me', password => 'secret');
 my $t = TestUA->new($nt->ua);
 
 $t->response->content('"true"');

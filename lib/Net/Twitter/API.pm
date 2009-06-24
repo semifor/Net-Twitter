@@ -7,8 +7,17 @@ use URI::Escape;
 use namespace::autoclean;
 
 Moose::Exporter->setup_import_methods(
-    with_caller => [ 'base_url', 'twitter_api_method' ],
+    with_caller => [ qw/base_url authenticate twitter_api_method/ ],
 );
+
+sub base_url {
+    my ($caller, $name, %options) = @_;
+
+    Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
+}
+
+my $do_auth;
+sub authenticate { (undef, $do_auth) = @_ }
 
 my $with_url_arg = sub {
     my ($path, $args) = @_;
@@ -45,6 +54,11 @@ sub twitter_api_method {
         }
         $args->{source} ||= $self->source if $options{add_source};
 
+        my $authenticate = exists $args->{authenticate}  ? delete $args->{authenticate}
+                         : exists $options{authenticate} ? $options{authenticate}
+                         : $do_auth
+                         ;
+
         my $local_path = $modify_path->($path, $args);
         
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
@@ -52,7 +66,9 @@ sub twitter_api_method {
         # upgrade params to UTF-8 so latin-1 literals can be handled as UTF-8 too
         utf8::upgrade $_ for values %$args;
 
-        return $self->_parse_result($self->_authenticated_request($options{method}, $uri, $args));
+        return $self->_parse_result(
+            $self->_authenticated_request($options{method}, $uri, $args, $authenticate)
+        );
     };
 
     $class->add_method(
@@ -67,13 +83,6 @@ sub twitter_api_method {
 
     $class->add_method($_, $code) for @{$options{aliases} || []};
 }
-
-sub base_url {
-    my ($caller, $name, %options) = @_;
-
-    Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
-}
-
 
 package Net::Twitter::Meta::Method;
 use Moose;
@@ -90,6 +99,7 @@ has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } )
 has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
 has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
+has authenticate => ( isa => 'Bool', is => 'ro', predicate => 'has_authenticate' );
 
 sub new { shift->SUPER::wrap(@_) }
 
@@ -147,6 +157,10 @@ Specifies, by name, the attribute which contains the base URL for the defined AP
 =item twitter_api_method
 
 Defines a Twitter API method.  Valid arguments are:
+
+=item authenticate
+
+Specifies whether, by default, API methods calls should authenticate.
 
 =over 4
 

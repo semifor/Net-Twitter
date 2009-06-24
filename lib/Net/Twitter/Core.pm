@@ -71,7 +71,7 @@ sub credentials {
 
 # Basic Auth, overridden by Role::OAuth, if included
 sub _authenticated_request {
-    my ($self, $http_method, $uri, $args) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
     my $msg;
 
@@ -86,9 +86,8 @@ sub _authenticated_request {
         croak "unexpected HTTP method: $http_method";
     }
 
-    if ( $self->has_username && $self->has_password ) {
-        $msg->headers->authorization_basic($self->username, $self->password);
-    }
+    $msg->headers->authorization_basic($self->username, $self->password)
+        if $authenticate && $self->has_username && $self->has_password;
 
     return $self->ua->request($msg);
 }

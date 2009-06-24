@@ -257,6 +257,17 @@ To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
 C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
 more information on using OAuth, including examples.
 
+In addition to the arguments specified for each API method described below, an
+additional C<authenticate> parameter can be passed.  To request an
+C<Authorization> header, pass C<< authenticated => 1 >>; to suppress an
+authentication header, pass C<< authentication => 0 >>.  Even if requested, an
+Authorization header will not be added if there are no user credentials
+(username and password for Basic Authentication; access tokens for OAuth).
+
+This is probably only useful for the L</rate_limit_status> method in the REST
+API, since it returns different values for an authenticated and a
+non-authenticated call.
+
 =head1 API METHODS AND ARGUMENTS
 
 Most Twitter API methods take parameters.  All Net::Twitter API

@@ -10,7 +10,7 @@ plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
 BEGIN { use_ok 'Net::Twitter', qw/Legacy/ }
 
-my $nt  = Net::Twitter->new;
+my $nt  = Net::Twitter->new(username => 'me', password => 'secret');
 my $t   = TestUA->new($nt->ua);
 my $msg = 'Test failure';
 

@@ -10,7 +10,10 @@ eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
 use Net::Twitter;
-my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search API::TwitterVision/]);
+my $nt = Net::Twitter->new(
+    traits => [qw/API::REST API::Search API::TwitterVision/],
+    username => 'me', password => 'secret',
+);
 my $t  = TestUA->new($nt->ua);
 my @params = qw/twitter_id another_id/;
 

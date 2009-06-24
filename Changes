@@ -1,3 +1,10 @@
+3.03000
+    - Added "authenticate" parameter handling. By default REST API methods
+      inclued an Authorization header; Search API methods do not. Can be
+      overridden with "authenticate => 0|1".  This finally allows getting
+      rate_limit_status by user (the default), or by IP address, with
+      ->rate_limit_status({ authenticate => 0 }).
+
     - Added FAQ section to pod
 
 3.02000 2009-06-21

@@ -34,14 +34,21 @@ after credentials => sub {
     $self->ua->credentials($self->apihost, $self->apirealm, $self->username, $self->password);
 };
 
-base_url 'apiurl';
+base_url     'apiurl';
+authenticate 1;
 
 twitter_api_method public_timeline => (
-    description => <<'',
+    description => <<'EOT',
 Returns the 20 most recent statuses from non-protected users who have
 set a custom user icon.  Does not require authentication.  Note that
 the public timeline is cached for 60 seconds so requesting it more
 often than that is a waste of resources.
+
+If user credentials are provided, C<public_timeline> calls are authenticated,
+so they count against the authenticated user's rate limit.  Use C<<
+->public_timeline({ authenticate => 0 }) >> to make an unauthenticated call
+which will count against the calling IP address' rate limit, instead.
+EOT
 
     path     => 'statuses/public_timeline',
     method   => 'GET',
@@ -397,13 +404,15 @@ raw multipart data, not a URL to an image.
 );
 
 twitter_api_method rate_limit_status => (
-    description => <<'',
+    description => <<'EOT',
 Returns the remaining number of API requests available to the
-requesting user before the API limit is reached for the current hour.
-Calls to rate_limit_status do not count against the rate limit.  If
-authentication credentials are provided, the rate limit status for the
-authenticating user is returned.  Otherwise, the rate limit status for
-the requester's IP address is returned.
+authenticated user before the API limit is reached for the current hour.
+
+Use C<< ->rate_limit_status({ authenticate => 0 }) >> to force an
+unauthenticated call, which will return the status for the IP address rather
+than the authenticated user. (Note: for a web application, this is the server's
+IP address.)
+EOT
 
     path     => 'account/rate_limit_status',
     method   => 'GET',

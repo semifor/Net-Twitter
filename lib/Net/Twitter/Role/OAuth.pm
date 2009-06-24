@@ -50,7 +50,7 @@ for my $attribute ( qw/access_token access_token_secret request_token request_to
 sub authorized {
     my $self = shift;
 
-    return defined $self->{access_token} && $self->{access_token_secret};
+    return defined $self->has_access_token && $self->has_access_token_secret;
 }
 
 # get the authorization URL from Twitter
@@ -140,25 +140,29 @@ sub request_access_token {
 }
 
 override _authenticated_request => sub {
-    my ($self, $http_method, $uri, $args) = @_;
-
-    my $request = $self->_make_oauth_request(
-        'protected resource',
-        request_url    => $uri,
-        request_method => $http_method,
-        token          => $self->access_token,
-        token_secret   => $self->access_token_secret,
-    );
+    my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
     my $msg;
 
     if ( $http_method eq 'GET' ) {
         $uri->query_form($args);
-        $msg = GET($uri, Authorization => $request->to_authorization_header);
+        $msg = GET($uri);
     }
     elsif ( $http_method eq 'POST' ) {
         delete $args->{source}; # no necessary with OAuth requests
-        $msg = POST($request->request_url, $args, Authorization => $request->to_authorization_header);
+        $msg = POST($uri, $args);
+    }
+
+    if ( $authenticate && $self->authorized ) {
+        my $request = $self->_make_oauth_request(
+            'protected resource',
+            request_url    => $uri,
+            request_method => $http_method,
+            token          => $self->access_token,
+            token_secret   => $self->access_token_secret,
+        );
+
+        $msg->header(Authorization => $request->to_authorization_header);
     }
 
     return $self->ua->request($msg);
