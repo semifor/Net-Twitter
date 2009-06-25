@@ -446,6 +446,13 @@ Twitter sometimes discards parameters it doesn't recognize.  In this case,
 the result is a list of your own followers---the same thing that would happen
 if you called C<followers> without the C<screen_name> parameter.
 
+=item How do I use the C<geocode> parameter in the Search API?
+
+The C<geocode> parameter value includes a latitude, longitude, and radius
+separated with commas.
+
+    $r = $nt->search({ geocode => "45.511795,-122.675629,25mi" });
+
 =back
 
 =head1 SEE ALSO

@@ -977,6 +977,12 @@ FAQ
         followers---the same thing that would happen if you called
         "followers" without the "screen_name" parameter.
 
+    How do I use the "geocode" parameter in the Search API?
+        The "geocode" parameter value includes a latitude, longitude, and
+        radius separated with commas.
+
+            $r = $nt->search({ geocode => "45.511795,-122.675629,25mi" });
+
 SEE ALSO
     Net::Twitter::Error
         The "Net::Twitter" exception object.
