@@ -42,22 +42,19 @@ my $resolve_traits = sub {
     } @traits;
 };
 
-my %ANON_CLASSES;
-
 sub _create_anon_class {
     my ($superclasses, $traits, $immutable) = @_;
 
-    my $cache_key = join '=' => join('|', @$superclasses), join('|', sort @$traits);
-    $ANON_CLASSES{$cache_key} ||= do {
-        my $meta = Net::Twitter::Core->meta->create_anon_class(
-            superclasses => $superclasses,
-            roles        => $traits,
-            cache        => 1,
-        );
-        $meta->add_method(meta => sub { $meta });
-        $meta->make_immutable if $immutable;
-        $meta;
-    };
+    my $meta;
+    $meta = Net::Twitter::Core->meta->create_anon_class(
+        superclasses => $superclasses,
+        roles        => $traits,
+        methods      => { meta => sub { $meta } },
+        cache        => 1,
+    );
+    $meta->make_immutable(inline_constructor => $immutable);
+
+    return $meta;
 }
 
 sub new {
@@ -82,13 +79,15 @@ sub new {
     my $superclasses = [ 'Net::Twitter::Core' ];
     my $meta = _create_anon_class($superclasses, $traits, 1);
 
-    # create a Net::Twitter::Core object
+    # create a Net::Twitter::Core object with roles applied
     my $new = $meta->name->new(%args);
 
-    # rebless it to a subclass, if necessary
-    unshift @$superclasses, $class if $class ne __PACKAGE__;
-    my $final_meta = _create_anon_class($superclasses, $traits, 0);
-    bless $new, $final_meta->name if $meta->name ne $final_meta->name;
+    # rebless it to a subclass wrapper, if necessary
+    if ( $class ne __PACKAGE__ ) {
+        unshift @$superclasses, $class;
+        my $final_meta = _create_anon_class($superclasses, $traits, 0);
+        bless $new, $final_meta->name;
+    }
 
     return $new;
 }
