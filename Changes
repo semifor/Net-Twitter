@@ -1,5 +1,10 @@
 3.03000
+    - Twitter API update:
+        - Added screen_name and user_id parameters to new_direct_message
+        - Added show_friendship method (friendships/show.json)
+
     - Made Net::Twitter safe for subclassing
+
     - Added "authenticate" parameter handling. By default REST API methods
       inclued an Authorization header; Search API methods do not. Can be
       overridden with "authenticate => 0|1".  This finally allows getting

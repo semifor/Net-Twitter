@@ -601,12 +601,14 @@ REST API Methods
     new_direct_message
     new_direct_message(user, text)
 
-        Parameters: user, text
+        Parameters: user, text, screen_name, user_id
         Required: user, text
 
         Sends a new direct message to the specified user from the
         authenticating user. Requires both the user and text parameters.
-        Returns the sent message when successful.
+        Returns the sent message when successful. In order to support
+        numeric screen names, the "screen_name" or "user_id" parameters may
+        be used instead of "user".
 
         Returns: DirectMessage
 
@@ -663,6 +665,18 @@ REST API Methods
         and recipient users.
 
         Returns: ArrayRef[DirectMessage]
+
+    show_friendship
+    show_friendship(id)
+    alias: show_relationship
+
+        Parameters: source_id, source_screen_name, target_id, target_id_name
+        Required: id
+
+        Returns detailed information about the relationship between two
+        users.
+
+        Returns: Relationship
 
     show_saved_search
     show_saved_search(id)

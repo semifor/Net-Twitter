@@ -216,11 +216,12 @@ twitter_api_method new_direct_message => (
     description => <<'',
 Sends a new direct message to the specified user from the authenticating user.
 Requires both the user and text parameters.  Returns the sent message when
-successful.
+successful.  In order to support numeric screen names, the C<screen_name> or
+C<user_id> parameters may be used instead of C<user>.
 
     path     => 'direct_messages/new',
     method   => 'POST',
-    params   => [qw/user text/],
+    params   => [qw/user text screen_name user_id/],
     required => [qw/user text/],
     returns  => 'DirectMessage',
 );
@@ -236,6 +237,18 @@ message.
     params   => [qw/id/],
     required => [qw/id/],
     returns  => 'DirectMessage',
+);
+
+twitter_api_method show_friendship => (
+    description => <<'',
+Returns detailed information about the relationship between two users.
+
+    aliases  => [qw/show_relationship/],
+    path     => 'friendships/show',
+    method   => 'GET',
+    params   => [qw/source_id source_screen_name target_id target_id_name/],
+    required => [qw/id/],
+    returns  => 'Relationship',
 );
 
 twitter_api_method create_friend => (
