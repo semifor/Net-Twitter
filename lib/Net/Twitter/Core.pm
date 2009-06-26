@@ -10,16 +10,12 @@ use Net::Twitter::Error;
 
 use namespace::autoclean;
 
-with 'MooseX::Traits';
-
 # use *all* digits for fBSD ports
 our $VERSION = '3.02000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
 # For transparent legacy support, we need ->isa('Net::Twitter') to succeed.
-# TODO: MOP is not picking up UNIVERSAL methods. When it does, this code needs
-# to be removed and the around isa => sub {...} uncommented in Legacy.
 sub isa {
     my ($class, $isa) = @_;
 
@@ -42,7 +38,6 @@ has ua              => ( isa => 'Object', is => 'rw' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
-has '+_trait_namespace' => ( default => 'Net::Twitter::Role' );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 
 sub BUILD {
@@ -125,7 +120,7 @@ sub _parse_result {
     die $error;
 }
 
-__PACKAGE__->meta->make_immutable(inline_constructor => 0);
+__PACKAGE__->meta->make_immutable;
 
 
 1;
