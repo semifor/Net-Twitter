@@ -16,7 +16,6 @@ system($^X, "src/build.pl", version, 'src/net-twitter-pod.tt2', 'lib/Net/Twitter
 name        'Net-Twitter';
 all_from    'lib/Net/Twitter.pod';
 requires    'Moose' => 0.78;
-requires    'MooseX::Traits';
 requires    'JSON::Any' => 1.19;
 requires    'URI::Escape';
 requires    'namespace::autoclean';

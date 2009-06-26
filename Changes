@@ -1,4 +1,4 @@
-3.03000
+3.03000 2009-06-25
     - Twitter API update:
         - Added screen_name and user_id parameters to new_direct_message
         - Added show_friendship method (friendships/show.json)

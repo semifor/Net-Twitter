@@ -8,7 +8,7 @@ use namespace::autoclean;
 has '_trait_namespace' => ( default => 'Net::Twitter::Role' );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.02000';
+our $VERSION = '3.03000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
