@@ -1,3 +1,7 @@
+3.03001 2009-06-29
+    - Updated to Moose 0.85
+    - Properly subclassed top level Net::Twitter modules
+
 3.03000 2009-06-25
     - Twitter API update:
         - Added screen_name and user_id parameters to new_direct_message

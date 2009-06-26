@@ -1,12 +1,19 @@
 package Net::Identica;
-use Net::Twitter;
+use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.03000';
+our $VERSION = '3.03001';
+$VERSION     = eval $VERSION; # numify for warning-free dev releases
 
-$VERSION = eval $VERSION; # numify for warning-free dev releases
+extends 'Net::Twitter::Core';
+with map "Net::Twitter::Role::$_", qw/Legacy/;
 
-sub new { shift; Net::Twitter->new(identica => 1, @_) }
+has '+apiurl'    => ( default => 'http://identi.ca/api' );
+has '+apirealm'  => ( default => 'Laconica API'         );
+
+no Moose;
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

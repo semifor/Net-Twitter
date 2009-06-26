@@ -5,10 +5,10 @@ use Net::Twitter::Core;
 
 use namespace::autoclean;
 
-has '_trait_namespace' => ( default => 'Net::Twitter::Role' );
+has '_trait_namespace' => ( is => 'bare', default => 'Net::Twitter::Role' );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.03000';
+our $VERSION = '3.03001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -17,6 +17,7 @@ $VERSION = eval $VERSION; # numify for warning-free dev releases
 # For transparent back compat, Net::Twitter->new() creates a Net::Twitter::Core
 # with the 'Legacy' trait.
 
+# transform_trait and resolve_traits stolen from MooseX::Traits
 my $transform_trait = sub {
     my ($class, $name) = @_;
     my $namespace = $class->meta->find_attribute_by_name('_trait_namespace');
@@ -42,7 +43,7 @@ my $resolve_traits = sub {
     } @traits;
 };
 
-sub _create_anon_class {
+my $create_anon_class = sub {
     my ($superclasses, $traits, $immutable) = @_;
 
     my $meta;
@@ -55,7 +56,7 @@ sub _create_anon_class {
     $meta->make_immutable(inline_constructor => $immutable);
 
     return $meta;
-}
+};
 
 sub new {
     my $class = shift;
@@ -70,22 +71,22 @@ sub new {
         croak "Options 'legacy' and 'traits' are mutually exclusive. Use only one."
             if $traits;
 
-        $traits = $legacy ? [qw/Legacy/] : [qw/API::REST/];
+        $traits = [ $legacy ? 'Legacy' : 'API::REST' ];
     }
 
-    $traits ||= [qw/Legacy/];
-    $traits = [ $class->$resolve_traits(@$traits) ];
+    $traits ||= [ qw/Legacy/ ];
+    $traits   = [ $class->$resolve_traits(@$traits) ];
 
     my $superclasses = [ 'Net::Twitter::Core' ];
-    my $meta = _create_anon_class($superclasses, $traits, 1);
+    my $meta = $create_anon_class->($superclasses, $traits, 1);
 
     # create a Net::Twitter::Core object with roles applied
     my $new = $meta->name->new(%args);
 
-    # rebless it to a subclass wrapper, if necessary
+    # rebless it to include a subclass, if necessary
     if ( $class ne __PACKAGE__ ) {
         unshift @$superclasses, $class;
-        my $final_meta = _create_anon_class($superclasses, $traits, 0);
+        my $final_meta = $create_anon_class->($superclasses, $traits, 0);
         bless $new, $final_meta->name;
     }
 

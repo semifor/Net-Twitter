@@ -39,11 +39,13 @@ t/11_useragent.t
 t/12_identica.t
 t/13_search.t
 t/14_authenticate.t
+t/15_subclass.t
 t/20_exceptions.t
 t/20_generated.t
 t/21_wraperror.t
 t/22_twitter_insanity.t
 t/30_legacy.t
+t/40_nt_subclasses.t
 t/99-pod_coverage.t
 t/99-pod_spelling.t
 t/99-pod_syntax.t

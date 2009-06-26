@@ -7,9 +7,14 @@ use Net::Twitter::API;
 
 requires qw/ua username password credentials/;
 
-has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.com' );
-has apihost         => ( isa => 'Str', is => 'ro', default => 'twitter.com:80'     );
-has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'        );
+my $build_api_host = sub {
+    my $uri = URI->new(shift->apiurl);
+    join ':', $uri->host, $uri->port;
+};
+
+has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.com'        );
+has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, default => $build_api_host  );
+has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
 
 around BUILDARGS => sub {
     my $next    = shift;
@@ -19,7 +24,6 @@ around BUILDARGS => sub {
     if ( delete $options{identica} ) {
         %options = (
             apiurl => 'http://identi.ca/api',
-            apihost => 'identi.ca:80',
             apirealm => 'Laconica API',
             %options,
         );

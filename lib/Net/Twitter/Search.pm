@@ -1,12 +1,16 @@
 package Net::Twitter::Search;
-use Net::Twitter;
+use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.03000';
-
+our $VERSION = '3.03001';
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
-sub new { shift; Net::Twitter->new(traits => [qw/Legacy/], @_) }
+extends 'Net::Twitter::Core';
+with    "Net::Twitter::Role::Legacy";
+
+no Moose;
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -26,8 +30,9 @@ Net::Twitter::Search - A perl interface to the Twitter Search API
 
 =head1 DESCRIPTION
 
-This module simply creates an instance of C<Net::Twitter> with the C<Legacy> trait
-set.
+This module simply creates an instance of C<Net::Twitter> with the C<Legacy>
+trait for backwards compatibility with prior versions.  Consider
+L<Net::Twitter::Lite> if you need a lighter, non-Moose alternative.
 
 See L<Net::Twitter> for full documentation.
 

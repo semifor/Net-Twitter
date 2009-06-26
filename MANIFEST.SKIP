@@ -28,6 +28,7 @@
 \..*?\.sw[po]$
 \#$
 \b\.#
+\.prove$
 
 # avoid OS X finder files
 \.DS_Store$
