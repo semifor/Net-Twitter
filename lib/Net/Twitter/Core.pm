@@ -7,6 +7,7 @@ use JSON::Any qw/XS DWIW JSON/;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
+use Scalar::Util qw/reftype/;
 
 use namespace::autoclean;
 
@@ -84,6 +85,10 @@ sub _from_json {
     return eval { JSON::Any->from_json($json) };
 }
 
+# By default, Net::Twitter does not inflate objects, so just return the
+# hashref, untouched. This is really just a hook for Role::InflateObjects.
+sub _inflate_objects { return $_[1] }
+
 sub _parse_result {
     my ($self, $res) = @_;
 
@@ -94,8 +99,11 @@ sub _parse_result {
 
     my $obj = $self->_from_json($content);
 
+    # inflate the twitter object(s) if possible
+    $self->_inflate_objects($obj);
+
     # Twitter sometimes returns an error with status code 200
-    if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
+    if ( ref $obj && reftype $obj eq 'HASH' && exists $obj->{error} ) {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
@@ -106,9 +114,6 @@ sub _parse_result {
 
     die $error;
 }
-
-__PACKAGE__->meta->make_immutable;
-
 
 1;
 

@@ -21,11 +21,13 @@ API
 APIs
 BasicUser
 CPAN
+DateTime
 DirectMessage
 ExtendedUser
 Grennan
 Identi
 IM
+InflateObjects
 IP
 IRC
 JSON

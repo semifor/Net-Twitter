@@ -3,7 +3,7 @@ use Moose;
 
 use overload '""' => \&error;
 
-has twitter_error   => ( isa => 'HashRef', is => 'rw', predicate => 'has_twitter_error' );
+has twitter_error   => ( isa => 'HashRef|Object', is => 'rw', predicate => 'has_twitter_error' );
 has http_response   => ( isa => 'HTTP::Response', is => 'rw', required => 1, handles => [qw/code message/] );
 
 sub error {

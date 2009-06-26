@@ -97,6 +97,31 @@ The C<OAuth> trait provides OAuth authentication rather than the default Basic
 Authentication for Twitter API method calls.  See the L</Authentication>
 section and L<Net::Twitter::Role::OAuth> for full documentation.
 
+=item InflateObjects
+
+When this optional trait is included, Net::Twitter inflates HASH refs returned
+by Twitter into objects with read accessors for each element.  In addition, it
+inflates dates to L<DateTime> objects and URLs to L<URI> objects.  Objects that
+include a C<created_at> attribute also have a C<relative_created_at> method.
+
+For example, with C<InflateObjects> applied, the <friends_timeline> method
+returns an array of status objects:
+
+    $r = $nt->friends_timeline;
+    for my $status ( @$r ) {
+        $r->user->screen_name; # same as $r->{user}{screen_name}
+
+        # $created_at is a DateTime; $age is a DateTime::Duration
+        my $age = DateTime->now - $r->created_at;
+
+        # print an age in a similar style to the Twitter web site, e.g.:
+        # less than a minute ago
+        # about a minute ago
+        # 6 minutes ago
+        # 1 day ago
+        # etc.
+        print $r->relative_created_at;
+
 =item Legacy
 
 This trait provides backwards compatibility to C<Net::Twitter> versions prior

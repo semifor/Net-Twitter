@@ -78,6 +78,33 @@ METHODS AND ARGUMENTS
                 calls. See the "Authentication" section and
                 Net::Twitter::Role::OAuth for full documentation.
 
+            InflateObjects
+                When this optional trait is included, Net::Twitter inflates
+                HASH refs returned by Twitter into objects with read
+                accessors for each element. In addition, it inflates dates
+                to DateTime objects and URLs to URI objects. Objects that
+                include a "created_at" attribute also have a
+                "relative_created_at" method.
+
+                For example, with "InflateObjects" applied, the
+                <friends_timeline> method returns an array of status
+                objects:
+
+                    $r = $nt->friends_timeline;
+                    for my $status ( @$r ) {
+                        $r->user->screen_name; # same as $r->{user}{screen_name}
+
+                        # $created_at is a DateTime; $age is a DateTime::Duration
+                        my $age = DateTime->now - $r->created_at;
+
+                        # print an age in a similar style to the Twitter web site, e.g.:
+                        # less than a minute ago
+                        # about a minute ago
+                        # 6 minutes ago
+                        # 1 day ago
+                        # etc.
+                        print $r->relative_created_at;
+
             Legacy
                 This trait provides backwards compatibility to
                 "Net::Twitter" versions prior to 3.00. It implies the traits

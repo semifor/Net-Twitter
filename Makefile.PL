@@ -14,14 +14,19 @@ all_from    'lib/Net/Twitter.pod';
 # core
 requires    'Carp';
 requires    'Digest::SHA';
+requires    'Scalar::Util';
 
 # CPAN
+requires    'Data::Visitor::Callback';
+requires    'DateTime';
+requires    'DateTime::Format::Strptime';
 requires    'HTTP::Request::Common';
 requires    'JSON::Any'                 => 1.21;
 requires    'LWP::UserAgent'            => 2.032;
 requires    'Moose'                     => 0.85;
 requires    'Moose::Exporter';
 requires    'Moose::Role';
+requires    'MooseX::AttributeHelpers';
 requires    'MooseX::MultiInitArg';
 requires    'namespace::autoclean';
 requires    'Net::OAuth'                => 0.16;
