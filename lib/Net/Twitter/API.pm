@@ -16,6 +16,7 @@ sub base_url {
     Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
 }
 
+# kludge: This is very transient!
 my $do_auth;
 sub authenticate { (undef, $do_auth) = @_ }
 
@@ -32,7 +33,9 @@ my $with_url_arg = sub {
 };
 
 sub twitter_api_method {
-    my ($caller, $name, %options) = @_;
+    my $caller = shift;
+    my $name   = shift;
+    my %options = ( authenticate => $do_auth, @_ );
 
     my $class = Moose::Meta::Class->initialize($caller);
 
@@ -55,8 +58,7 @@ sub twitter_api_method {
         $args->{source} ||= $self->source if $options{add_source};
 
         my $authenticate = exists $args->{authenticate}  ? delete $args->{authenticate}
-                         : exists $options{authenticate} ? $options{authenticate}
-                         : $do_auth
+                         : $options{authenticate}
                          ;
 
         my $local_path = $modify_path->($path, $args);
@@ -100,7 +102,7 @@ has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } )
 has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
 has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
-has authenticate => ( isa => 'Bool', is => 'ro', predicate => 'has_authenticate' );
+has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
 
 # TODO: can MooseX::StrictConstructor be made to work here?
 my %valid_attribute_names = map { $_->init_arg => 1 }
