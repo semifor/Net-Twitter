@@ -43,6 +43,13 @@ my $resolve_traits = sub {
     } @traits;
 };
 
+my $isa = sub {
+    my $self = shift;
+    my $isa  = shift;
+
+    return $isa eq __PACKAGE__ || $self->SUPER::isa($isa)
+};
+
 my $create_anon_class = sub {
     my ($superclasses, $traits, $immutable) = @_;
 
@@ -50,7 +57,7 @@ my $create_anon_class = sub {
     $meta = Net::Twitter::Core->meta->create_anon_class(
         superclasses => $superclasses,
         roles        => $traits,
-        methods      => { meta => sub { $meta } },
+        methods      => { meta => sub { $meta }, isa => $isa },
         cache        => 1,
     );
     $meta->make_immutable(inline_constructor => $immutable);

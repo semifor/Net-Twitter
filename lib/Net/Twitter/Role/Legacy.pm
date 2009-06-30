@@ -14,20 +14,6 @@ has arrayref_on_error => ( isa => 'Bool', is => 'rw', default => 0,
                            trigger => sub { shift->_set_error_return_val } );
 has twittervision     => ( isa => 'Bool', is => 'rw', default => 0 );
 
-=begin comment
-
-# TODO: MOP is not picking up UNIVERSAL methods; waiting for a fix
-# For transparent legacy support, we need ->isa('Net::Twitter') to succeed
-around isa => sub {
-    my $orig = shift;
-    my $self = shift;
-
-    return 1 if $_[0] eq 'Net::Twitter';
-    return $self->$orig(@_);
-};
-
-=cut
-
 sub _set_error_return_val {
     my $self = shift;
 

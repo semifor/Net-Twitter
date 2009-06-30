@@ -83,7 +83,7 @@ is      $nt3->password, 'secret', 'has base class attribute value';
 
 diag 'valid Moose subclass';
 my $nt4 = My::Subclass::ValidMoose->new(username => 'me', password => 'secret');
-isa_ok  $nt4, 'Net::Twitter';
+ok      !$nt4->isa('Net::Twitter'), 'not created by Net::Twitter';
 isa_ok  $nt4, 'Net::Twitter::Core';
 isa_ok  $nt4, 'My::Subclass::ValidMoose';
 can_ok  $nt4, qw/subclass_method user_timeline credentials/;

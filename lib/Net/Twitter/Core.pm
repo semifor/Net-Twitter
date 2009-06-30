@@ -15,15 +15,6 @@ our $VERSION = '3.03001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
-# For transparent legacy support, we need ->isa('Net::Twitter') to succeed.
-sub isa {
-    my ($class, $isa) = @_;
-
-    return 1 if $isa && !ref $isa && $isa eq 'Net::Twitter';
-
-    return $class->SUPER::isa($isa);
-}
-
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
 has username        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
