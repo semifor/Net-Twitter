@@ -10,15 +10,15 @@ with map "Net::Twitter::Role::$_", qw/
     WrapError
 /;
 
-has arrayref_on_error => ( isa => 'Bool', is => 'rw', default => 0,
-                           trigger => sub { shift->_set_error_return_val } );
-has twittervision     => ( isa => 'Bool', is => 'rw', default => 0 );
-
-sub _set_error_return_val {
+my $set_error_return_val = sub {
     my $self = shift;
 
     $self->_error_return_val($self->arrayref_on_error ? [] : undef);
-}
+};
+
+has arrayref_on_error => ( isa => 'Bool', is => 'rw', default => 0,
+                           trigger => sub { shift->$set_error_return_val } );
+has twittervision     => ( isa => 'Bool', is => 'rw', default => 0 );
 
 # Legacy Net::Twitter does not make the call unless twittervision is true.
 # Bug or feature?
