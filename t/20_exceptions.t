@@ -1,13 +1,15 @@
 #!perl
 use warnings;
 use strict;
-use Test::More tests => 10;
+use Test::More;
 use Test::Exception;
 use lib qw(t/lib);
 use Net::Twitter;
 
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
+
+plan tests => 10;
 
 my $nt = Net::Twitter->new(
     traits   => [qw/API::REST/],

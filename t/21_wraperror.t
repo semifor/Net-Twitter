@@ -2,13 +2,17 @@
 use warnings;
 use strict;
 use Test::Exception;
-use Test::More qw/no_plan/;
+use Test::More;
 use lib qw(t/lib);
 
-eval 'use TestUA';
-plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
+BEGIN {
+    eval 'use TestUA';
+    plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
-BEGIN { use_ok 'Net::Twitter', qw/Legacy/ }
+    plan tests => 12;
+
+    use_ok 'Net::Twitter', qw/Legacy/;
+}
 
 my $nt  = Net::Twitter->new(username => 'me', password => 'secret');
 my $t   = TestUA->new($nt->ua);

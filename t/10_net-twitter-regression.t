@@ -1,12 +1,14 @@
 #!perl
 use Carp;
 use strict;
-use Test::More tests => 32;
+use Test::More;
 use Test::Exception;
 use lib qw(t/lib);
 
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
+
+plan tests => 32;
 
 use Net::Twitter;
 

@@ -1,8 +1,13 @@
 #!perl
 use warnings;
 use strict;
+use Test::More;
+use lib qw(t/lib);
 
-use Test::More tests => 3;
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
+
+plan tests => 3;
 
 use Net::Twitter;
 

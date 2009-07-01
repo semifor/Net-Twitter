@@ -1,4 +1,4 @@
-#!perl -wT
+#!perl -w
 use strict;
 use warnings;
 use Test::More;

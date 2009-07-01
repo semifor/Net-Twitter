@@ -1,13 +1,15 @@
 #!perl
 use warnings;
 use strict;
-use Test::More tests => 14;
+use Test::More;
 use Test::Exception;
 use lib qw(t/lib);
 use Net::Twitter;
 
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
+
+plan tests => 14;
 
 my $nt = Net::Twitter->new(legacy => 1);
 isa_ok $nt, 'Net::Twitter';
