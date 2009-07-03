@@ -92,11 +92,6 @@ Returns true if the object contains a Twitter error HASH.
 Returns the C<error> value from the C<twitter_error> HASH ref if there is one.
 Otherwise, it returns the string "[unknown]".
 
-=item stringify
-
-Returns the error element of the Twitter error HASH, if one exists.  Otherwise,
-it returns the HTTP message.  =back
-
 =back
 
 =head1 SEE ALSO
