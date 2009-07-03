@@ -3,6 +3,7 @@ use Moose::Role;
 use HTTP::Request::Common;
 use Carp;
 use URI;
+use Digest::SHA;
 
 requires qw/_authenticated_request ua/;
 
@@ -75,7 +76,7 @@ sub _make_oauth_request {
         request_method   => 'GET',
         signature_method => 'HMAC-SHA1',
         timestamp        => time,
-        nonce            => join('', map { ('0'..'9','A'..'Z','a'..'z')[rand(26*2+10)] } 1..16),
+        nonce            => Digest::SHA::sha1_base64(time . $$ . rand),
         %params,
     );
 
