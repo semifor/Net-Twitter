@@ -1,4 +1,5 @@
 .*.swp
+MANIFEST
 META.yml
 Makefile
 blib/

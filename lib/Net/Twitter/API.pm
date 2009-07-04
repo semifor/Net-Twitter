@@ -91,7 +91,7 @@ use Moose;
 use Carp;
 extends 'Moose::Meta::Method';
 
-use namespace::clean;
+use namespace::autoclean;
 
 has description => ( isa => 'Str', is => 'ro', required => 1 );
 has aliases     => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );

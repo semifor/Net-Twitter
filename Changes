@@ -1,3 +1,8 @@
+3.03002 2009-07-04
+    - Updated documentation to include callback parameter to get_authorization_url
+    - Different OAuth nonce algorithm avoids duplicates in forked processes
+    - Bumped JSON version dependencies for better JSON boolean handling
+
 3.03001 2009-06-29
     - Updated to Moose 0.85
     - Properly subclassed top level Net::Twitter modules
