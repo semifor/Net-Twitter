@@ -230,6 +230,13 @@ authentication instead of the default Basic Authentication.
 
 Note that this client only works with APIs that are compatible to OAuth authentication.
 
+=head1 IMPORTANT
+
+Beginning with version 3.02, it is necessary for web applications to pass the
+C<callback> parameter to C<get_authorization_url>.  In the absence of a
+callback parameter, when the user authorizes the application a PIN number is
+displayed rather than redirecting the user back to your site.
+
 =head1 EXAMPLES
 
 See the C<examples> directory in this distribution for working examples of both
@@ -273,7 +280,7 @@ authorization URL.
       my($self, $c) = @_;
 
       my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
-      my $url = $nt->get_authorization_url;
+      my $url = $nt->get_authorization_url(callback => $callbackurl);
 
       $c->response->cookies->{oauth} = {
           value => {
@@ -343,9 +350,12 @@ Returns the access token and access token secret but also sets them internally
 so that after calling this method, you can immediately call API methods
 requiring authentication.
 
-=item get_authorization_url
+=item get_authorization_url(callback => $callback_url)
 
-Get the URL used to authorize the user.  Returns a C<URI> object.
+Get the URL used to authorize the user.  Returns a C<URI> object.  For web
+applications, pass your applications callback URL as the C<callback> parameter.
+No arguments are required for desktop applications (C<callback> defaults to
+C<oob>, out-of-band).
 
 =item access_token
 

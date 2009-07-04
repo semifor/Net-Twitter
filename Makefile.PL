@@ -3,39 +3,54 @@ use inc::Module::Install;
 version_from      'lib/Net/Twitter/Core.pm';
 perl_version_from 'lib/Net/Twitter/Core.pm';
 
-# MAINTAINER only exists in the repository (i.e., development) version of the
-# project. This eliminates the need for a "require 'Template'".  TT2 is only
-# needed to prepare a distribution.  It is not necessary for making, testing,
-# or installing the CPAN module.
-#
-# To build lib/Net/Twitter/Lite.pm from src/net-twitter-lite-pm.tt2, touch
-# MAINTAINER, the run "perl Makefile.PL"
-system($^X, "src/build.pl", version, 'src/net-twitter-pod.tt2', 'lib/Net/Twitter.pod')
-    if -e 'MAINTAINER';
+if ( $Module::Install::AUTHOR ) {
+    system $^X, "src/build.pl", version, 'src/net-twitter-pod.tt2', 'lib/Net/Twitter.pod';
+    system 'pod2text lib/Net/Twitter.pod > README';
+}
 
 name        'Net-Twitter';
 all_from    'lib/Net/Twitter.pod';
-requires    'Moose' => 0.85;
-requires    'JSON::Any' => 1.19;
-requires    'URI::Escape';
-requires    'namespace::autoclean';
-requires    'Net::OAuth'     => 0.16;
-requires    'LWP::UserAgent' => 2.032;
+
+# core
+requires    'Carp';
+requires    'Digest::SHA';
+
+# CPAN
+requires    'HTTP::Request::Common';
+requires    'JSON::Any'                 => 1.21;
+requires    'LWP::UserAgent'            => 2.032;
+requires    'Moose'                     => 0.85;
+requires    'Moose::Exporter';
+requires    'Moose::Role';
 requires    'MooseX::MultiInitArg';
-recommends  'JSON::XS';
+requires    'namespace::autoclean';
+requires    'Net::OAuth'                => 0.16;
+requires    'URI';
+requires    'URI::Escape';
+
+# Don't rely on the JSON::Any requirement to pull in a suitable JSON backend.
+# The user may already have JSON::Any installed, but since removed all valid
+# providers.  (Yes, this seems to have happened in the wild.)
+sub has_json_handler () {
+    my @order = qw/JSON::XS JSON::DWIW JSON/;
+    for my $provider ( @order ) {
+        eval "require $provider";
+        return 1 unless $@;
+    }
+    return;
+}
+
+has_json_handler || require JSON => '2.02';
 
 no_index    directory => 'src';
 no_index    directory => 'examples';
 
 # resources
-repository 'git://github.com/semifor/Net-Twitter.git';
 homepage   'http://github.com/semifor/Net-Twitter';
 bugtracker 'http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter';
 
-eval {
-    system 'pod2text lib/Net/Twitter.pod > README';
-};
-
+auto_set_repository;
+auto_manifest;
 auto_install;
 
 WriteAll;
