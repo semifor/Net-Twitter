@@ -92,11 +92,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    # some JSON backends don't handle booleans correctly
-    # TODO: move this fix to JSON::Any
-    my $obj = $content eq 'true'  ? 1
-            : $content eq 'false' ? ''
-            : $self->_from_json($content);
+    my $obj = $self->_from_json($content);
 
     # Twitter sometimes returns an error with status code 200
     if ( $obj && ref $obj eq 'HASH' && exists $obj->{error} ) {
