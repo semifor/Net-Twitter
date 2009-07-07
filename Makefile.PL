@@ -40,7 +40,7 @@ sub has_json_handler () {
     return;
 }
 
-has_json_handler || require JSON => '2.02';
+has_json_handler || requires JSON => '2.02';
 
 no_index    directory => 'src';
 no_index    directory => 'examples';
