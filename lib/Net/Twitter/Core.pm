@@ -12,7 +12,7 @@ use Scalar::Util qw/reftype/;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.03003';
+our $VERSION = '3.04000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
