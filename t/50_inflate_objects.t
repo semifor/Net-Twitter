@@ -8,7 +8,7 @@ use lib qw(t/lib);
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
-plan tests => 7;
+plan tests => 12;
 
 use_ok 'Net::Twitter';
 
@@ -35,3 +35,19 @@ can_ok $object, qw/text user created_at relative_created_at/;
 isa_ok $object->created_at,          'DateTime',      'DateTime inflation';
 is     $object->relative_created_at, '6 minutes ago', 'relative_created_at';
 is     $object->user->screen_name,   'net_twitter',   'nested objects';
+
+# make sure we don't co-mingle our object methods
+$t->response->content(JSON::Any->to_json({
+    foo => 'foo',
+    bar => 'bar',
+    baz => 'and of course, baz',
+}));
+
+my $other = $nt->friends_timeline;
+can_ok $other, qw/foo bar baz/;
+isnt   $other->meta->name, $object->meta->name, 'different anon class';
+ok     !$other->can('text'), 'different methods';
+
+my $same  = $nt->friends_timeline;
+can_ok $same, qw/foo bar baz/;
+is     $same->meta->name, $other->meta->name, 'same anon class';

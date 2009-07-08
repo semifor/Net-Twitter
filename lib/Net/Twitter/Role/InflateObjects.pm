@@ -64,7 +64,7 @@ sub _hash_to_object {
 
     my $class = $self->get_cached_class($signature);
     unless ( $class ) {
-        $class = Class::MOP::Class->create_anon_class;
+        $class = Moose::Meta::Class->create_anon_class;
         for my $name ( keys %$href ) {
             $class->add_attribute(
                 $name,
