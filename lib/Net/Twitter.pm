@@ -5,7 +5,10 @@ use Net::Twitter::Core;
 
 use namespace::autoclean;
 
-has '_trait_namespace' => ( is => 'bare', default => 'Net::Twitter::Role' );
+has '_trait_namespace' => (
+    Moose->VERSION >= '0.85' ? (is => 'bare') : (),
+    default => 'Net::Twitter::Role',
+);
 
 # use *all* digits for fBSD ports
 our $VERSION = '3.04000';
