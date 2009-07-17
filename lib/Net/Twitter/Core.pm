@@ -12,7 +12,7 @@ use Scalar::Util qw/reftype/;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.04000';
+our $VERSION = '3.04001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -31,6 +31,11 @@ has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
+has _json_handler   => (
+    is      => 'rw',
+    default => sub { JSON::Any->new(uft8 => 1) },
+    handles => { _from_json => 'from_json' },
+);
 
 sub BUILD {
     my $self = shift;
@@ -79,12 +84,6 @@ sub _authenticated_request {
     return $self->ua->request($msg);
 }
 
-sub _from_json {
-    my ($self, $json) = @_;
-
-    return eval { JSON::Any->from_json($json) };
-}
-
 # By default, Net::Twitter does not inflate objects, so just return the
 # hashref, untouched. This is really just a hook for Role::InflateObjects.
 sub _inflate_objects { return $_[1] }
@@ -97,7 +96,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = $self->_from_json($content);
+    my $obj = eval { $self->_from_json($content) };
 
     # inflate the twitter object(s) if possible
     $self->_inflate_objects($obj);
