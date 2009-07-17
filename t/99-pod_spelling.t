@@ -35,6 +35,7 @@ Laconica
 Marc
 Mims
 Miyagawa
+netrc
 OAuth
 OMG
 oauth
@@ -69,6 +70,8 @@ params
 perigrin
 requester's
 rpp
+SSL
+ssl
 stringifies
 timeline
 tvhost

@@ -1,5 +1,6 @@
 3.0400  2009-07-17
     - Set JSON::Any option utf8 for consistent unicode support
+    - Added ssl and netrc options (from Net::Twitter::Lite)
 
 3.04000 2009-07-07
     - Added inflation of Twitter return HASH refs to Moose objects

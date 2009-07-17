@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.04000
+    This document describes Net::Twitter version 3.04001
 
 SYNOPSIS
       use Net::Twitter;
@@ -230,6 +230,22 @@ METHODS AND ARGUMENTS
         consumer_secret
             A string containing the OAuth consumer secret. This option is
             available when the "OAuth" trait is included.
+
+        ssl If set to 1, an SSL connection will be used for all API calls.
+            Defaults to 0.
+
+        netrc
+            If set to 1, Net::Twitter will look up the host portion of the
+            "apiurl" in the ".netrc" file to obtain the u"username" and
+            "password" arguments.
+
+               # in .netrc
+               machine twitter.com
+               login YOUR_TWITTER_USER_NAME
+               password YOUR_TWITTER_PASSWORD
+
+               # in your perl program
+               $nt = Net::Twitter::Lite->new(netrc => 1);
 
     credentials($username, $password)
         Set the credentials for Basic Authentication. This is helpful for

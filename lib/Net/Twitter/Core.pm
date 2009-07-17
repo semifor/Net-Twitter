@@ -24,6 +24,8 @@ has username        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
 has password        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
                          isa => 'Str', is => 'rw', predicate => 'has_password',
                          init_args => [qw/pass/] );
+has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
+has netrc           => ( isa => 'Bool', is => 'ro', default => 0 );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has ua              => ( isa => 'Object', is => 'rw' );
@@ -42,6 +44,20 @@ sub BUILD {
 
     eval "use " . $self->useragent_class;
     croak $@ if $@;
+
+    $self->{apiurl} =~ s/http/https/ if $self->ssl;
+
+    if ( $self->netrc ) {
+        require Net::Netrc;
+
+        my $host = URI->new($self->apiurl)->host;
+        my $nrc  = Net::Netrc->lookup($host)
+            || croak "No .netrc entry for $host";
+
+        my ($user, $pass) = $nrc->lpa;
+        $self->username($user);
+        $self->password($pass);
+    }
 
     $self->ua($self->useragent_class->new(%{$self->useragent_args}));
     $self->ua->agent($self->useragent);

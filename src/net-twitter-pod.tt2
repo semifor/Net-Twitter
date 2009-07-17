@@ -254,6 +254,23 @@ is registered.  This option is available when the C<OAuth> trait is included.
 A string containing the OAuth consumer secret.  This option is available when
 the C<OAuth> trait is included.
 
+=item ssl
+
+If set to 1, an SSL connection will be used for all API calls. Defaults to 0.
+
+=item netrc
+
+If set to 1, Net::Twitter will look up the host portion of the C<apiurl> in the
+C<.netrc> file to obtain the uC<username> and C<password> arguments.
+
+   # in .netrc
+   machine twitter.com
+   login YOUR_TWITTER_USER_NAME
+   password YOUR_TWITTER_PASSWORD
+
+   # in your perl program
+   $nt = Net::Twitter->new(netrc => 1);
+
 =back
 
 =item credentials($username, $password)
