@@ -1,4 +1,7 @@
-3.0400  2009-07-17
+3.04002  2009-07-21
+    - Optionally decode HTML entities in status text
+
+3.04001  2009-07-17
     - Set JSON::Any option utf8 for consistent unicode support
     - Added ssl and netrc options (from Net::Twitter::Lite)
 

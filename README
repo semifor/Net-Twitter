@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.04001
+    This document describes Net::Twitter version 3.04002
 
 SYNOPSIS
       use Net::Twitter;
@@ -245,7 +245,12 @@ METHODS AND ARGUMENTS
                password YOUR_TWITTER_PASSWORD
 
                # in your perl program
-               $nt = Net::Twitter::Lite->new(netrc => 1);
+               $nt = Net::Twitter->new(netrc => 1);
+
+        decode_html_entities
+            Twitter encodes HTML entities in the "text" field of statuses.
+            Set this option to 1 to have them automatically decoded. Default
+            0.
 
     credentials($username, $password)
         Set the credentials for Basic Authentication. This is helpful for

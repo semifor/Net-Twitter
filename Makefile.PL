@@ -21,6 +21,7 @@ requires    'Scalar::Util';
 requires    'Data::Visitor::Callback';
 requires    'DateTime';
 requires    'DateTime::Format::Strptime';
+requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
 requires    'JSON::Any'                 => 1.21;
 requires    'LWP::UserAgent'            => 2.032;

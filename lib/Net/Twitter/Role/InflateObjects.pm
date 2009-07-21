@@ -49,9 +49,7 @@ sub _build_visitor {
     my $self = shift;
 
     Data::Visitor::Callback->new(
-        # inflate hashes
         hash   => sub { $self->_hash_to_object($_[1]) },
-        # deflate bools; some JSON handlers return blessed SCALAR refs
     );
 }
 

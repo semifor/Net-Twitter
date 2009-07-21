@@ -271,6 +271,11 @@ C<.netrc> file to obtain the uC<username> and C<password> arguments.
    # in your perl program
    $nt = Net::Twitter->new(netrc => 1);
 
+=item decode_html_entities
+
+Twitter encodes HTML entities in the C<text> field of statuses.  Set this
+option to 1 to have them automatically decoded.  Default 0.
+
 =back
 
 =item credentials($username, $password)

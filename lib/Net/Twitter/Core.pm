@@ -8,11 +8,12 @@ use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
 use Scalar::Util qw/reftype/;
+use HTML::Entities;
 
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.04001';
+our $VERSION = '3.04002';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -26,6 +27,7 @@ has password        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
                          init_args => [qw/pass/] );
 has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Bool', is => 'ro', default => 0 );
+has decode_html_entities => ( isa => 'Bool', is => 'rw', default => 0 );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has ua              => ( isa => 'Object', is => 'rw' );
@@ -100,6 +102,20 @@ sub _authenticated_request {
     return $self->ua->request($msg);
 }
 
+# Twitter returns HTML encoded entities in the "text" field of status messages.
+# Decode them.
+sub _decode_html_entities {
+    my ($self, $obj) = @_;
+
+    if ( ref $obj eq 'ARRAY' ) {
+        $self->_decode_html_entities($_) for @$obj;
+    }
+    elsif ( ref $obj eq 'HASH' ) {
+        $self->_decode_html_entities($_) for values %$obj;
+        decode_entities($obj->{text}) if exists $obj->{text};
+    }
+}
+
 # By default, Net::Twitter does not inflate objects, so just return the
 # hashref, untouched. This is really just a hook for Role::InflateObjects.
 sub _inflate_objects { return $_[1] }
@@ -113,6 +129,7 @@ sub _parse_result {
     $content =~ s/^"(true|false)"$/$1/;
 
     my $obj = eval { $self->_from_json($content) };
+    $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # inflate the twitter object(s) if possible
     $self->_inflate_objects($obj);
