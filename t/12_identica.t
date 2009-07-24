@@ -2,12 +2,14 @@
 
 use warnings;
 use strict;
-use Test::More tests => 4;
+use Test::More;
 
 use lib qw(t/lib);
 
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
+
+plan tests => 4;
 
 use_ok 'Net::Twitter';
 
