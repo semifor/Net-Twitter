@@ -159,6 +159,7 @@ override _authenticated_request => sub {
     }
 
     if ( $authenticate && $self->authorized ) {
+        local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
         my $request = $self->_make_oauth_request(
             'protected resource',
             request_url    => $uri,

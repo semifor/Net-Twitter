@@ -1,8 +1,10 @@
+    - Silence Net::OAuth double encoding error (false positives)
+
 3.04005  2009-07-28
     - Fix: OAuth / unicode conflict
 
 3.04004  2009-07-28
-    - Bug fix: OAuth signatures on POST requests (Peter Bray)
+    - Bug fix: OAuth signatures on POST requests (Galen Huntington)
 
 3.04003  2009-07-23
     - properly utf-8 encode output to twitter (should provide full unicode support, now)
