@@ -9,11 +9,12 @@ use HTTP::Request::Common;
 use Net::Twitter::Error;
 use Scalar::Util qw/reftype/;
 use HTML::Entities;
+use Encode;
 
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.04004';
+our $VERSION = '3.04005';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -37,7 +38,7 @@ has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpa
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 has _json_handler   => (
     is      => 'rw',
-    default => sub { JSON::Any->new(uft8 => 1) },
+    default => sub { JSON::Any->new(utf8 => 1) },
     handles => { _from_json => 'from_json' },
 );
 
@@ -84,6 +85,8 @@ sub _authenticated_request {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
     my $msg;
+
+    $_ = encode('utf-8', $_) for values %$args;
 
     if ( $http_method eq 'GET' ) {
         $uri->query_form($args);

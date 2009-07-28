@@ -4,6 +4,7 @@ use HTTP::Request::Common;
 use Carp;
 use URI;
 use Digest::SHA;
+use Encode;
 
 requires qw/_authenticated_request ua/;
 
@@ -152,7 +153,9 @@ override _authenticated_request => sub {
     }
     elsif ( $http_method eq 'POST' ) {
         delete $args->{source}; # no necessary with OAuth requests
-        $msg = POST($uri, $args);
+        my $encoded_args = { %$args };
+        $_ = encode('utf-8', $_) for values %$encoded_args;
+        $msg = POST($uri, $encoded_args);
     }
 
     if ( $authenticate && $self->authorized ) {
