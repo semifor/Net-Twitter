@@ -13,7 +13,7 @@ use HTML::Entities;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.04003';
+our $VERSION = '3.04004';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

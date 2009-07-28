@@ -147,6 +147,7 @@ override _authenticated_request => sub {
 
     if ( $http_method eq 'GET' ) {
         $uri->query_form($args);
+        $args = {};
         $msg = GET($uri);
     }
     elsif ( $http_method eq 'POST' ) {
@@ -161,6 +162,7 @@ override _authenticated_request => sub {
             request_method => $http_method,
             token          => $self->access_token,
             token_secret   => $self->access_token_secret,
+            extra_params   => $args,
         );
 
         $msg->header(Authorization => $request->to_authorization_header);
