@@ -1,4 +1,6 @@
+3.04006  2009-07-29
     - Silence Net::OAuth double encoding error (false positives)
+    - Fixed: infrequent OAuth signature failures
 
 3.04005  2009-07-28
     - Fix: OAuth / unicode conflict

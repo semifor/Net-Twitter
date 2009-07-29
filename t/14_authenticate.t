@@ -9,7 +9,7 @@ use Net::Twitter;
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
-plan tests => 14;
+plan tests => 13;
 
 my $nt = Net::Twitter->new(legacy => 1);
 isa_ok $nt, 'Net::Twitter';
@@ -52,4 +52,3 @@ ok      !$t->request->header('Authorization'), "no auth header without access to
 $nt->access_token('1234');
 $nt->access_token_secret('5678');
 lives_ok { $nt->user_timeline } "lives with access tokens";
-like     $t->request->header('Authorization'), qr/OAuth/, "has OAuth auth header";

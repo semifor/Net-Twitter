@@ -146,18 +146,6 @@ override _authenticated_request => sub {
 
     my $msg;
 
-    if ( $http_method eq 'GET' ) {
-        $uri->query_form($args);
-        $args = {};
-        $msg = GET($uri);
-    }
-    elsif ( $http_method eq 'POST' ) {
-        delete $args->{source}; # no necessary with OAuth requests
-        my $encoded_args = { %$args };
-        $_ = encode('utf-8', $_) for values %$encoded_args;
-        $msg = POST($uri, $encoded_args);
-    }
-
     if ( $authenticate && $self->authorized ) {
         local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
         my $request = $self->_make_oauth_request(
@@ -169,7 +157,28 @@ override _authenticated_request => sub {
             extra_params   => $args,
         );
 
-        $msg->header(Authorization => $request->to_authorization_header);
+        if ( $http_method eq 'GET' ) {
+            $msg = GET($request->to_url);
+        }
+        elsif ( $http_method eq 'POST' ) {
+            $msg = POST($uri, Content => $request->to_post_body);
+        }
+        else {
+            croak "unexpected http_method: $http_method";
+        }
+    }
+    elsif ( $http_method eq 'GET' ) {
+        $uri->query_form($args);
+        $args = {};
+        $msg = GET($uri);
+    }
+    elsif ( $http_method eq 'POST' ) {
+        delete $args->{source}; # no necessary with OAuth requests
+        $_ = encode('utf-8', $_) for values %$args;
+        $msg = POST($uri, $args);
+    }
+    else {
+        croak "unexpected http_method: $http_method";
     }
 
     return $self->ua->request($msg);
