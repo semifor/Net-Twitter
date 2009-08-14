@@ -39,7 +39,7 @@ requires    'URI::Escape';
 # The user may already have JSON::Any installed, but since removed all valid
 # providers.  (Yes, this seems to have happened in the wild.)
 sub has_json_handler () {
-    my @order = qw/JSON::XS JSON::DWIW JSON/;
+    my @order = qw/JSON::XS JSON/;
     for my $provider ( @order ) {
         eval "require $provider";
         return 1 unless $@;

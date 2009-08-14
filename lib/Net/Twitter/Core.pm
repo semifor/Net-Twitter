@@ -3,7 +3,7 @@ use 5.008001;
 use Moose;
 use MooseX::MultiInitArg;
 use Carp;
-use JSON::Any qw/XS DWIW JSON/;
+use JSON::Any qw/XS JSON/;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
