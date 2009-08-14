@@ -61,6 +61,65 @@ EOT
     required => [],
 );
 
+twitter_api_method home_timeline => (
+    description => <<'',
+Returns the 20 most recent statuses, including retweets, posted by the
+authenticating user and that user's friends. This is the equivalent of
+/timeline/home on the Web.
+
+    path      => 'statuses/home_timeline',
+    method    => 'GET',
+    params    => [qw/since_id max_id count page/],
+    required  => [],
+    returns   => 'ArrayRef[Status]',
+);
+
+twitter_api_method retweet => (
+    description => <<'',
+Retweets a tweet. Requires the id parameter of the tweet you are retweeting.
+Returns the original tweet with retweet details embedded.
+
+    path      => 'statuses/retweet/id',
+    method    => 'POST',
+    params    => [qw/id/],
+    required  => [qw/id/],
+    returns   => 'Status',
+);
+
+twitter_api_method retweeted_by_me => (
+    description => <<'',
+Returns the 20 most recent retweets posted by the authenticating user.
+
+    path      => 'statuses/retweeted_by_me',
+    method    => 'GET',
+    params    => [qw/since_id max_id count page/],
+    required  => [],
+    returns   => 'ArrayRef[Status]',
+);
+
+twitter_api_method retweeted_to_me => (
+    description => <<'',
+Returns the 20 most recent retweets posted by the authenticating user's friends.
+
+    path      => 'statuses/retweeted_by_me',
+    method    => 'GET',
+    params    => [qw/since_id max_id count page/],
+    required  => [],
+    returns   => 'ArrayRef[Status]',
+);
+
+twitter_api_method retweeted_of_me => (
+    description => <<'',
+Returns the 20 most recent tweets of the authenticated user that have been
+retweeted by others.
+
+    path      => 'statuses/retweeted_by_me',
+    method    => 'GET',
+    params    => [qw/since_id max_id count page/],
+    required  => [],
+    returns   => 'ArrayRef[Status]',
+);
+
 twitter_api_method friends_timeline => (
     description => <<'',
 Returns the 20 most recent statuses posted by the authenticating user

@@ -69,6 +69,11 @@ ok
 params
 perigrin
 requester's
+retweet
+retweeted
+retweeting
+Retweets
+retweets
 rpp
 SSL
 ssl
