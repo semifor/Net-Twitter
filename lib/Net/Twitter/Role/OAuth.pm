@@ -20,9 +20,10 @@ around BUILDARGS => sub {
 
     my $args = $class->$orig(@_);
     my $oauth_urls = delete $args->{oauth_urls} || {
-        request_token_url => "http://twitter.com/oauth/request_token",
-        authorization_url => "http://twitter.com/oauth/authorize",
-        access_token_url  => "http://twitter.com/oauth/access_token",
+        request_token_url  => "http://twitter.com/oauth/request_token",
+        authentication_url => "http://twitter.com/oauth/authenticate",
+        authorization_url  => "http://twitter.com/oauth/authorize",
+        access_token_url   => "http://twitter.com/oauth/access_token",
     };
 
     return { %$oauth_urls, %$args };
@@ -32,7 +33,7 @@ has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
 has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
 
 # url attributes
-for my $attribute ( qw/authorization_url request_token_url access_token_url/ ) {
+for my $attribute ( qw/authentication_url authorization_url request_token_url access_token_url/ ) {
     has $attribute => (
         isa    => 'Str', is => 'rw', required => 1,
         # inflate urls to URI objects when read
@@ -55,16 +56,22 @@ sub authorized {
     return defined $self->has_access_token && $self->has_access_token_secret;
 }
 
-# get the authorization URL from Twitter
-sub get_authorization_url {
-    my ($self, %params) = @_;
+# get the athorization or authentication url
+sub _get_auth_url {
+    my ($self, $which_url, %params ) = @_;
 
     $self->_request_request_token(%params) unless $self->has_request_token;
 
-    my $uri = $self->authorization_url;
+    my $uri = $self->$which_url;
     $uri->query_form(oauth_token => $self->request_token);
     return $uri;
 }
+
+# get the authentication URL from Twitter
+sub get_authentication_url { return shift->_get_auth_url(authentication_url => @_) }
+
+# get the authorization URL from Twitter
+sub get_authorization_url { return shift->_get_auth_url(authorization_url => @_) }
 
 # common portion of all oauth requests
 sub _make_oauth_request {
@@ -371,6 +378,13 @@ Get the URL used to authorize the user.  Returns a C<URI> object.  For web
 applications, pass your applications callback URL as the C<callback> parameter.
 No arguments are required for desktop applications (C<callback> defaults to
 C<oob>, out-of-band).
+
+=item get_authentication_url(callback => $callback_url)
+
+Get the URL used to authenticate the user with "Sign in with Twitter"
+authentication flow.  Returns a C<URI> object.  For web applications, pass your
+applications callback URL as the C<callback> parameter.  No arguments are
+required for desktop applications (C<callback> defaults to C<oob>, out-of-band).
 
 =item access_token
 

@@ -1,5 +1,8 @@
+3.05001
+    - Added get_authentication_url for "Sign in with Twitter" authentication flow
+
 3.05000  2009-08-14
-    - Addde new API methods: home_timeline, retweet, retweed_{by,of,to}_me
+    - Added new API methods: home_timeline, retweet, retweed_{by,of,to}_me
     - Removed JSON::DWIW from supported handlers (lacks support for JSON::Any's uft8 option)
 
 3.04006  2009-07-29
