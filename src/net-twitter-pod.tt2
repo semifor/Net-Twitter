@@ -217,9 +217,13 @@ The value used in the C<source> parameter of API method calls. It is currently
 only used in the C<update> method in the REST API.  It defaults to
 "twitterpm".  This results in the text "from Net::Twitter" rather than "from
 web" for status messages posted from C<Net::Twitter> when displayed via the
-Twitter web interface.  The value for this parameter is provided by Twitter
-when a Twitter application is registered.  See
-L<http://apiwiki.twitter.com/FAQ#HowdoIget%E2%80%9CfromMyApp%E2%80%9DappendedtoupdatessentfrommyAPIapplication>.
+Twitter web interface.
+
+Twitter is no longer registering source parameters.  New applications should
+implement OAuth and register via L<http://twitter.com/oauth_clients>.
+
+Only use the C<source> parameter if you have an existing, registered source
+parameter from Twitter.
 
 =item apiurl
 

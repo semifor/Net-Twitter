@@ -1,5 +1,6 @@
 3.05001
     - Added get_authentication_url for "Sign in with Twitter" authentication flow
+    - Updated "source" option documentation (closes RT 48786)
 
 3.05000  2009-08-14
     - Added new API methods: home_timeline, retweet, retweed_{by,of,to}_me
