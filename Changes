@@ -1,4 +1,4 @@
-3.05001
+3.05001 2009-08-21
     - Added get_authentication_url for "Sign in with Twitter" authentication flow
     - Updated "source" option documentation (closes RT 48786)
 
