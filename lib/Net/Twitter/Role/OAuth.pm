@@ -180,7 +180,7 @@ override _authenticated_request => sub {
         $msg = GET($uri);
     }
     elsif ( $http_method eq 'POST' ) {
-        delete $args->{source}; # no necessary with OAuth requests
+        delete $args->{source}; # not necessary with OAuth requests
         $_ = encode('utf-8', $_) for values %$args;
         $msg = POST($uri, $args);
     }
