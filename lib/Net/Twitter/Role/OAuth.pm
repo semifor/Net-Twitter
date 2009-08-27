@@ -4,7 +4,6 @@ use HTTP::Request::Common;
 use Carp;
 use URI;
 use Digest::SHA;
-use Encode;
 
 requires qw/_authenticated_request ua/;
 
@@ -151,10 +150,12 @@ sub request_access_token {
 override _authenticated_request => sub {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
-    my $msg;
+    delete $args->{source}; # not necessary with OAuth requests
 
+    my $msg;
     if ( $authenticate && $self->authorized ) {
         local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
+
         my $request = $self->_make_oauth_request(
             'protected resource',
             request_url    => $uri,
@@ -175,13 +176,13 @@ override _authenticated_request => sub {
         }
     }
     elsif ( $http_method eq 'GET' ) {
+        $self->_encode_args($args);
         $uri->query_form($args);
         $args = {};
         $msg = GET($uri);
     }
     elsif ( $http_method eq 'POST' ) {
-        delete $args->{source}; # not necessary with OAuth requests
-        $_ = encode('utf-8', $_) for values %$args;
+        $self->_encode_args($args);
         $msg = POST($uri, $args);
     }
     else {

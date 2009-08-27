@@ -1,3 +1,6 @@
+3.05002 2009-08-27
+    - Work around perl bug requiring encoded hash keys when client uses "use utf8"
+
 3.05001 2009-08-21
     - Added get_authentication_url for "Sign in with Twitter" authentication flow
     - Updated "source" option documentation (closes RT 48786)

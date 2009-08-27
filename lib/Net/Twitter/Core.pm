@@ -9,12 +9,12 @@ use HTTP::Request::Common;
 use Net::Twitter::Error;
 use Scalar::Util qw/reftype/;
 use HTML::Entities;
-use Encode;
+use Encode qw/encode_utf8/;
 
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.05001';
+our $VERSION = '3.05002';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -80,13 +80,23 @@ sub credentials {
     return $self; # make it chainable
 }
 
+sub _encode_args {
+    my ($self, $args) = @_;
+
+    # Values need to be utf-8 encoded.  Because of a perl bug, exposed when
+    # client code does "use utf8", keys must also be encoded as well.
+    # see: http://www.perlmonks.org/?node_id=668987
+    # and: http://perl5.git.perl.org/perl.git/commit/eaf7a4d2
+    return { map { encode_utf8 $_ } %$args };
+}
+
 # Basic Auth, overridden by Role::OAuth, if included
 sub _authenticated_request {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
     my $msg;
 
-    $_ = encode('utf-8', $_) for values %$args;
+    $self->_encode_args($args);
 
     if ( $http_method eq 'GET' ) {
         $uri->query_form($args);
