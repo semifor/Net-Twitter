@@ -282,7 +282,7 @@ Here's how to authorize users as a desktop app mode:
       $nt->access_token_secret($access_token_secret);
   }
 
-  unless ( $nt->is_authorized ) {
+  unless ( $nt->authorized ) {
       # The client is not yet authorized: Do it now
       print "Authorize this app at ", $nt->get_authorization_url, " and enter the PIN#\n";
 

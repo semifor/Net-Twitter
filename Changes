@@ -1,3 +1,5 @@
+    - Removed deprecated is_authorized from examples in pod (thanks to Nigel Metheringham)
+
 3.05002 2009-08-27
     - Work around perl bug requiring encoded hash keys when client uses "use utf8"
 
