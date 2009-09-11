@@ -32,7 +32,7 @@ requires    'MooseX::AttributeHelpers';
 requires    'MooseX::MultiInitArg';
 requires    'namespace::autoclean';
 requires    'Net::OAuth'                => 0.16;
-requires    'URI';
+requires    'URI'                       => 1.40;
 requires    'URI::Escape';
 
 # Don't rely on the JSON::Any requirement to pull in a suitable JSON backend.

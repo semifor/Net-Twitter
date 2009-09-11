@@ -14,7 +14,7 @@ use Encode qw/encode_utf8/;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.05002';
+our $VERSION = '3.05003';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
