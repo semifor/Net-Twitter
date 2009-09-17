@@ -4,6 +4,7 @@ use HTTP::Request::Common;
 use Carp;
 use URI;
 use Digest::SHA;
+use List::Util qw/first/;
 
 requires qw/_authenticated_request ua/;
 
@@ -42,7 +43,7 @@ for my $attribute ( qw/authentication_url authorization_url request_token_url ac
 
 # token attributes
 for my $attribute ( qw/access_token access_token_secret request_token request_token_secret/ ) {
-    has $attribute => ( isa => 'Str', is => 'rw', init_arg => undef,
+    has $attribute => ( isa => 'Str', is => 'rw',
                         clearer   => "clear_$attribute",
                         predicate => "has_$attribute",
     );
@@ -156,20 +157,29 @@ override _authenticated_request => sub {
     if ( $authenticate && $self->authorized ) {
         local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
 
+        my $is_multipart = first { ref } %$args;
+
         my $request = $self->_make_oauth_request(
             'protected resource',
             request_url    => $uri,
             request_method => $http_method,
             token          => $self->access_token,
             token_secret   => $self->access_token_secret,
-            extra_params   => $args,
+            extra_params   => $is_multipart ? {} : $args,
         );
 
         if ( $http_method eq 'GET' ) {
             $msg = GET($request->to_url);
         }
         elsif ( $http_method eq 'POST' ) {
-            $msg = POST($uri, Content => $request->to_post_body);
+            $msg = $is_multipart
+                 ? POST($request->request_url,
+                        Authorization => $request->to_authorization_header,
+                        Content_Type  => 'form-data',
+                        Content       => [ %$args ],
+                   )
+                 : POST($uri, Content => $request->to_post_body)
+                 ;
         }
         else {
             croak "unexpected http_method: $http_method";

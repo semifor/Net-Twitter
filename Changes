@@ -1,3 +1,8 @@
+3.06000 2009-09-16
+    - support for multipart/from-data posts, used by update_profile_image and
+      update_profile_background_image
+    - bumped version requirement on namespace::autoclean to avoid deprecation notice
+
 3.05003 2009-09-10
     - URI 1.35 breaks unicode support; require 1.40 (thanks to Dan Boger, @zigdon)
     - Removed deprecated is_authorized from examples in pod (thanks to Nigel Metheringham)

@@ -8,13 +8,14 @@ use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
 use Scalar::Util qw/reftype/;
+use List::Util qw/first/;
 use HTML::Entities;
 use Encode qw/encode_utf8/;
 
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.05003';
+our $VERSION = '3.06000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -87,7 +88,7 @@ sub _encode_args {
     # client code does "use utf8", keys must also be encoded as well.
     # see: http://www.perlmonks.org/?node_id=668987
     # and: http://perl5.git.perl.org/perl.git/commit/eaf7a4d2
-    return { map { encode_utf8 $_ } %$args };
+    return { map { ref($_) ? $_ : encode_utf8 $_ } %$args };
 }
 
 # Basic Auth, overridden by Role::OAuth, if included
@@ -103,7 +104,14 @@ sub _authenticated_request {
         $msg = GET($uri);
     }
     elsif ( $http_method eq 'POST' ) {
-        $msg = POST($uri, $args);
+        # if any of the arguments are (array) refs, use form-data
+        $msg = (first { ref } values %$args)
+             ? POST($uri,
+                    Content_Type => 'form-data',
+                    Content      => [ %$args ],
+               )
+             : POST($uri, $args)
+             ;
     }
     else {
         croak "unexpected HTTP method: $http_method";

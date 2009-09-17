@@ -456,9 +456,24 @@ also returned in the /users/show API method.
 );
 
 twitter_api_method update_profile_image => (
-    description => <<'',
-Updates the authenticating user's profile image.  Expects raw multipart
-data, not a URL to an image.
+    description => <<'EOT',
+Updates the authenticating user's profile image.  The C<image> parameter is an
+arrayref with the following interpretation:
+
+  [ $file ]
+  [ $file, $filename ]
+  [ $file, $filename, Content_Type => $mime_type ]
+  [ undef, $filename, Content_Type => $mime_type, Content => $raw_image_data ]
+
+The first value of the array (C<$file>) is the name of a file to open.  The
+second value (C<$filename>) is the name given to Twitter for the file.  If
+C<$filename> is not provided, the basename portion of C<$file> is used.  If
+C<$mime_type> is not provided, it will be provided automatically using
+L<LWP::MediaTypes::guess_media_type()>.
+
+C<$raw_image_data> can be provided, rather than opening a file, by passing
+C<undef> as the first array value.
+EOT
 
     path     => 'account/update_profile_image',
     method   => 'POST',
@@ -469,8 +484,10 @@ data, not a URL to an image.
 
 twitter_api_method update_profile_background_image => (
     description => <<'',
-Updates the authenticating user's profile background image.  Expects
-raw multipart data, not a URL to an image.
+Updates the authenticating user's profile background image. The C<image>
+parameter must be an arrayref with the same interpretation as the C<image>
+parameter in the C<update_profile_image> method.  See that method's
+documentation for details.
 
     path     => 'account/update_profile_background_image',
     method   => 'POST',

@@ -30,7 +30,7 @@ requires    'Moose::Exporter';
 requires    'Moose::Role';
 requires    'MooseX::AttributeHelpers';
 requires    'MooseX::MultiInitArg';
-requires    'namespace::autoclean';
+requires    'namespace::autoclean'      => 0.09;
 requires    'Net::OAuth'                => 0.16;
 requires    'URI'                       => 1.40;
 requires    'URI::Escape';
