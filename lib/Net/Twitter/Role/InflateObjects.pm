@@ -13,7 +13,6 @@ Net::Twitter::Role::InflateObjects - Inflate Twitter API return values to Moose 
 
 requires qw/_inflate_objects/;
 
-has _visitor   => ( isa => 'Data::Visitor::Callback', is => 'ro', lazy => 1, builder => '_build_visitor' );
 has _class_map => (
     metaclass => 'Collection::Hash',
     isa       => 'HashRef',
@@ -25,32 +24,28 @@ has _class_map => (
 );
 
 override _inflate_objects => sub {
-    my ($self, $obj) = @_;
+    my ($self, $datetime_parser, $obj) = @_;
 
     return unless ref $obj;
 
-    $self->_visitor->visit($obj);
+    my $visitor = Data::Visitor::Callback->new(
+        hash   => sub { $self->_hash_to_object($datetime_parser, $_[1]) },
+    );
+
+    $visitor->visit($obj);
 };
 
 sub _attribute_inflator {
-    my ($self, $name, $value) = @_;
+    my ($self, $datetime_parser, $name, $value) = @_;
 
     return URI->new($value) if $name =~ /url$/;
-    return $self->_dt_parser->parse_datetime($value) if $name =~ /^created_at|reset_time$/;
+    return $datetime_parser->parse_datetime($value) if $name =~ /^created_at|reset_time$/;
 
     return $value;
 }
 
-sub _build_visitor {
-    my $self = shift;
-
-    Data::Visitor::Callback->new(
-        hash   => sub { $self->_hash_to_object($_[1]) },
-    );
-}
-
 sub _hash_to_object {
-    my ($self, $href) = @_;
+    my ($self, $datetime_parser, $href) = @_;
 
     my $signature = Digest::SHA::sha1_hex(
         join ',' => sort keys %$href
@@ -63,7 +58,7 @@ sub _hash_to_object {
             $class->add_attribute(
                 $name,
                 reader => {
-                    $name => sub { $self->_attribute_inflator($name, shift->{$name}) },
+                    $name => sub { $self->_attribute_inflator($datetime_parser, $name, shift->{$name}) },
                 },
             );
         }

@@ -25,21 +25,24 @@ sub get_error {
 }
 
 around _parse_result => sub {
-    my ($next, $self, $res) = @_;
+    my ($next, $self, $res, $sythetic_args, $datetime_parser) = @_;
 
     $self->_clear_error;
     $self->_http_response($res);
 
-    my $r = eval { $next->($self, $res) };
+    my $r = eval { $next->($self, $res, $sythetic_args, $datetime_parser) };
     if ( $@ ) {
         die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Error');
 
         $self->_twitter_error($@->has_twitter_error
             ? $@->twitter_error
-            : $self->_inflate_objects({
+            : $self->_inflate_objects(
+                $datetime_parser,
+                {
                   error => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF JSON RESPONSE FAILED - "
                          . $res->message
-              })
+                }
+              )
         );
         $r = $self->_error_return_val;
     }

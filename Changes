@@ -1,4 +1,5 @@
     - added synthetic 'since' parameter
+    - fixed: object inflation for Search API returns (different timestamp format!)
 
 3.06000 2009-09-16
     - support for multipart/from-data posts, used by update_profile_image and

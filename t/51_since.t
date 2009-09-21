@@ -13,6 +13,11 @@ use_ok 'Net::Twitter';
 
 my $nt = Net::Twitter->new(traits => [qw/API::REST/]);
 
+my $datetime_parser = do {
+    no warnings 'once';
+    $Net::Twitter::Role::API::REST::DATETIME_PARSER;
+};
+
 my $dt = DateTime->now;
 $dt->subtract(minutes => 6);
 
@@ -20,17 +25,13 @@ my $t = TestUA->new($nt->ua);
 $t->response->content(JSON::Any->to_json([
     {
         text => 'Hello, twittersphere!',
-        user => {
-           screen_name => 'net_twitter',
-        },
-        created_at => $nt->_dt_parser->format_datetime($dt),
+        id => 1234,
+        created_at => $datetime_parser->format_datetime($dt),
     },
     {
         text => 'Too old',
-        user => {
-            screen_name => 'net_twitter',
-        },
-        created_at => $nt->_dt_parser->format_datetime($dt - DateTime::Duration->new(days => 2)),
+        id => 5678,
+        created_at => $datetime_parser->format_datetime($dt - DateTime::Duration->new(days => 2)),
     },
 ]));
 
@@ -44,7 +45,7 @@ cmp_ok @$r, '==', 1,  'filtered with DateTime';
 $r = $nt->friends_timeline({ since => time - 3600*24 });
 cmp_ok @$r, '==', 1,  'filtered with epoch';
 
-$r = $nt->friends_timeline({ since => $nt->_dt_parser->format_datetime(
+$r = $nt->friends_timeline({ since => $datetime_parser->format_datetime(
             $dt - DateTime::Duration->new(days => 1)) });
 cmp_ok @$r, '==', 1,  'filtered with string in Twitter timestamp format';
 

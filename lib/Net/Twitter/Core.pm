@@ -11,7 +11,8 @@ use Scalar::Util qw/reftype/;
 use List::Util qw/first/;
 use HTML::Entities;
 use Encode qw/encode_utf8/;
-use DateTime::Format::Strptime;
+use DateTime;
+use Data::Visitor::Callback;
 
 use namespace::autoclean;
 
@@ -43,9 +44,6 @@ has _json_handler   => (
     default => sub { JSON::Any->new(utf8 => 1) },
     handles => { _from_json => 'from_json' },
 );
-
-has _dt_parser => ( isa => 'DateTime::Format::Strptime', is => 'ro', lazy => 1,
-                    default => sub { DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y') } );
 
 sub _synthetic_args { qw/authenticate since/ }
 
@@ -145,10 +143,10 @@ sub _decode_html_entities {
 
 # By default, Net::Twitter does not inflate objects, so just return the
 # hashref, untouched. This is really just a hook for Role::InflateObjects.
-sub _inflate_objects { return $_[1] }
+sub _inflate_objects { return $_[2] }
 
 sub _parse_result {
-    my ($self, $res, $synthetic_args) = @_;
+    my ($self, $res, $synthetic_args, $datetime_parser) = @_;
 
     # workaround for Laconica API returning bools as strings
     # (Fixed in Laconi.ca 0.7.4)
@@ -159,7 +157,7 @@ sub _parse_result {
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # inflate the twitter object(s) if possible
-    $self->_inflate_objects($obj);
+    $self->_inflate_objects($datetime_parser, $obj);
 
     # Twitter sometimes returns an error with status code 200
     if ( ref $obj && reftype $obj eq 'HASH' && exists $obj->{error} ) {
@@ -168,7 +166,7 @@ sub _parse_result {
 
     if  ( $res->is_success && defined $obj ) {
         if ( my $since = delete $synthetic_args->{since} ) {
-            $obj = $self->_filter_since($obj, $since);
+            $self->_filter_since($datetime_parser, $obj, $since);
         }
         return $obj;
     }
@@ -180,24 +178,48 @@ sub _parse_result {
 }
 
 sub _filter_since {
-    my ($self, $obj, $since) = @_;
-
-    # if it isn't a non-empty arrayref, we have nothing to do
-    return unless reftype $obj eq 'ARRAY' && @$obj;
+    my ($self, $datetime_parser, $obj, $since) = @_;
 
     # $since can be a DateTime, an epoch value, or a Twitter formatted timestamp
-    my $since_dt  = blessed $since && $since->isa('DateTime') && $since
+    my $since_dt  = ref $since && $since->isa('DateTime') && $since
                  || eval { DateTime->from_epoch(epoch => $since) }
-                 || eval { $self->_dt_parser->parse_datetime($since) }
+                 || eval { $datetime_parser->parse_datetime($since) }
                  || croak
 "Invalid 'since' parameter: $since. Must be a DateTime, epoch, or string in Twitter timestamp format.";
 
-    # $obj may have inflated created_at attributes, already
-    my $get_created_at_dt = ref $obj->[0]{created_at} ? sub { shift->{created_at} }
-                          : sub { $self->_dt_parser->parse_datetime(shift->{created_at}) };
+    my $visitor = Data::Visitor::Callback->new(
+        ignore_return_values => 1,
+        array => sub {
+            my ($visitor, $data) = @_;
 
-    # filter out statuses that are too old
-    return [ grep { $get_created_at_dt->($_) > $since_dt } @$obj ];
+            return unless $self->_contains_statuses($data);
+
+            # $obj may have inflated created_at attributes, already
+            my $get_created_at_dt = ref $data->[0]{created_at} ? sub { shift->{created_at} }
+                                  : sub { $datetime_parser->parse_datetime(shift->{created_at}) };
+
+            # filter out statuses that are too old
+            my $i = 0;
+            while ( $i < @$data ) {
+                unless ( $get_created_at_dt->($data->[$i]) > $since_dt ) {
+                    splice @$data, $i, 1;
+                }
+                else {
+                    $i++;
+                }
+            }
+        }
+    );
+
+    $visitor->visit($obj);
+}
+
+# check an arrayref to see if it contains satuses
+sub _contains_statuses {
+    my ($self, $arrayref) = @_;
+
+    my $e = $arrayref->[0] || return;
+    return $e->{created_at} && $e->{text} && $e->{id};
 }
 
 1;

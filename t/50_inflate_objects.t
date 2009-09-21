@@ -14,6 +14,11 @@ use_ok 'Net::Twitter';
 
 my $nt = Net::Twitter->new(traits => [qw/API::REST InflateObjects/]);
 
+my $datetime_parser = do {
+    no warnings 'once';
+    $Net::Twitter::Role::API::REST::DATETIME_PARSER;
+};
+
 my $dt = DateTime->now;
 $dt->subtract(minutes => 6);
 
@@ -23,7 +28,7 @@ $t->response->content(JSON::Any->to_json([{
     user => {
        screen_name => 'net_twitter',
     },
-    created_at => $nt->_dt_parser->format_datetime($dt),
+    created_at => $datetime_parser->format_datetime($dt),
 }]));
 
 my $r = $nt->friends_timeline;

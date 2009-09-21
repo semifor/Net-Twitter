@@ -1,9 +1,7 @@
 package Net::Twitter::Role::API::REST;
 use Moose::Role;
-
-requires qw/credentials/;
-
 use Net::Twitter::API;
+use DateTime::Format::Strptime;
 
 requires qw/ua username password credentials/;
 
@@ -40,6 +38,9 @@ after credentials => sub {
 
 base_url     'apiurl';
 authenticate 1;
+
+our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
+datetime_parser $DATETIME_PARSER;
 
 twitter_api_method public_timeline => (
     description => <<'EOT',

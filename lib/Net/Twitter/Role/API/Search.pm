@@ -2,11 +2,15 @@ package Net::Twitter::Role::API::Search;
 
 use Moose::Role;
 use Net::Twitter::API;
+use DateTime::Format::Strptime;
 
 has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
 base_url     'searchapiurl';
 authenticate 0;
+
+our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a, %d %b %Y %T %z');
+datetime_parser $DATETIME_PARSER;
 
 twitter_api_method search => (
     description => <<'',
