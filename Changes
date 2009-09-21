@@ -1,3 +1,5 @@
+    - added synthetic 'since' parameter
+
 3.06000 2009-09-16
     - support for multipart/from-data posts, used by update_profile_image and
       update_profile_background_image

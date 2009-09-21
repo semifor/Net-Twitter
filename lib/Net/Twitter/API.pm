@@ -57,7 +57,14 @@ sub twitter_api_method {
         }
         $args->{source} ||= $self->source if $options{add_source};
 
-        my $authenticate = exists $args->{authenticate}  ? delete $args->{authenticate}
+        # save synthetic arguments; don't pass them to Twitter
+        my $synthetic_args = {};
+        for my $k ( $self->_synthetic_args ) {
+            $synthetic_args->{$k} = delete $args->{$k} if exists $args->{$k};
+        }
+
+        my $authenticate = exists $synthetic_args->{authenticate}
+                         ? $synthetic_args->{authenticate}
                          : $options{authenticate}
                          ;
 
@@ -66,7 +73,8 @@ sub twitter_api_method {
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
 
         return $self->_parse_result(
-            $self->_authenticated_request($options{method}, $uri, $args, $authenticate)
+            $self->_authenticated_request($options{method}, $uri, $args, $authenticate),
+            $synthetic_args,
         );
     };
 

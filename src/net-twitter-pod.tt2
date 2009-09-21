@@ -363,6 +363,32 @@ Methods that support the C<page> parameter expect page numbers E<gt> 0.  Twitter
 ignores invalid C<page> values.  So C<< { page => 0 } >> produces the same result
 as C<< { page => 1 } >>.
 
+=head2 Synthetic Arguments
+
+In addition to the arguments described in the Twitter API Documentation for
+each API method, Net::Twitter supports additional I<synthetic> arguments.
+
+=over 4
+
+=item authenticate
+
+When set to 1, Net::Twitter will provide an Authorization header for the API
+call; when set to 0, it will suppress the Authentication header.  This argument
+overrides the defined authentication behavior for the API method.  It is
+probably only useful for the C<rate_limit_satus> method which returns different
+values for authenticated and unauthenticated calls.  See L</AUTHENTICATION> for
+more details.
+
+=item since
+
+API methods that accept the C<since_id> argument will also accept the synthetic
+C<since> argument, instead.  C<since> may be a C<Date::Time> object, an epoch
+time (the number of seconds since the system epoch), or a string in the same
+format returned by Twitter for the C<created_at> attribute.  Only status with a
+C<created_at> time greater than C<since> will be returned by the API call.
+
+=back
+
 =head1 REST API Methods
 
 These methods are provided when trait C<API::REST> is included in the C<traits>

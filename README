@@ -333,6 +333,28 @@ API METHODS AND ARGUMENTS
     Twitter silently ignores invalid "page" values. So "{ page => 0 }"
     produces the same result as "{ page => 1 }".
 
+  Synthetic Arguments
+    In addition to the arguments described in the Twitter API Documentation
+    for each API method, Net::Twitter supports additional *synthetic*
+    arguments.
+
+    authenticate
+        When set to 1, Net::Twitter will provide an Authorization header for
+        the API call; when set to 0, it will suppress the Authentication
+        header. This argument overrides the defined authentication behavior
+        for the API method. It is probably only useful for the
+        "rate_limit_satus" method which returns different values for
+        authenticated and unauthenticated calls. See "AUTHENTICATION" for
+        more details.
+
+    since
+        API methods that accept the "since_id" argument will also accept the
+        synthetic "since" argument, instead. "since" may be a "Date::Time"
+        object, an epoch time (the number of seconds since the system
+        epoch), or a string in the same format returned by Twitter for the
+        "created_at" attribute. Only status with a "created_at" time greater
+        than "since" will be returned by the API call.
+
 REST API Methods
     These methods are provided when trait "API::REST" is included in the
     "traits" option to "new".

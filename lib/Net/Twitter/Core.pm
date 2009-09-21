@@ -11,6 +11,7 @@ use Scalar::Util qw/reftype/;
 use List::Util qw/first/;
 use HTML::Entities;
 use Encode qw/encode_utf8/;
+use DateTime::Format::Strptime;
 
 use namespace::autoclean;
 
@@ -42,6 +43,11 @@ has _json_handler   => (
     default => sub { JSON::Any->new(utf8 => 1) },
     handles => { _from_json => 'from_json' },
 );
+
+has _dt_parser => ( isa => 'DateTime::Format::Strptime', is => 'ro', lazy => 1,
+                    default => sub { DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y') } );
+
+sub _synthetic_args { qw/authenticate since/ }
 
 sub BUILD {
     my $self = shift;
@@ -142,7 +148,7 @@ sub _decode_html_entities {
 sub _inflate_objects { return $_[1] }
 
 sub _parse_result {
-    my ($self, $res) = @_;
+    my ($self, $res, $synthetic_args) = @_;
 
     # workaround for Laconica API returning bools as strings
     # (Fixed in Laconi.ca 0.7.4)
@@ -160,12 +166,38 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $obj if $res->is_success && defined $obj;
+    if  ( $res->is_success && defined $obj ) {
+        if ( my $since = delete $synthetic_args->{since} ) {
+            $obj = $self->_filter_since($obj, $since);
+        }
+        return $obj;
+    }
 
     my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if ref $obj;
 
     die $error;
+}
+
+sub _filter_since {
+    my ($self, $obj, $since) = @_;
+
+    # if it isn't a non-empty arrayref, we have nothing to do
+    return unless reftype $obj eq 'ARRAY' && @$obj;
+
+    # $since can be a DateTime, an epoch value, or a Twitter formatted timestamp
+    my $since_dt  = blessed $since && $since->isa('DateTime') && $since
+                 || eval { DateTime->from_epoch(epoch => $since) }
+                 || eval { $self->_dt_parser->parse_datetime($since) }
+                 || croak
+"Invalid 'since' parameter: $since. Must be a DateTime, epoch, or string in Twitter timestamp format.";
+
+    # $obj may have inflated created_at attributes, already
+    my $get_created_at_dt = ref $obj->[0]{created_at} ? sub { shift->{created_at} }
+                          : sub { $self->_dt_parser->parse_datetime(shift->{created_at}) };
+
+    # filter out statuses that are too old
+    return [ grep { $get_created_at_dt->($_) > $since_dt } @$obj ];
 }
 
 1;

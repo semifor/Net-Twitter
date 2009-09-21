@@ -4,7 +4,6 @@ use namespace::autoclean;
 use MooseX::AttributeHelpers;
 use Data::Visitor::Callback;
 use Digest::SHA;
-use DateTime::Format::Strptime;
 
 =head1 NAME
 
@@ -24,9 +23,6 @@ has _class_map => (
        get => 'get_cached_class',
     },
 );
-
-has _dt_parser => ( isa => 'DateTime::Format::Strptime', is => 'ro', lazy => 1,
-                    default => sub { DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y') } );
 
 override _inflate_objects => sub {
     my ($self, $obj) = @_;
