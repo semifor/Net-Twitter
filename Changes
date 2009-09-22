@@ -1,3 +1,5 @@
+3.07000 2009-09-22
+    - added 'retweets' REST API method
     - added synthetic 'since' parameter
     - fixed: object inflation for Search API returns (different timestamp format!)
 

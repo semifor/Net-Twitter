@@ -87,6 +87,17 @@ Returns the original tweet with retweet details embedded.
     returns   => 'Status',
 );
 
+twitter_api_method retweets => (
+    description => <<'',
+Returns up to 100 of the first retweets of a given tweet.
+
+    path    => 'statuses/retweets/id',
+    method  => 'GET',
+    params  => [qw/id count/],
+    required => [qw/id/],
+    returns  => 'Arrayref[Status]',
+);
+
 twitter_api_method retweeted_by_me => (
     description => <<'',
 Returns the 20 most recent retweets posted by the authenticating user.

@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.06000
+    This document describes Net::Twitter version 3.07000
 
 SYNOPSIS
       use Net::Twitter;
@@ -772,6 +772,16 @@ REST API Methods
         user's friends.
 
         Returns: ArrayRef[Status]
+
+    retweets
+    retweets(id)
+
+        Parameters: id, count
+        Required: id
+
+        Returns up to 100 of the first retweets of a given tweet.
+
+        Returns: Arrayref[Status]
 
     saved_searches
 
