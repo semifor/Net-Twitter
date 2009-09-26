@@ -41,8 +41,8 @@ test_requires 'Test::More' => 0.88; # for done_testing
 # Don't rely on the JSON::Any requirement to pull in a suitable JSON backend.
 # The user may already have JSON::Any installed, but since removed all valid
 # providers.  (Yes, this seems to have happened in the wild.)
-sub has_json_handler () {
-    my @order = qw/JSON::XS JSON/;
+sub has_json_xs () {
+    my @order = qw/JSON::XS/;
     for my $provider ( @order ) {
         eval "require $provider";
         return 1 unless $@;
@@ -50,7 +50,11 @@ sub has_json_handler () {
     return;
 }
 
-has_json_handler || requires JSON => '2.02';
+if (has_json_xs()) {
+  requires 'JSON::XS' => 0;
+} else {
+  requires 'JSON' => '2.02';
+}
 
 no_index    directory => 'src';
 no_index    directory => 'examples';
