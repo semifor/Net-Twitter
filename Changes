@@ -1,3 +1,5 @@
+    - better deps (Alexandr Ciornii)
+
 3.07000 2009-09-22
     - added 'retweets' REST API method
     - added synthetic 'since' parameter
