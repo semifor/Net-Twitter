@@ -1,3 +1,5 @@
+3.07001 2009-09-28
+    - Added specific versions for DateTime and DateTime::Format::Strptime (closes RT#50069)
     - better deps (Alexandr Ciornii)
 
 3.07000 2009-09-22

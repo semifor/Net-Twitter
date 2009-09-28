@@ -14,13 +14,14 @@ all_from    'lib/Net/Twitter.pod';
 # core
 requires    'Carp';
 requires    'Digest::SHA';
+requires    'List::Util';
 requires    'Net::Netrc';
 requires    'Scalar::Util';
 
 # CPAN
 requires    'Data::Visitor::Callback';
-requires    'DateTime';
-requires    'DateTime::Format::Strptime';
+requires    'DateTime'                  => 0.50;
+requires    'DateTime::Format::Strptime'=> 1.09;
 requires    'Encode';
 requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
