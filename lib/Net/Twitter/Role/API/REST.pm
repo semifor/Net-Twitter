@@ -216,36 +216,55 @@ authenticating user must be the author of the specified status.
 
 twitter_api_method friends => (
     description => <<'EOT',
-Returns the authenticating user's friends, each with current status
-inline. They are ordered by the order in which they were added as
-friends. It's also possible to request another user's recent friends
-list via the id parameter.
+Returns a reference to an array of the user's friends.  If C<id>, C<user_id>,
+or C<screen_name> is not specified, the friends of the authenticating user are
+returned.  The returned users are ordered from most recently followed to least
+recently followed.
 
-Returns 100 friends per page.
+Use the optional C<cursor> parameter to retrieve users in pages of 100.  When
+the C<cursor> parameter is used, the return value is a reference to a hash with
+keys C<previous_cursor>, C<next_cursor>, and C<users>.  The value of C<users>
+is a reference to an array of the user's friends. The result set isn't
+guaranteed to be 100 every time as suspended users will be filtered out.  Set
+the optional C<cursor> parameter to -1 to get the first page of users.  Set it
+to the prior return's value of C<previous_cursor> or C<next_cursor> to page
+forward or backwards.  When there are no prior pages, the value of
+C<previous_cursor> will be 0.  When there are no subsequent pages, the value of
+C<next_cursor> will be 0.
 EOT
 
     aliases  => [qw/following/],
     path     => 'statuses/friends/id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name page/],
+    params   => [qw/id user_id screen_name cursor/],
     required => [qw//],
-    returns  => 'ArrayRef[BasicUser]',
+    returns  => 'Hashref|ArrayRef[User]',
 );
 
 twitter_api_method followers => (
     description => <<'EOT',
-Returns the authenticating user's followers, each with current status
-inline.  They are ordered by the order in which they joined Twitter
-(this is going to be changed).
+Returns a reference to an array of the user's followers.  If C<id>, C<user_id>,
+or C<screen_name> is not specified, the followers of the authenticating user are
+returned.  The returned users are ordered from most recently followed to least
+recently followed.
 
-Returns 100 followers per page.
+Use the optional C<cursor> parameter to retrieve users in pages of 100.  When
+the C<cursor> parameter is used, the return value is a reference to a hash with
+keys C<previous_cursor>, C<next_cursor>, and C<users>.  The value of C<users>
+is a reference to an array of the user's friends. The result set isn't
+guaranteed to be 100 every time as suspended users will be filtered out.  Set
+the optional C<cursor> parameter to -1 to get the first page of users.  Set it
+to the prior return's value of C<previous_cursor> or C<next_cursor> to page
+forward or backwards.  When there are no prior pages, the value of
+C<previous_cursor> will be 0.  When there are no subsequent pages, the value of
+C<next_cursor> will be 0.
 EOT
 
     path     => 'statuses/followers/id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name page/],
+    params   => [qw/id user_id screen_name cursor/],
     required => [qw//],
-    returns  => 'ArrayRef[BasicUser]',
+    returns  => 'HashRef|ArrayRef[User]',
 );
 
 twitter_api_method show_user => (
@@ -369,29 +388,47 @@ user_a follows user_b, otherwise will return false.
 
 twitter_api_method friends_ids => (
     description => <<'EOT',
-Returns an array of numeric IDs for every user the specified user is following.
+Returns a reference to an array of numeric IDs for every user followed the
+specified user.
 
-Currently, Twitter returns IDs ordered from most recently followed to least
-recently followed.  This order may change at any time.
+Use the optional C<cursor> parameter to retrieve IDs in pages of 5000.  When
+the C<cursor> parameter is used, the return value is a reference to a hash with
+keys C<previous_cursor>, C<next_cursor>, and C<ids>.  The value of C<ids> is a
+reference to an array of IDS of the user's friends. Set the optional C<cursor>
+parameter to -1 to get the first page of IDs.  Set it to the prior return's
+value of C<previous_cursor> or C<next_cursor> to page forward or backwards.
+When there are no prior pages, the value of C<previous_cursor> will be 0.  When
+there are no subsequent pages, the value of C<next_cursor> will be 0.
 EOT
 
     aliases  => [qw/following_ids/],
     path     => 'friends/ids/id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name page/],
+    params   => [qw/id user_id screen_name cursor/],
     required => [qw/id/],
-    returns  => 'ArrayRef[Int]',
+    returns  => 'HashRef|ArrayRef[Int]',
 );
 
 twitter_api_method followers_ids => (
-    description => <<'',
-Returns an array of numeric IDs for every user is followed by.
+    description => <<'EOT',
+Returns a reference to an array of numeric IDs for every user following the
+specified user.
+
+Use the optional C<cursor> parameter to retrieve IDs in pages of 5000.  When
+the C<cursor> parameter is used, the return value is a reference to a hash with
+keys C<previous_cursor>, C<next_cursor>, and C<ids>.  The value of C<ids> is a
+reference to an array of IDS of the user's followers. Set the optional C<cursor>
+parameter to -1 to get the first page of IDs.  Set it to the prior return's
+value of C<previous_cursor> or C<next_cursor> to page forward or backwards.
+When there are no prior pages, the value of C<previous_cursor> will be 0.  When
+there are no subsequent pages, the value of C<next_cursor> will be 0.
+EOT
 
     path     => 'followers/ids/id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name page/],
+    params   => [qw/id user_id screen_name cursor/],
     required => [qw/id/],
-    returns  => 'ArrayRef[Int]',
+    returns  => 'HashRef|ArrayRef[Int]',
 );
 
 twitter_api_method verify_credentials => (
