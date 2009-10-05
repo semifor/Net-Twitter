@@ -1,3 +1,4 @@
+3.07002 2009-10-05
     - Documented the cursor parameter for friends, followers, friends_ids, and
       followers_ids.
     - Fixed: synthetic since parameter (could fail with multiple API traits defined)
