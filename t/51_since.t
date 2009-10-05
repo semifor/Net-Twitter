@@ -11,7 +11,7 @@ plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
 use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(traits => [qw/API::REST/]);
+my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search/]);
 
 my $datetime_parser = do {
     no warnings 'once';
@@ -50,5 +50,8 @@ $r = $nt->friends_timeline({ since => $datetime_parser->format_datetime(
 cmp_ok @$r, '==', 1,  'filtered with string in Twitter timestamp format';
 
 dies_ok { $r = $nt->friends_timeline({ since => 'not a date' }) } 'dies on invalid since';
+
+$nt = Net::Twitter->new(traits => [qw/API::Search/]);
+lives_ok { $r = $nt->search({ q => 'perl', since => '2009-10-05' }) } 'YYYY-MM-DD';
 
 done_testing;

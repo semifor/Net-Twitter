@@ -7,7 +7,7 @@ use JSON::Any qw/XS JSON/;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
-use Scalar::Util qw/reftype/;
+use Scalar::Util qw/blessed reftype/;
 use List::Util qw/first/;
 use HTML::Entities;
 use Encode qw/encode_utf8/;
@@ -177,15 +177,33 @@ sub _parse_result {
     die $error;
 }
 
+# Return a DateTime object, given $since as one of:
+#   - DateTime object
+#   - string in format "YYYY-MM-DD"
+#   - string in the same format as created_at values for the particular
+#     Twitter API (Search and REST have different created_at formats!)
+#   - an integer with epoch time (in seconds)
+# Otherwise, throw an exception
+sub _since_as_datetime {
+    my ($self, $since, $parser) = @_;
+
+    return $since if blessed($since) && $since->isa('DateTime');
+
+    if ( my ($y, $m, $d) = $since =~ /^(\d{4})-(\d{2})-(\d{2})$/ ) {
+        return DateTime->new(month => $m, day => $d, year => $y);
+    }
+
+    return eval { DateTime->from_epoch(epoch => $since) }
+        || eval { $parser->parse_datetime($since) }
+        || croak
+"Invalid 'since' parameter: $since. Must be a DateTime, epoch, string in Twitter timestamp format, or YYYY-MM-DD.";
+}
+
 sub _filter_since {
     my ($self, $datetime_parser, $obj, $since) = @_;
 
     # $since can be a DateTime, an epoch value, or a Twitter formatted timestamp
-    my $since_dt  = ref $since && $since->isa('DateTime') && $since
-                 || eval { DateTime->from_epoch(epoch => $since) }
-                 || eval { $datetime_parser->parse_datetime($since) }
-                 || croak
-"Invalid 'since' parameter: $since. Must be a DateTime, epoch, or string in Twitter timestamp format.";
+    my $since_dt  = $self->_since_as_datetime($since, $datetime_parser);
 
     my $visitor = Data::Visitor::Callback->new(
         ignore_return_values => 1,

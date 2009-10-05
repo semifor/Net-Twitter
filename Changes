@@ -1,3 +1,6 @@
+    - Fixed: synthetic since parameter (could fail with multiple API traits defined)
+    - Added support for since in YYYY-MM-DD format
+
 3.07001 2009-09-28
     - Added specific versions for DateTime and DateTime::Format::Strptime (closes RT#50069)
     - better deps (Alexandr Ciornii)

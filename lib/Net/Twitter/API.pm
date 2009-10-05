@@ -40,7 +40,7 @@ my $with_url_arg = sub {
 sub twitter_api_method {
     my $caller = shift;
     my $name   = shift;
-    my %options = ( authenticate => $do_auth, @_ );
+    my %options = ( authenticate => $do_auth, datetime_parser => $datetime_parser, @_ );
 
     my $class = Moose::Meta::Class->initialize($caller);
 
@@ -80,7 +80,7 @@ sub twitter_api_method {
         return $self->_parse_result(
             $self->_authenticated_request($options{method}, $uri, $args, $authenticate),
             $synthetic_args,
-            $datetime_parser,
+            $options{datetime_parser},
         );
     };
 
@@ -114,6 +114,7 @@ has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } )
 has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
 has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
 has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
+has datetime_parser => ( is => 'ro', required => 1 );
 
 # TODO: can MooseX::StrictConstructor be made to work here?
 my %valid_attribute_names = map { $_->init_arg => 1 }
