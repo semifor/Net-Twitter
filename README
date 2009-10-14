@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.07002
+    This document describes Net::Twitter version 3.07003
 
 SYNOPSIS
       use Net::Twitter;
@@ -771,6 +771,17 @@ REST API Methods
         application, this is the server's IP address.)
 
         Returns: RateLimitStatus
+
+    report_spam
+    report_spam(id)
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        The user specified in the id is blocked by the authenticated user
+        and reported as a spammer.
+
+        Returns: User
 
     retweet
     retweet(id)

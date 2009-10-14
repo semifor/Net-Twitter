@@ -77,6 +77,7 @@ retweeted
 retweeting
 retweets
 rpp
+spammer
 ssl
 stringifies
 timeline

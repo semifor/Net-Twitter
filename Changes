@@ -1,3 +1,6 @@
+3.07003 2009-10-13
+    - Added new API method: report_spam
+
 3.07002 2009-10-05
     - Documented the cursor parameter for friends, followers, friends_ids, and
       followers_ids.

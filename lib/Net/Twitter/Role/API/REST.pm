@@ -780,6 +780,17 @@ by the authenticating user.
     returns  => 'SavedSearch',
 );
 
+twitter_api_method report_spam => (
+    description => <<'',
+The user specified in the id is blocked by the authenticated user and reported as a spammer.
+
+    path     => 'report_spam',
+    method   => 'POST',
+    params   => [qw/id user_id screen_name/],
+    required => [qw/id/],
+    returns  => 'User',
+);
+
 1;
 
 __END__
