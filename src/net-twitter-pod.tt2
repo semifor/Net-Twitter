@@ -400,10 +400,10 @@ the C<screen_name> or C<user_id> parameters, instead.
 
 For example, These calls are equivalent:
 
-    $nt->create_friend('net_twitter'); # screen name
+    $nt->create_friend('perl_api');    # screen name
     $nt->create_friend(1564061);       # numeric ID
-    $nt->create_friend({ id => 'net_twitter' });
-    $nt->create_friend({ screen_name => 'net_twitter' });
+    $nt->create_friend({ id => 'perl_api' });
+    $nt->create_friend({ screen_name => 'perl_api' });
     $nt->create_friend({ user_id     => 1564061 });
 
 However user_id 911 and screen_name 911 are separate Twitter accounts.  These
@@ -560,7 +560,7 @@ interface at L<https://rt.cpan.org/Dist/Display.html?Queue=Net-Twitter>.
 
 Join the Net::Twitter IRC channel at L<irc://irc.perl.org/net-twitter>.
 
-Follow net_twitter: L<http://twitter.com/net_twitter>.
+Follow perl_api: L<http://twitter.com/perl_api>.
 
 Track Net::Twitter development at L<http://github.com/semifor/Net-Twitter>.
 

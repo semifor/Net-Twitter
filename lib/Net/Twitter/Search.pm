@@ -26,7 +26,7 @@ Net::Twitter::Search - A perl interface to the Twitter Search API
 
   $nt = Net::Twitter::Search->new;
 
-  $tweets = $nt->search('net_twitter');
+  $tweets = $nt->search('perl_api');
 
 =head1 DESCRIPTION
 
