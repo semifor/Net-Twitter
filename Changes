@@ -1,3 +1,5 @@
+    - Fixed: cached request_token results in a stale authentication/authorization urls
+
 3.07003 2009-10-13
     - Added new API method: report_spam
 

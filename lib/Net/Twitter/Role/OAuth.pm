@@ -60,7 +60,7 @@ sub authorized {
 sub _get_auth_url {
     my ($self, $which_url, %params ) = @_;
 
-    $self->_request_request_token(%params) unless $self->has_request_token;
+    $self->_request_request_token(%params);
 
     my $uri = $self->$which_url;
     $uri->query_form(oauth_token => $self->request_token);
