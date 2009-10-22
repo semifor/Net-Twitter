@@ -1,3 +1,4 @@
+3.07004 2009-10-22
     - Fixed: cached request_token results in a stale authentication/authorization urls
 
 3.07003 2009-10-13

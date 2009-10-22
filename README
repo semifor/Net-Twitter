@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.07003
+    This document describes Net::Twitter version 3.07004
 
 SYNOPSIS
       use Net::Twitter;
@@ -365,10 +365,10 @@ REST API Methods
 
     For example, These calls are equivalent:
 
-        $nt->create_friend('net_twitter'); # screen name
+        $nt->create_friend('perl_api');    # screen name
         $nt->create_friend(1564061);       # numeric ID
-        $nt->create_friend({ id => 'net_twitter' });
-        $nt->create_friend({ screen_name => 'net_twitter' });
+        $nt->create_friend({ id => 'perl_api' });
+        $nt->create_friend({ screen_name => 'perl_api' });
         $nt->create_friend({ user_id     => 1564061 });
 
     However user_id 911 and screen_name 911 are separate Twitter accounts.
@@ -1222,7 +1222,7 @@ SUPPORT
 
     Join the Net::Twitter IRC channel at <irc://irc.perl.org/net-twitter>.
 
-    Follow net_twitter: <http://twitter.com/net_twitter>.
+    Follow perl_api: <http://twitter.com/perl_api>.
 
     Track Net::Twitter development at
     <http://github.com/semifor/Net-Twitter>.
