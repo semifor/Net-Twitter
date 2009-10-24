@@ -132,9 +132,9 @@ either C<public> or C<private>.  If not specified, it defaults to C<public>.
 =cut
 
 sub create_list {
-    my ($self, $args) = @_;
+    my ($self, @args) = @_;
 
-    return $self->_lists_api_call('POST', [], 'lists', $args);
+    return $self->_lists_api_call('POST', [], 'lists', @args);
 }
 
 =item update_list
@@ -279,7 +279,7 @@ Subscribes the authenticated user to the specified list.
 sub subscribe_list {
     my ( $self, @args ) = @_;
     
-    return $self->_lists_api_call('POST', ['slug'], "lists/%s/subscribers", @args);
+    return $self->_lists_api_call('POST', ['slug'], "%s/subscribers", @args);
 }
 
 =item list_subscribers
@@ -293,7 +293,7 @@ Returns the subscribers to the specified list.
 sub list_subscribers {
     my ( $self, @args ) = @_;
     
-    return $self->_lists_api_call('GET', ['slug'], "lists/%s/subscribers", @args);
+    return $self->_lists_api_call('GET', ['slug'], "%s/subscribers", @args);
 }
 
 =item unsubscribe_list
@@ -307,20 +307,19 @@ Unsubscribes the authenticated user from the specified list.
 sub unsubscribe_list {
     my ( $self, @args ) = @_;
     
-    return $self->_lists_api_call('DELETE', ['slug'], "lists/%s/subscribers", @args);
+    return $self->_lists_api_call('DELETE', ['slug'], "%s/subscribers", @args);
 }
 
-=item list_subscribers
+=item is_subscribed
 
-Parameters: user, slug, [ id ]
+Parameters: user, slug, id
 
-Returns the subscribers to the specified list.  Use the optional C<id>
-parameter to check to see if the user identified by C<id> is subscribed to the
+Check to see if the user identified by C<id> is subscribed to the specified
 list.
 
 =cut
 
-sub list_subscribers {
+sub is_subscribed_list {
     my ( $self, @args ) = @_;
 
     return $self->_lists_api_call('GET', [qw/slug id/], "%s/subscribers/%s", @args);
