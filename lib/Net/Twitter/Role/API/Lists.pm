@@ -310,7 +310,7 @@ sub unsubscribe_list {
     return $self->_lists_api_call('DELETE', ['slug'], "%s/subscribers", @args);
 }
 
-=item is_subscribed
+=item is_subscribed_list
 
 Parameters: user, slug, id
 
