@@ -1,3 +1,5 @@
+    - return user_id and screen_name from request_access_token (Roberto Etcheverry)
+
 3.07004 2009-10-22
     - Fixed: cached request_token results in a stale authentication/authorization urls
 

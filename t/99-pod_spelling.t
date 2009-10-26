@@ -23,6 +23,7 @@ BasicUser
 CPAN
 DateTime
 DirectMessage
+Etcheverry
 ExtendedUser
 Grennan
 IM
