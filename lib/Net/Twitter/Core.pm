@@ -103,7 +103,7 @@ sub _authenticated_request {
 
     $self->_encode_args($args);
 
-    if ( $http_method =~ /^GET|DELETE$/ ) {
+    if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
         $uri->query_form($args);
         $msg = HTTP::Request->new($http_method, $uri);
     }

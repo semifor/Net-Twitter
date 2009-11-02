@@ -168,7 +168,7 @@ override _authenticated_request => sub {
             extra_params   => $is_multipart ? {} : $args,
         );
 
-        if ( $http_method =~ /^GET|DELETE$/ ) {
+        if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
             $msg = HTTP::Request->new($http_method, $request->to_url);
         }
         elsif ( $http_method eq 'POST' ) {
@@ -185,7 +185,7 @@ override _authenticated_request => sub {
             croak "unexpected http_method: $http_method";
         }
     }
-    elsif ( $http_method =~ /^GET|DELETE$/ ) {
+    elsif ( $http_method =~ /^(?:GET|DELETE)$/ ) {
         $self->_encode_args($args);
         $uri->query_form($args);
         $args = {};
