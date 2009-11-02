@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.07004';
+our $VERSION = '3.07999_01';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -103,9 +103,9 @@ sub _authenticated_request {
 
     $self->_encode_args($args);
 
-    if ( $http_method eq 'GET' ) {
+    if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
         $uri->query_form($args);
-        $msg = GET($uri);
+        $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
         # if any of the arguments are (array) refs, use form-data

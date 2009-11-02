@@ -1,4 +1,8 @@
+3.08000 2009-11-02
     - return user_id and screen_name from request_access_token (Roberto Etcheverry)
+
+3.07999_01 2009-10-23
+    - Added experimental Lists API support
 
 3.07004 2009-10-22
     - Fixed: cached request_token results in a stale authentication/authorization urls
