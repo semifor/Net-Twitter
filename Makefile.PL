@@ -20,7 +20,7 @@ requires    'Scalar::Util';
 
 # CPAN
 requires    'Data::Visitor::Callback';
-requires    'DateTime'                  => 0.50;
+requires    'DateTime'                  => 0.51;
 requires    'DateTime::Format::Strptime'=> 1.09;
 requires    'Encode';
 requires    'HTML::Entities';
