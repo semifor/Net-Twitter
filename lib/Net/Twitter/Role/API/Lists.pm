@@ -54,6 +54,11 @@ identifier assigned by Twitter for each list, based on the list's name.  A
 C<slug> is unique to a user, but is not globally unique.  To identify a
 specific list, both the C<user> and C<slug> parameters are required.
 
+Twitter has already announced upcoming changes to the Lists API. Code written
+now will require modification when the API is finalized.  You have been warned.
+
+L<http://groups.google.com/group/twitter-api-announce/browse_thread/thread/1eefb0263ea73ac8>
+
 =over 4
 
 =item new
