@@ -14,6 +14,12 @@ has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.co
 has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, default => $build_api_host  );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
 
+sub BUILD {
+    my $self = shift;
+
+    $self->{apiurl} =~ s/^http:/https:/ if $self->ssl;
+}
+
 around BUILDARGS => sub {
     my $next    = shift;
     my $class   = shift;

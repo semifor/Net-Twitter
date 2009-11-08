@@ -53,8 +53,6 @@ sub BUILD {
     eval "use " . $self->useragent_class;
     croak $@ if $@;
 
-    $self->{apiurl} =~ s/http/https/ if $self->ssl;
-
     if ( $self->netrc ) {
         require Net::Netrc;
 
