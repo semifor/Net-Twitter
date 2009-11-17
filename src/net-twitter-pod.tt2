@@ -227,13 +227,12 @@ parameter from Twitter.
 
 =item apiurl
 
-The URL for the Twitter API. This defaults to "http://twitter.com". This
+The URL for the Twitter API. This defaults to "http://api.twitter.com/1". This
 option is available when the C<API::REST> trait is included.
 
 =item apihost
 
-A string containing the Twitter API host. It defaults to "twitter.com:80".
-This option is available when the C<API::REST> trait is included.
+DEPRECATED - Setting the C<apiurl> is sufficient.
 
 =item apirealm
 

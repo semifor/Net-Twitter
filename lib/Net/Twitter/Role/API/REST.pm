@@ -10,7 +10,7 @@ my $build_api_host = sub {
     join ':', $uri->host, $uri->port;
 };
 
-has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://twitter.com'        );
+has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1'  );
 has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, default => $build_api_host  );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
 
@@ -795,6 +795,21 @@ The user specified in the id is blocked by the authenticated user and reported a
     params   => [qw/id user_id screen_name/],
     required => [qw/id/],
     returns  => 'User',
+);
+
+twitter_api_method users_search => (
+    aliases     => [qw/find_people search_users/],
+    path        => 'users/search',
+    method      => 'GET',
+    params      => [qw/q per_page page/],
+    required    => [qw/q/],
+    returns     => 'ArrayRef[Users]',
+    description => <<'',
+Run a search for users similar to Find People button on Twitter.com; the same
+results returned by people search on Twitter.com will be returned by using this
+API (about being listed in the People Search).  It is only possible to retrieve
+the first 1000 matches from this API.
+
 );
 
 1;

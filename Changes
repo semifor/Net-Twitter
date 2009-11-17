@@ -1,3 +1,8 @@
+    - Added users_search/find_people API method
+    - Updated default apiurl: http://api.twitter.com/1
+    - Deprecated apihost option to new
+    - Fixed ssl handling for Lists API
+
 3.08000 2009-11-02
     - return user_id and screen_name from request_access_token (Roberto Etcheverry)
 
