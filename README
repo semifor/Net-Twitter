@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.08000
+    This document describes Net::Twitter version 3.09000
 
 SYNOPSIS
       use Net::Twitter;
@@ -206,13 +206,11 @@ METHODS AND ARGUMENTS
 
         apiurl
             The URL for the Twitter API. This defaults to
-            "http://twitter.com". This option is available when the
+            "http://api.twitter.com/1". This option is available when the
             "API::REST" trait is included.
 
         apihost
-            A string containing the Twitter API host. It defaults to
-            "twitter.com:80". This option is available when the "API::REST"
-            trait is included.
+            DEPRECATED - Setting the "apiurl" is sufficient.
 
         apirealm
             A string containing the Twitter API realm used for Basic
@@ -239,17 +237,21 @@ METHODS AND ARGUMENTS
             Defaults to 0.
 
         netrc
-            If set to 1, Net::Twitter will look up the host portion of the
-            "apiurl" in the ".netrc" file to obtain the u"username" and
-            "password" arguments.
+            (Optional) Sets the *machine* key to look up in ".netrc" to
+            obtain credentials. If set to 1, Net::Twitter will use the host
+            portion of the "apiurl".
 
                # in .netrc
-               machine twitter.com
-               login YOUR_TWITTER_USER_NAME
-               password YOUR_TWITTER_PASSWORD
+               machine api.twitter.com
+                 login YOUR_TWITTER_USER_NAME
+                 password YOUR_TWITTER_PASSWORD
+               machine semifor.twitter.com
+                 login semifor
+                 password SUPERSECRET
 
                # in your perl program
                $nt = Net::Twitter->new(netrc => 1);
+               $nt = Net::Twitter->new(netrc => 'semifor.twitter.com');
 
         decode_html_entities
             Twitter encodes HTML entities in the "text" field of statuses.
@@ -1011,6 +1013,22 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
+    users_search
+    users_search(q)
+    alias: find_people
+    alias: search_users
+
+        Parameters: q, per_page, page
+        Required: q
+
+        Run a search for users similar to Find People button on Twitter.com;
+        the same results returned by people search on Twitter.com will be
+        returned by using this API (about being listed in the People
+        Search). It is only possible to retrieve the first 1000 matches from
+        this API.
+
+        Returns: ArrayRef[Users]
+
     verify_credentials
 
         Parameters: *none*
@@ -1104,6 +1122,15 @@ TwitterVision API Methods
         Updates the location for the authenticated user.
 
         Returns: HashRef
+
+Lists API
+    For Lists API support, add trait "API::Lists" to the "traits" option in
+    "new". The Lists API is still in beta and not finalized, so the API will
+    change. Follow the Twitter API Announcement list for details:
+    <http://groups.google.com/group/twitter-api-announce/>.
+
+    For full documentation of the Lists API, see
+    Net::Twitter::Role::API::Lists.
 
 LEGACY COMPATIBILITY
     This version of "Net::Twitter" automatically includes the "Legacy" trait

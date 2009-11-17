@@ -263,8 +263,8 @@ If set to 1, an SSL connection will be used for all API calls. Defaults to 0.
 
 =item netrc
 
-(Optional) Sets the I<machine> key to look up in C<.netrc> to obtain login
-crededentials. If set to 1, Net::Twitter will use the host portion of the
+(Optional) Sets the I<machine> key to look up in C<.netrc> to obtain
+credentials. If set to 1, Net::Twitter will use the host portion of the
 C<apiurl>.
 
    # in .netrc
@@ -434,6 +434,15 @@ These methods are provided when trait C<API::TwitterVision> is included in the
 C<traits> option to C<new>.
 
 [% INCLUDE APIDOC class='API::TwitterVision' %]
+
+=head1 Lists API
+
+For Lists API support, add trait C<API::Lists> to the C<traits> option in
+C<new>.  The Lists API is still in beta and not finalized, so the API will
+change.  Follow the Twitter API Announcement list for details:
+L<http://groups.google.com/group/twitter-api-announce/>.
+
+For full documentation of the Lists API, see L<Net::Twitter::Role::API::Lists>.
 
 =head1 LEGACY COMPATIBILITY
 

@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.08000';
+our $VERSION = '3.09000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

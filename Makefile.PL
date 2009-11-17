@@ -33,7 +33,7 @@ requires    'Moose::Role';
 requires    'MooseX::AttributeHelpers';
 requires    'MooseX::MultiInitArg';
 requires    'namespace::autoclean'      => 0.09;
-requires    'Net::OAuth'                => 0.16;
+requires    'Net::OAuth'                => 0.20;
 requires    'URI'                       => 1.40;
 requires    'URI::Escape';
 

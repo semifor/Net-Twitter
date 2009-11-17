@@ -59,7 +59,12 @@ sub add_id_arg {
 
 sub method { shift->{request}->method }
 
-sub path { shift->{request}->uri->path }
+sub path {
+   # hack! remove the api version portion of the path (if any)
+   my $path = shift->{request}->uri->path;
+   $path =~ s{/\d+(?=/)}{};
+   return $path;
+}
 
 sub response {
     my $self = shift;

@@ -1,3 +1,5 @@
+3.09000 2009-11-17
+    - Bumped Net::OAuth requirement to 0.20 (hopefully resolves CPAN Testers failures)
     - Added users_search/find_people API method
     - Updated default apiurl: http://api.twitter.com/1
     - Deprecated apihost option to new
