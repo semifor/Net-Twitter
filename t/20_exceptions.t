@@ -38,7 +38,7 @@ is     $e, $e->error,                'stringifies to $@->error';
 
 
 # simulate a 500 response returned by LWP::UserAgent when it can't make a connection
-$response = HTTP::Response->new(500, "Can't connect to twitter.com:80");
+$response = HTTP::Response->new(500, "Can't connect to api.twitter.com:80");
 $response->content("<html>foo</html>");
 $t->response($response);
 

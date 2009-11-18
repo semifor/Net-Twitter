@@ -195,14 +195,20 @@ status's author will be returned inline.
 );
 
 twitter_api_method update => (
-    description => <<'',
+    description => <<EOT,
 Updates the authenticating user's status.  Requires the status parameter
 specified.  A status update with text identical to the authenticating
 user's current status will be ignored.
 
+The optional C<lat> and C<long> parameters add location data to the status for
+a geo enabled account. They expect values in the ranges -90.0 to +90.0 and
+-180.0 to +180.0 respectively.  They are ignored unless the user's
+C<geo_enabled> field is true.
+EOT
+
     path       => 'statuses/update',
     method     => 'POST',
-    params     => [qw/status in_reply_to_status_id/],
+    params     => [qw/status lat long in_reply_to_status_id/],
     required   => [qw/status/],
     add_source => 1,
     returns    => 'Status',
