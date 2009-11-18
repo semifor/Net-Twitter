@@ -25,6 +25,7 @@ DateTime
 DirectMessage
 Etcheverry
 ExtendedUser
+geo
 Grennan
 IM
 IP
@@ -94,3 +95,5 @@ Unsubscribes
 url
 useragent
 username
+WOEID
+woeid

@@ -818,6 +818,43 @@ the first 1000 matches from this API.
 
 );
 
+twitter_api_method trends_available => (
+    path        => 'trends/available',
+    method      => 'GET',
+    params      => [qw/lat long/],
+    required    => [],
+    returns     => 'ArrayRef[Location]',
+    description => <<EOT,
+Returns the locations with trending topic information. The response is an
+array of "locations" that encode the location's WOEID (a Yahoo!  Where On Earth
+ID L<http://developer.yahoo.com/geo/geoplanet/>) and some other human-readable
+information such as a the location's canonical name and country.
+
+When the optional C<lat> and C<long> parameters are passed, the available trend
+locations are sorted by distance from that location, nearest to farthest.
+
+Use the WOEID returned in the location object to query trends for a specific
+location.
+EOT
+);
+
+twitter_api_method trends_location => (
+    path        => 'trends/location',
+    method      => 'GET',
+    params      => [qw/woeid/],
+    required    => [qw/woeid/],
+    returns     => 'ArrayRef[Trend]',
+    description => <<'',
+Returns the top 10 trending topics for a specific location. The response is an
+array of "trend" objects that encode the name of the trending topic, the query
+parameter that can be used to search for the topic on Search, and the direct
+URL that can be issued against Search.  This information is cached for five
+minutes, and therefore users are discouraged from querying these endpoints
+faster than once every five minutes.  Global trends information is also
+available from this API by using a WOEID of 1.
+
+);
+
 1;
 
 __END__

@@ -914,6 +914,44 @@ REST API Methods
 
         Returns: Str
 
+    trends_available
+
+        Parameters: lat, long
+        Required: *none*
+
+        Returns the locations with trending topic information. The response
+        is an array of "locations" that encode the location's WOEID (a
+        Yahoo! Where On Earth ID
+        <http://developer.yahoo.com/geo/geoplanet/>) and some other
+        human-readable information such as a the location's canonical name
+        and country.
+
+        When the optional "lat" and "long" parameters are passed, the
+        available trend locations are sorted by distance from that location,
+        nearest to farthest.
+
+        Use the WOEID returned in the location object to query trends for a
+        specific location.
+
+        Returns: ArrayRef[Location]
+
+    trends_location
+    trends_location(woeid)
+
+        Parameters: woeid
+        Required: woeid
+
+        Returns the top 10 trending topics for a specific location. The
+        response is an array of "trend" objects that encode the name of the
+        trending topic, the query parameter that can be used to search for
+        the topic on Search, and the direct URL that can be issued against
+        Search. This information is cached for five minutes, and therefore
+        users are discouraged from querying these endpoints faster than once
+        every five minutes. Global trends information is also available from
+        this API by using a WOEID of 1.
+
+        Returns: ArrayRef[Trend]
+
     update
     update(status)
 
