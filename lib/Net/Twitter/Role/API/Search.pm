@@ -13,14 +13,22 @@ our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a, %d %b %Y 
 datetime_parser $DATETIME_PARSER;
 
 twitter_api_method search => (
-    description => <<'',
-Returns tweets that match a specified query.  You can use a variety of search operators in your query.
+    description => <<'EOT',
+Returns a HASH reference with some meta-data about the query including the
+C<next_page>, C<refresh_url>, and C<max_id>. The statuses are returned in
+C<results>.  To iterate over the results, use something similar to:
+
+    my $r = $nt->search($searh_term);
+    for my $status ( @{$r->{results}} ) {
+        print "$status->{text}\n";
+    }
+EOT
 
     path     => 'search',
     method   => 'GET',
     params   => [qw/q callback lang rpp page since_id geocode show_user/],
     required => [qw/q/],
-    returns  => 'ArrayRef[Status]',
+    returns  => 'HashRef',
 );
 
 twitter_api_method trends => (

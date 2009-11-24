@@ -69,6 +69,7 @@ multipart
 netrc
 oauth
 ok
+online
 params
 perigrin
 RateLimit

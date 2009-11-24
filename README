@@ -46,6 +46,30 @@ OMG! THE MOOSE!
     generated from Net::Twitter. It is a related module, but does not depend
     on Net::Twitter or Moose for installation.
 
+RETURN VALUES
+    Net::Twitter decodes the data structures returned by the Twitter API
+    into native perl data structures (HASH references and ARRAY references).
+    The full layout of those data structures are not documented, here. They
+    change often, usually with the addition of new elements, and documenting
+    all of those changes would be a significant challenge.
+
+    Instead, rely on the online Twitter API documentation and inspection of
+    the returned data.
+
+    The Twitter API online documentation is located at
+    <http://apiwiki.twitter.com/Twitter-API-Documentation>.
+
+    To inspect the data, use Data::Dumper or similar module of your choice.
+    Here's a simple example using Data::Dumper:
+
+        use Data::Dumper;
+
+        my $r = $nt->search($search_term);
+        print Dumper $r;
+
+    For more information on perl data structures, see perlreftut, perldsc,
+    and perllol.
+
 METHODS AND ARGUMENTS
     new This constructs a "Net::Twitter" object. It takes several named
         parameters, all of them optional:
@@ -1100,10 +1124,17 @@ Search API Methods
         show_user
         Required: q
 
-        Returns tweets that match a specified query. You can use a variety
-        of search operators in your query.
+        Returns a HASH reference with some meta-data about the query
+        including the "next_page", "refresh_url", and "max_id". The statuses
+        are returned in "results". To iterate over the results, use
+        something similar to:
 
-        Returns: ArrayRef[Status]
+            my $r = $nt->search($searh_term);
+            for my $status ( @{$r->{results}} ) {
+                print "$status->{text}\n";
+            }
+
+        Returns: HashRef
 
     trends
 

@@ -52,6 +52,31 @@ Net::Twitter::Lite's API method definitions and documentation are generated
 from Net::Twitter.  It is a related module, but does not depend on
 Net::Twitter or Moose for installation.
 
+=head1 RETURN VALUES
+
+Net::Twitter decodes the data structures returned by the Twitter API into
+native perl data structures (HASH references and ARRAY references).  The full
+layout of those data structures are not documented, here.  They change often,
+usually with the addition of new elements, and documenting all of those
+changes would be a significant challenge.
+
+Instead, rely on the online Twitter API documentation and inspection of the
+returned data.
+
+The Twitter API online documentation is located at
+L<http://apiwiki.twitter.com/Twitter-API-Documentation>.
+
+To inspect the data, use L<Data::Dumper> or similar module of your choice.
+Here's a simple example using Data::Dumper:
+
+    use Data::Dumper;
+
+    my $r = $nt->search($search_term);
+    print Dumper $r;
+
+For more information on perl data structures, see L<perlreftut>, L<perldsc>,
+and L<perllol>.
+
 =head1 METHODS AND ARGUMENTS
 
 =over 4
