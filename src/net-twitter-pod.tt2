@@ -122,6 +122,11 @@ returns an array of status objects:
         # etc.
         print $r->relative_created_at;
 
+=item RateLimit
+
+The C<RateLimit> trait adds utility methods that return information about the
+current rate limit status.  See L<Net::Twitter::Role::RateLimit> for details.
+
 =item Legacy
 
 This trait provides backwards compatibility to C<Net::Twitter> versions prior

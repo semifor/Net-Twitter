@@ -71,6 +71,7 @@ oauth
 ok
 params
 perigrin
+RateLimit
 refactored
 requester's
 return's

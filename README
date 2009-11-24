@@ -105,6 +105,11 @@ METHODS AND ARGUMENTS
                         # etc.
                         print $r->relative_created_at;
 
+            RateLimit
+                The "RateLimit" trait adds utility methods that return
+                information about the current rate limit status. See
+                Net::Twitter::Role::RateLimit for details.
+
             Legacy
                 This trait provides backwards compatibility to
                 "Net::Twitter" versions prior to 3.00. It implies the traits

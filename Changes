@@ -1,3 +1,4 @@
+    - Added Role::RateLimit
     - Added trends_available and trends_location methods to the REST API
     - Documented the lat and long parameters to update
 
