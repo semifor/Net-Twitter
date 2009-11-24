@@ -85,11 +85,11 @@ has _lists_dt_parser => ( isa => 'Object', is => 'rw', default => sub {
     }
 );
 
-sub BUILD {
+after BUILD => sub {
     my $self = shift;
 
     $self->{lists_api_url} =~ s/^http:/https:/ if $self->ssl;
-}
+};
 
 sub _lists_api_call {
     my ( $self, $http_method, $uri_parts, $api_mask, @args ) = @_;

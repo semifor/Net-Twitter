@@ -1,3 +1,4 @@
+    - Fixed: ssl not applied when both Lists and REST api used
     - Added Role::RateLimit
     - Added trends_available and trends_location methods to the REST API
     - Documented the lat and long parameters to update

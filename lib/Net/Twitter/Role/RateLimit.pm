@@ -59,20 +59,20 @@ for my $method ( qw/rate_remaining rate_limit/ ) {
     };
 }
 
-sub BUILD {
+after BUILD => sub {
     my $self = shift;
 
     $self->ua->add_handler(response_done => sub {
         my $res = shift;
 
         my @values = map { $res->header($_) }
-                     qw/X-RateLimit-Remaining X-RateLimit-Reset X-RateLimit-Limit /;
+                     qw/x-ratelimit-remaining x-ratelimit-reset x-ratelimit-limit/;
 
         return unless @values == 3;
 
         @{$self->_rate_limit_status}{qw/rate_remaining rate_reset rate_limit/} = @values;
     });
-}
+};
 
 =head1 METHODS
 

@@ -8,8 +8,6 @@ use lib qw(t/lib);
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
-plan tests => 32;
-
 use Net::Twitter;
 
 my $nt = Net::Twitter->new(
@@ -72,4 +70,15 @@ $t->add_id_arg('homer');
 is      $t->arg('id'), 'homer',                    'show_user ID set 2';
 
 ok      $nt->public_timeline, 'public_timeline blankargs';
-exit 0;
+
+### v3.09000 ### Role BUILD methods not called need after BUILD => sub {...}
+$nt = Net::Twitter->new(ssl => 1, traits => [qw/API::REST API::Lists/]);
+$t  = TestUA->new($nt->ua);
+
+$r  = $nt->home_timeline;
+is    $t->request->uri->scheme, 'https', 'ssl used for REST';
+$r  = $nt->list_lists('perl_api');
+is    $t->request->uri->scheme, 'https', 'ssl used for Lists';
+
+
+done_testing
