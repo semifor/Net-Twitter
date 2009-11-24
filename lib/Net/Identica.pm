@@ -2,7 +2,7 @@ package Net::Identica;
 use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.09000';
+our $VERSION = '3.10000';
 $VERSION     = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';
