@@ -3,8 +3,10 @@ use warnings;
 use strict;
 use Test::More;
 use lib qw(t/lib);
-use TestUA;
 use Net::Twitter;
+
+eval 'use TestUA';
+plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
 my $nt = Net::Twitter->new(traits => [qw/API::REST RateLimit/]);
 

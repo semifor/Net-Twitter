@@ -1,3 +1,6 @@
+3.10001 2009-11-26
+    - Fixed: new t/51_rate_limit.t needs to skip tests unless LWP >= 5.819
+
 3.10000 2009-11-24
     - Fixed: ssl not applied when both Lists and REST api used
     - Added Role::RateLimit
