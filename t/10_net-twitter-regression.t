@@ -80,5 +80,8 @@ is    $t->request->uri->scheme, 'https', 'ssl used for REST';
 $r  = $nt->list_lists('perl_api');
 is    $t->request->uri->scheme, 'https', 'ssl used for Lists';
 
+### v3.10001 ### netrc used $self->apiurl, which is only available via the API::REST trait
+lives_ok  { Net::Twitter->new(netrc => 1, traits => [qw/API::Lists/]) }
+          'netrc with API::Lists lives';
 
 done_testing

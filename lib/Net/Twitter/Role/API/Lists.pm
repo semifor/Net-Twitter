@@ -74,7 +74,7 @@ The base URL for the Twitter Lists API. Defaults to C<http://twitter.com>
 
 =cut
 
-has lists_api_url => ( isa => 'Str', is => 'rw', default => 'http://twitter.com' );
+has lists_api_url => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
 
 =back
 

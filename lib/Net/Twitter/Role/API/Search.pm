@@ -4,7 +4,7 @@ use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 
-has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
+has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
 
 base_url     'searchapiurl';
 authenticate 0;

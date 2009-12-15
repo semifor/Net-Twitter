@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.10001
+    This document describes Net::Twitter version 3.10002
 
 SYNOPSIS
       use Net::Twitter;
@@ -267,8 +267,8 @@ METHODS AND ARGUMENTS
 
         netrc
             (Optional) Sets the *machine* key to look up in ".netrc" to
-            obtain credentials. If set to 1, Net::Twitter will use the host
-            portion of the "apiurl".
+            obtain credentials. If set to 1, Net::Twitter will use the value
+            of the "netrc_machine" option (below).
 
                # in .netrc
                machine api.twitter.com
@@ -281,6 +281,10 @@ METHODS AND ARGUMENTS
                # in your perl program
                $nt = Net::Twitter->new(netrc => 1);
                $nt = Net::Twitter->new(netrc => 'semifor.twitter.com');
+
+        netrc_machine
+            (Optional) Sets the "machine" entry to look up in ".netrc" when
+            "<netrc =" 1>> is used. Defaults to "api.twitter.com".
 
         decode_html_entities
             Twitter encodes HTML entities in the "text" field of statuses.

@@ -294,8 +294,8 @@ If set to 1, an SSL connection will be used for all API calls. Defaults to 0.
 =item netrc
 
 (Optional) Sets the I<machine> key to look up in C<.netrc> to obtain
-credentials. If set to 1, Net::Twitter will use the host portion of the
-C<apiurl>.
+credentials. If set to 1, Net::Twitter will use the value of the C<netrc_machine>
+option (below).
 
    # in .netrc
    machine api.twitter.com
@@ -308,6 +308,11 @@ C<apiurl>.
    # in your perl program
    $nt = Net::Twitter->new(netrc => 1);
    $nt = Net::Twitter->new(netrc => 'semifor.twitter.com');
+
+=item netrc_machine
+
+(Optional) Sets the C<machine> entry to look up in C<.netrc> when C<<netrc => 1>>
+is used.  Defaults to C<api.twitter.com>.
 
 =item decode_html_entities
 
