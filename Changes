@@ -1,3 +1,5 @@
+    - Fixed: retweeded_{to,of}_me API URLs (RT#52784)
+
 3.10001 2009-11-26
     - Fixed: new t/51_rate_limit.t needs to skip tests unless LWP >= 5.819
 
