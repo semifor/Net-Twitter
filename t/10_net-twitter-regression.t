@@ -5,6 +5,18 @@ use Test::More;
 use Test::Exception;
 use lib qw(t/lib);
 
+{
+    # simple mock object for Net::Netrc
+    package # hide from PAUSE
+        Net::Netrc;
+    use Moose;
+    sub lookup { shift->new }
+    sub lpa { qw/fred bedrock/ }
+
+    $INC{'Net/Netrc.pm'} = __FILE__;
+}
+
+
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
