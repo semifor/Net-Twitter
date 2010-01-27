@@ -1,3 +1,8 @@
+3.11000 2009-01-27
+    - Lists API overhaul; bug fixes, added parameters, documentation
+    - Create meaninful names for anonymous classes; better error context
+    - Added "Paging and Cursors" documentation section
+
 3.10003 2009-12-15
     - Oops! Fixed bug in new test in t/10_net-twitter-regression.t (oh, the irony!)
 

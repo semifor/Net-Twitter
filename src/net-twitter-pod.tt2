@@ -398,9 +398,59 @@ Aliases support both the HASH ref and convenient forms:
 
     $nt->follows({ user_a => $fred, user_b => $barney });
 
-Methods that support the C<page> parameter expect page numbers E<gt> 0.  Twitter silently
-ignores invalid C<page> values.  So C<< { page => 0 } >> produces the same result
-as C<< { page => 1 } >>.
+=head2 Cursors and Paging
+
+Some methods return partial results a page at a time.  Originally, methods that
+returned partial results used a C<page> parameter.   A more recent addition to
+the Twitter API for retrieving multiple pages uses the C<cursor> parameter.
+Usually, a method uses either the C<page> parameter or the C<cursor> parameter,
+but not both.  There have been exceptions to this rule when Twitter
+deprecates the use of C<page> for a method in favor of C<cursor>.  In
+that case, both methods may work during a transition period. So, if a
+method supports both, you should always use the C<cursor> parameter.
+
+=head3 Paging
+
+For methods that support paging, the first page is returned by passing
+C<< page => 1 >>, the second page by passing C<< page => 2 >>, etc.  If no
+C<page> parameter is passed, the first page is returned.
+
+Here's an example that demonstrates how to obtain all favorites in a loop:
+
+    my @favs;
+    for ( my $page = 1; ; ++$page ) {
+        my $r = $nt->favorites({ page => $page });
+        last unless @$r;
+
+        push @favs, @$r;
+    }
+
+=head3 Cursors
+
+Cursoring employs a different strategy.  To obtain the first page of results,
+pass C<< cursor => -1 >>.  Twitter returns a reference to a hash that
+includes entries C<next_cursor>, C<previous_cursor>, and an entry
+with a reference to an array containing a page of the requested
+items.  The key for the array reference will be named C<users>,
+C<ids>, or something similar depending upon the type of returned
+items. For example, when C<cursor> parameter is used with the
+C<followers_ids> method, the returned in hash entry C<ids>.
+
+The C<next_cursor> value can be used in a subsequent call to obtain the next
+page of results.  When you have obtained the last page of results,
+C<next_cursor> will be 0.  Likewise, you can use the value for
+C<previous_cursor> to obtain the previous page of results.  When you have
+obtained the first page, C<previous_cursor> will be 0.
+
+Here's an example that demonstrates how to obtain all follower IDs in a loop
+using the C<cursor> parameter:
+
+    my @ids;
+    for ( my $cursor = -1, my $r; $cursor; $cursor = $r->{next_cursor} ) {
+        $r = $nt->followers_ids({ cursor => $cursor });
+        push @ids, @{ $r->{ids} };
+    }
+
 
 =head2 Synthetic Arguments
 
@@ -423,7 +473,7 @@ more details.
 API methods that accept the C<since_id> argument will also accept the synthetic
 C<since> argument, instead.  C<since> may be a C<Date::Time> object, an epoch
 time (the number of seconds since the system epoch), or a string in the same
-format returned by Twitter for the C<created_at> attribute.  Only status with a
+format returned by Twitter for the C<created_at> attribute.  Only statuses with a
 C<created_at> time greater than C<since> will be returned by the API call.
 
 =back
@@ -473,11 +523,46 @@ C<traits> option to C<new>.
 =head1 Lists API
 
 For Lists API support, add trait C<API::Lists> to the C<traits> option in
-C<new>.  The Lists API is still in beta and not finalized, so the API will
-change.  Follow the Twitter API Announcement list for details:
-L<http://groups.google.com/group/twitter-api-announce/>.
+C<new>.
 
 For full documentation of the Lists API, see L<Net::Twitter::Role::API::Lists>.
+
+  use Net::Twitter;
+
+  my $nt = Net::Twitter->new(traits => ['API::Lists'], ...);
+
+  $list = $nt->create_list($owner, { name => $name, description => $desc });
+  $list = $nt->update_list($owner, $list_id, { description => $desc });
+
+  $lists = $nt->get_lists($owner);
+  $lists = $nt->list_lists($owner);
+
+  $list = $nt->get_list($owner, $list_id);
+  $list = $nt->delete_list($owner, $list_id);
+
+  $statuses = $nt->list_statuses($owner, $list_id);
+
+  $lists = $nt->list_memberships($owner);
+  $lists = $nt->list_subscriptions($owner);
+
+  $users = $nt->list_members($owner, $list_id);
+
+  $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
+
+  $user = $nt->add_list_member($owner, $list_id, $user_id);
+
+  $user = $nt->delete_list_member($owner, $list_id, $user_id);
+  $user = $nt->remove_list_member($owner, $list_id, $user_id);
+
+  $user_or_undef = $nt->is_list_member($owner, $list_id, $user_id);
+
+  $users = $nt->list_subscribers($owner, $list_id);
+
+  $list = $nt->subscribe_list($owner, $list_id);
+  $list = $nt->unsubscribe_list($owner, $list_id);
+
+  $user_or_undef = $nt->is_subscribed_list($owner, $list_id, $user_id);
+  $user_or_undef = $nt->is_list_subscriber($owner, $list_id, $user_id);
 
 =head1 LEGACY COMPATIBILITY
 
@@ -598,6 +683,11 @@ with this module.
 
 This LWP::UserAgent compatible class can be used in L<POE> based application
 along with Net::Twitter to provide concurrent, non-blocking requests.
+
+=item L<Catalyst::Authentication::Credential::Twitter>
+
+This module, by Jesse Stay, provides Twitter OAuth authentication support for
+the popular L<Catalyst> web application framework.
 
 =back
 

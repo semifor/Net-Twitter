@@ -13,16 +13,59 @@ Net::Twitter::Role::API::Lists - Twitter Lists API support for Net::Twitter
 
   use Net::Twitter;
 
-  my $nt = Net::Twitter->new(traits => ['API::Lists']);
-  $nt->credentials($username, $password);
+  my $nt = Net::Twitter->new(traits => ['API::Lists'], ...);
 
-  my $list = $nt->create_list(
-      $my_screen_name,
-      { name => 'My List Name', mode => private, description => 'A test list' }
-  );
+  $list = $nt->create_list($owner, { name => $name, description => $desc });
+  $list = $nt->update_list($owner, $list_id, { description => $desc });
 
-  $nt->add_list_member($my_screen_name, $list->{id}, $member_user_id);
+  $lists = $nt->get_lists($owner);
+  $lists = $nt->list_lists($owner);
 
+  $list = $nt->get_list($owner, $list_id);
+  $list = $nt->delete_list($owner, $list_id);
+
+  $statuses = $nt->list_statuses($owner, $list_id);
+
+  $lists = $nt->list_memberships($owner);
+  $lists = $nt->list_subscriptions($owner);
+
+  $users = $nt->list_members($owner, $list_id);
+
+  $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
+
+  $user = $nt->add_list_member($owner, $list_id, $user_id);
+
+  $user = $nt->delete_list_member($owner, $list_id, $user_id);
+  $user = $nt->remove_list_member($owner, $list_id, $user_id);
+
+  $user_or_undef = $nt->is_list_member($owner, $list_id, $user_id);
+
+  $users = $nt->list_subscribers($owner, $list_id);
+
+  $list = $nt->subscribe_list($owner, $list_id);
+  $list = $nt->unsubscribe_list($owner, $list_id);
+
+  $user_or_undef = $nt->is_subscribed_list($owner, $list_id, $user_id);
+  $user_or_undef = $nt->is_list_subscriber($owner, $list_id, $user_id);
+
+  #############################
+  # With the cursor parameter #
+  #############################
+
+  $r = $nt->get_list($user, $list_id, { cursor => $cursor });
+  $lists = $r->{lists};
+
+  $r = $nt->list_memberships($user, { cursor => $cursor });
+  $lists = $r->{lists};
+
+  $r = $nt->list_subscriptions($user, { cursor => $cursor });
+  $lists = $r->{lists};
+
+  $r = $nt->list_members($owner, $list_id, { cursor => $cursor });
+  $users = $r->{users};
+
+  $r = $nt->list_subscribers($owner, $list_id, { cursor => $cursor });
+  $users = $r->{users};
 
 =head1 DESCRIPTION
 
