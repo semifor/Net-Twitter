@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.10003
+    This document describes Net::Twitter version 3.11000
 
 SYNOPSIS
       use Net::Twitter;
@@ -18,7 +18,7 @@ SYNOPSIS
       eval {
           my $statuses = $nt->friends_timeline({ since_id => $high_water, count => 100 });
           for my $status ( @$statuses ) {
-              print "$status->{time} <$status->{user}{screen_name}> $status->{text}\n";
+              print "$status->{created_at} <$status->{user}{screen_name}> $status->{text}\n";
           }
       };
       if ( my $err = $@ ) {
@@ -364,9 +364,57 @@ API METHODS AND ARGUMENTS
 
         $nt->follows({ user_a => $fred, user_b => $barney });
 
-    Methods that support the "page" parameter expect page numbers > 0.
-    Twitter silently ignores invalid "page" values. So "{ page => 0 }"
-    produces the same result as "{ page => 1 }".
+  Cursors and Paging
+    Some methods return partial results a page at a time. Originally,
+    methods that returned partial results used a "page" parameter. A more
+    recent addition to the Twitter API for retrieving multiple pages uses
+    the "cursor" parameter. Usually, a method uses either the "page"
+    parameter or the "cursor" parameter, but not both. There have been
+    exceptions to this rule when Twitter deprecates the use of "page" for a
+    method in favor of "cursor". In that case, both methods may work during
+    a transition period. So, if a method supports both, you should always
+    use the "cursor" parameter.
+
+   Paging
+    For methods that support paging, the first page is returned by passing
+    "page => 1", the second page by passing "page => 2", etc. If no "page"
+    parameter is passed, the first page is returned.
+
+    Here's an example that demonstrates how to obtain all favorites in a
+    loop:
+
+        my @favs;
+        for ( my $page = 1; ; ++$page ) {
+            my $r = $nt->favorites({ page => $page });
+            last unless @$r;
+
+            push @favs, @$r;
+        }
+
+   Cursors
+    Cursoring employs a different strategy. To obtain the first page of
+    results, pass "cursor => -1". Twitter returns a reference to a hash that
+    includes entries "next_cursor", "previous_cursor", and an entry with a
+    reference to an array containing a page of the requested items. The key
+    for the array reference will be named "users", "ids", or something
+    similar depending upon the type of returned items. For example, when
+    "cursor" parameter is used with the "followers_ids" method, the returned
+    in hash entry "ids".
+
+    The "next_cursor" value can be used in a subsequent call to obtain the
+    next page of results. When you have obtained the last page of results,
+    "next_cursor" will be 0. Likewise, you can use the value for
+    "previous_cursor" to obtain the previous page of results. When you have
+    obtained the first page, "previous_cursor" will be 0.
+
+    Here's an example that demonstrates how to obtain all follower IDs in a
+    loop using the "cursor" parameter:
+
+        my @ids;
+        for ( my $cursor = -1, my $r; $cursor; $cursor = $r->{next_cursor} ) {
+            $r = $nt->followers_ids({ cursor => $cursor });
+            push @ids, @{ $r->{ids} };
+        }
 
   Synthetic Arguments
     In addition to the arguments described in the Twitter API Documentation
@@ -387,8 +435,8 @@ API METHODS AND ARGUMENTS
         synthetic "since" argument, instead. "since" may be a "Date::Time"
         object, an epoch time (the number of seconds since the system
         epoch), or a string in the same format returned by Twitter for the
-        "created_at" attribute. Only status with a "created_at" time greater
-        than "since" will be returned by the API call.
+        "created_at" attribute. Only statuses with a "created_at" time
+        greater than "since" will be returned by the API call.
 
 REST API Methods
     These methods are provided when trait "API::REST" is included in the
@@ -1208,12 +1256,47 @@ TwitterVision API Methods
 
 Lists API
     For Lists API support, add trait "API::Lists" to the "traits" option in
-    "new". The Lists API is still in beta and not finalized, so the API will
-    change. Follow the Twitter API Announcement list for details:
-    <http://groups.google.com/group/twitter-api-announce/>.
+    "new".
 
     For full documentation of the Lists API, see
     Net::Twitter::Role::API::Lists.
+
+      use Net::Twitter;
+
+      my $nt = Net::Twitter->new(traits => ['API::Lists'], ...);
+
+      $list = $nt->create_list($owner, { name => $name, description => $desc });
+      $list = $nt->update_list($owner, $list_id, { description => $desc });
+
+      $lists = $nt->get_lists($owner);
+      $lists = $nt->list_lists($owner);
+
+      $list = $nt->get_list($owner, $list_id);
+      $list = $nt->delete_list($owner, $list_id);
+
+      $statuses = $nt->list_statuses($owner, $list_id);
+
+      $lists = $nt->list_memberships($owner);
+      $lists = $nt->list_subscriptions($owner);
+
+      $users = $nt->list_members($owner, $list_id);
+
+      $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
+
+      $user = $nt->add_list_member($owner, $list_id, $user_id);
+
+      $user = $nt->delete_list_member($owner, $list_id, $user_id);
+      $user = $nt->remove_list_member($owner, $list_id, $user_id);
+
+      $user_or_undef = $nt->is_list_member($owner, $list_id, $user_id);
+
+      $users = $nt->list_subscribers($owner, $list_id);
+
+      $list = $nt->subscribe_list($owner, $list_id);
+      $list = $nt->unsubscribe_list($owner, $list_id);
+
+      $user_or_undef = $nt->is_subscribed_list($owner, $list_id, $user_id);
+      $user_or_undef = $nt->is_list_subscriber($owner, $list_id, $user_id);
 
 LEGACY COMPATIBILITY
     This version of "Net::Twitter" automatically includes the "Legacy" trait
@@ -1325,6 +1408,10 @@ SEE ALSO
         This LWP::UserAgent compatible class can be used in POE based
         application along with Net::Twitter to provide concurrent,
         non-blocking requests.
+
+    Catalyst::Authentication::Credential::Twitter
+        This module, by Jesse Stay, provides Twitter OAuth authentication
+        support for the popular Catalyst web application framework.
 
 SUPPORT
     Please report bugs to "bug-net-twitter@rt.cpan.org", or through the web
