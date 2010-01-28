@@ -1,3 +1,6 @@
+3.11001 2009-01-28
+    - Honor synthetic args (authenticate and since) for Lists API calls
+
 3.11000 2009-01-27
     - Lists API overhaul; bug fixes, added parameters, documentation
     - Create meaninful names for anonymous classes; better error context

@@ -171,9 +171,11 @@ sub _lists_api_call {
     my $base = $self->lists_api_url;
     my $uri = URI->new(sprintf "$base/$api_mask.json", @uri_parts);
 
-    my $res = $self->_authenticated_request($http_method, $uri, $args, 1);
+    my $synthetic_args = $self->_extract_synthetic_args($args);
+    my $authenticate = exists $synthetic_args->{authenticate} ? $synthetic_args->{authenticate} : 1;
+    my $res = $self->_authenticated_request($http_method, $uri, $args, $authenticate);
 
-    return $self->_parse_result($res, {}, $self->_lists_dt_parser);
+    return $self->_parse_result($res, $synthetic_args, $self->_lists_dt_parser);
 }
 
 sub _make_id_positional {

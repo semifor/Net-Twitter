@@ -7,7 +7,7 @@ use Net::Twitter;
 eval 'use LWP::UserAgent 5.819';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
-my $nt = Net::Twitter->new(traits => [qw/API::Lists/], user => 'fred', password => 'secret');
+my $nt = Net::Twitter->new(traits => [qw/API::Lists/], username => 'fred', password => 'secret');
 
 my $req;
 my $res = HTTP::Response->new(200);
@@ -125,7 +125,7 @@ my @tests = (
     },
 );
 
-plan tests => scalar @tests / 2 * 3;
+plan tests => scalar @tests / 2 * 3 + 2;
 
 while ( @tests ) {
     my $api_method = shift @tests;
@@ -136,6 +136,16 @@ while ( @tests ) {
     is $req->method, $t->{method}, "$api_method: HTTP method";
     is_deeply extract_args($req), $t->{params},
         "$api_method: parameters";
+}
+
+{
+    # unauthenticated call
+    my $r = $nt->list_statuses(twitter => 'team', { authenticate => 0 });
+    ok !$req->header('authorization'), 'unauthenticated call';
+
+    # authenticated call (default)
+    $r = $nt->list_statuses(twitter => 'team');
+    like $req->header('authorization'), qr/^Basic/, 'authenticated request (default)';
 }
 
 sub extract_args {

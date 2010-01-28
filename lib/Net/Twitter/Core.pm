@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.11000';
+our $VERSION = '3.11001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -47,6 +47,17 @@ has _json_handler   => (
 );
 
 sub _synthetic_args { qw/authenticate since/ }
+
+sub _extract_synthetic_args {
+    my ( $self, $args ) = @_;
+
+    my $synthetic_args = {};
+    for my $k ( $self->_synthetic_args ) {
+        $synthetic_args->{$k} = delete $args->{$k} if exists $args->{$k};
+    }
+
+    return $synthetic_args;
+}
 
 sub BUILD {
     my $self = shift;

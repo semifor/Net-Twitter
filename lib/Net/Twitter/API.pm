@@ -63,10 +63,7 @@ sub twitter_api_method {
         $args->{source} ||= $self->source if $options{add_source};
 
         # save synthetic arguments; don't pass them to Twitter
-        my $synthetic_args = {};
-        for my $k ( $self->_synthetic_args ) {
-            $synthetic_args->{$k} = delete $args->{$k} if exists $args->{$k};
-        }
+        my $synthetic_args = $self->_extract_synthetic_args($args);
 
         my $authenticate = exists $synthetic_args->{authenticate}
                          ? $synthetic_args->{authenticate}
