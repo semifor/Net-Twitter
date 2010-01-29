@@ -27,7 +27,7 @@ requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
 requires    'JSON::Any'                 => 1.21;
 requires    'LWP::UserAgent'            => 2.032;
-requires    'Moose'                     => 0.94;
+requires    'Moose'                     => 0.90;
 requires    'Moose::Exporter';
 requires    'Moose::Role';
 requires    'MooseX::MultiInitArg';

@@ -1,4 +1,6 @@
+3.11003 2009-01-29
     - Renamed "retweeted_of_me" REST API call to the correct "retweets_of_me" (Dan Moore @mgrdcm)
+    - Back the Moose requirement down to 0.09 (earliest version with native traits)
 
 3.11002 2009-01-28
     - Use Moose 0.94 with native traits (resolves CPAN testers failing reports)
