@@ -888,16 +888,6 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
-    retweets_of_me
-
-        Parameters: since_id, max_id, count, page
-        Required: *none*
-
-        Returns the 20 most recent tweets of the authenticated user that
-        have been retweeted by others.
-
-        Returns: ArrayRef[Status]
-
     retweeted_to_me
 
         Parameters: since_id, max_id, count, page
@@ -917,6 +907,17 @@ REST API Methods
         Returns up to 100 of the first retweets of a given tweet.
 
         Returns: Arrayref[Status]
+
+    retweets_of_me
+    alias: rewtweeted_of_me
+
+        Parameters: since_id, max_id, count, page
+        Required: *none*
+
+        Returns the 20 most recent tweets of the authenticated user that
+        have been retweeted by others.
+
+        Returns: ArrayRef[Status]
 
     saved_searches
 

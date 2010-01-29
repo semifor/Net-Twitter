@@ -131,6 +131,7 @@ twitter_api_method retweets_of_me => (
 Returns the 20 most recent tweets of the authenticated user that have been
 retweeted by others.
 
+    aliases   => [qw/rewtweeted_of_me/],
     path      => 'statuses/retweets_of_me',
     method    => 'GET',
     params    => [qw/since_id max_id count page/],
