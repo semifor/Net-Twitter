@@ -888,7 +888,7 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
-    retweeted_of_me
+    retweets_of_me
 
         Parameters: since_id, max_id, count, page
         Required: *none*

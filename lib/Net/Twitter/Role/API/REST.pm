@@ -126,12 +126,12 @@ Returns the 20 most recent retweets posted by the authenticating user's friends.
     returns   => 'ArrayRef[Status]',
 );
 
-twitter_api_method retweeted_of_me => (
+twitter_api_method retweets_of_me => (
     description => <<'',
 Returns the 20 most recent tweets of the authenticated user that have been
 retweeted by others.
 
-    path      => 'statuses/retweeted_of_me',
+    path      => 'statuses/retweets_of_me',
     method    => 'GET',
     params    => [qw/since_id max_id count page/],
     required  => [],
