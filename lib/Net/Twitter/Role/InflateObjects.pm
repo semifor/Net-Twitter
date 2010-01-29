@@ -1,7 +1,6 @@
 package Net::Twitter::Role::InflateObjects;
 use Moose::Role;
 use namespace::autoclean;
-use MooseX::AttributeHelpers;
 use Data::Visitor::Callback;
 use Digest::SHA;
 
@@ -14,12 +13,12 @@ Net::Twitter::Role::InflateObjects - Inflate Twitter API return values to Moose 
 requires qw/_inflate_objects/;
 
 has _class_map => (
-    metaclass => 'Collection::Hash',
+    traits    => ['Hash'],
     isa       => 'HashRef',
     default   => sub { {} },
-    provides  => {
-       set => 'set_cached_class',
-       get => 'get_cached_class',
+    handles  => {
+       set_cached_class => 'set',
+       get_cached_class => 'get',
     },
 );
 

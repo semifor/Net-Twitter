@@ -1,3 +1,6 @@
+3.11002 2009-01-28
+    - Use Moose 0.94 with native traits (resolves CPAN testers failing reports)
+
 3.11001 2009-01-28
     - Honor synthetic args (authenticate and since) for Lists API calls
 
