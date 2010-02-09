@@ -1,3 +1,6 @@
+3.11004 2009-02-09
+    - Removed an extraneous tar ball from the distribution (no code changes)
+
 3.11003 2009-01-29
     - Renamed "retweeted_of_me" REST API call to the correct "retweets_of_me" (Dan Moore @mgrdcm)
     - Back the Moose requirement down to 0.09 (earliest version with native traits)

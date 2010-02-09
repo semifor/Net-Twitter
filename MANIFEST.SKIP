@@ -12,6 +12,7 @@
 \bpm_to_blib$
 \bblibdirs$
 ^MANIFEST\.SKIP$
+.*\.tar$
 
 # for developers only :)
 ^TODO$
