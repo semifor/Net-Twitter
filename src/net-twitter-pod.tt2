@@ -663,6 +663,26 @@ separated with commas.
 
     $r = $nt->search({ geocode => "45.511795,-122.675629,25mi" });
 
+=item How do I get Twitter to display something other than "from Perl Net::Twitter"?
+
+If you set the source paramter to C<api>, twitter will display "from
+API", and if you set it to the empty string, twitter will display, "from
+web".
+
+    $nt = Net::Twitter->new(netrc => 1,legacy => 0,ssl => 1,source => 'api');
+    $nt->update('A post with the source parameter overridden.');
+    # result: http://twitter.com/semifor_test/status/6541105458
+
+    $nt = Net::Twitter->new(netrc => 1,legacy => 0,ssl => 1,source => '');
+    $nt->update('A post with the source parameter overridden.');
+    # result: http://twitter.com/semifor_test/status/6541257224
+
+If you want something other than "Net::Twitter", "API", or "web", you need to
+register an application and use OAuth authentication.  If you do that, you
+can have any name you choose for the application printed as the source.
+Since rolling out OAuth, Twitter has stopped issuing new registered source
+parameters, only existing register source parameters are valid.
+
 =back
 
 =head1 SEE ALSO

@@ -1,3 +1,5 @@
+    - FAQ: How do I get Twitter to display something other than "from Perl Net::Twitter"?
+
 3.11004 2009-02-09
     - Removed an extraneous tar ball from the distribution (no code changes)
 
