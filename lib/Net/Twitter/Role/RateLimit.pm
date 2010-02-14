@@ -17,7 +17,7 @@ Net::Twitter::Role::RateLimit - Rate limit features for Net::Twitter
 
     #...later
 
-    sleep $nt->until_rate(1.0) || $minumum_wait;
+    sleep $nt->until_rate(1.0) || $minimum_wait;
 
 =head1 DESCRIPTION
 
