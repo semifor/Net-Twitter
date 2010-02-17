@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 use Try::Tiny;
-use Test::More;
+use Test::More tests => 4;
 use Encode qw/decode encode_utf8 decode_utf8/;
 use Net::Twitter;
 
