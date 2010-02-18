@@ -22,7 +22,7 @@ my $t = TestUA->new($nt->ua);
 # things that should fail
 throws_ok { $nt->relationship_exists(qw/one two three/) } qr/expected 2 args/, 'too many args';
 throws_ok {
-    Net::Twitter->new(useragent_class => 'NoSuchModule::Test7701')
+    Net::Twitter->new(useragent_class => 'NoSuchModule::Test7701')->verify_credentials
 } qr/Can't locate NoSuchModule/, 'bad useragent_class';
 throws_ok { $nt->show_status([ 123 ]) } qr/must not be a reference/, 'wrong type';
 throws_ok { $nt->friends({ count => 30, page => 4 }, 'extra') }

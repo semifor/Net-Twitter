@@ -35,7 +35,7 @@ has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' 
 has decode_html_entities => ( isa => 'Bool', is => 'rw', default => 0 );
 has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$VERSION (Perl)" );
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
-has ua              => ( isa => 'Object', is => 'rw' );
+has ua              => ( isa => 'Object', is => 'rw', lazy => 1, builder => '_build_ua' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
 has clientver       => ( isa => 'Str', is => 'ro', default => $VERSION );
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
@@ -62,9 +62,6 @@ sub _extract_synthetic_args {
 sub BUILD {
     my $self = shift;
 
-    eval "use " . $self->useragent_class;
-    croak $@ if $@;
-
     if ( $self->has_netrc ) {
         require Net::Netrc;
 
@@ -78,13 +75,23 @@ sub BUILD {
         $self->password($pass);
     }
 
-    $self->ua($self->useragent_class->new(%{$self->useragent_args}));
-    $self->ua->agent($self->useragent);
-    $self->ua->default_header('X-Twitter-Client'         => $self->clientname);
-    $self->ua->default_header('X-Twitter-Client-Version' => $self->clientver);
-    $self->ua->default_header('X-Twitter-Client-URL'     => $self->clienturl);
-    $self->ua->env_proxy;
     $self->credentials($self->username, $self->password) if $self->has_username;
+}
+
+sub _build_ua {
+    my $self = shift;
+
+    eval "use " . $self->useragent_class;
+    croak $@ if $@;
+
+    my $ua = $self->useragent_class->new(%{$self->useragent_args});
+    $ua->agent($self->useragent);
+    $ua->default_header('X-Twitter-Client'         => $self->clientname);
+    $ua->default_header('X-Twitter-Client-Version' => $self->clientver);
+    $ua->default_header('X-Twitter-Client-URL'     => $self->clienturl);
+    $ua->env_proxy;
+
+    return $ua;
 }
 
 sub credentials {
@@ -100,10 +107,10 @@ sub _encode_args {
     my ($self, $args) = @_;
 
     # Values need to be utf-8 encoded.  Because of a perl bug, exposed when
-    # client code does "use utf8", keys must also be encoded as well.
+    # client code does "use utf8", keys must also be encoded.
     # see: http://www.perlmonks.org/?node_id=668987
     # and: http://perl5.git.perl.org/perl.git/commit/eaf7a4d2
-    return { map { ref($_) ? $_ : encode_utf8 $_ } %$args };
+    return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
 # Basic Auth, overridden by Role::OAuth, if included
