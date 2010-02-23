@@ -11,7 +11,7 @@ plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
 use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search/]);
+my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search RateLimit InflateObjects/]);
 
 my $datetime_parser = do {
     no warnings 'once';

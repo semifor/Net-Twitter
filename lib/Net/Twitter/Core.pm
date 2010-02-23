@@ -255,7 +255,7 @@ sub _contains_statuses {
     my ($self, $arrayref) = @_;
 
     my $e = $arrayref->[0] || return;
-    return unless ref $e eq 'HASH';
+    return unless ref $e && reftype $e eq 'HASH';
     return exists $e->{created_at} && exists $e->{text} && exists $e->{id};
 }
 
