@@ -1,24 +1,27 @@
-3.11005 2009-02-25
+3.11006 2010-02-25
+    - Fixed: unicode.t skip needed number of tests to skip (miyagawa)
+
+3.11005 2010-02-25
     - Fixed: image updates accept a single array ref argument (RT#54422)
     - Fixed: "since" synthetic arg with InflateObjects role (RT#54901)
     - Fixed: utf8 encoding error for latin1 using Basic Authentication
     - Allow a pre-created user agent object as argument to new (ua => $ua)
     - FAQ: How do I get Twitter to display something other than "from Perl Net::Twitter"?
 
-3.11004 2009-02-09
+3.11004 2010-02-09
     - Removed an extraneous tar ball from the distribution (no code changes)
 
-3.11003 2009-01-29
+3.11003 2010-01-29
     - Renamed "retweeted_of_me" REST API call to the correct "retweets_of_me" (Dan Moore @mgrdcm)
     - Back the Moose requirement down to 0.09 (earliest version with native traits)
 
-3.11002 2009-01-28
+3.11002 2010-01-28
     - Use Moose 0.94 with native traits (resolves CPAN testers failing reports)
 
-3.11001 2009-01-28
+3.11001 2010-01-28
     - Honor synthetic args (authenticate and since) for Lists API calls
 
-3.11000 2009-01-27
+3.11000 2010-01-27
     - Lists API overhaul; bug fixes, added parameters, documentation
     - Create meaninful names for anonymous classes; better error context
     - Added "Paging and Cursors" documentation section
