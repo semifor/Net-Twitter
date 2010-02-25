@@ -1,3 +1,5 @@
+3.11005 2009-02-25
+    - Fixed: image updates accept a single array ref argument (RT#54422)
     - Fixed: "since" synthetic arg with InflateObjects role (RT#54901)
     - Fixed: utf8 encoding error for latin1 using Basic Authentication
     - Allow a pre-created user agent object as argument to new (ua => $ua)

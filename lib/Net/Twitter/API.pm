@@ -56,7 +56,6 @@ sub twitter_api_method {
         my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
 
         if ( @_ ) {
-            ref $_[$_] && croak "arg $_ must not be a reference" for 0..$#_;
             @_ == @$arg_names || croak "$name expected @{[ scalar @$arg_names ]} args";
             @{$args}{@$arg_names} = @_;
         }

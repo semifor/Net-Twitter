@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.11004
+    This document describes Net::Twitter version 3.11005
 
 SYNOPSIS
       use Net::Twitter;

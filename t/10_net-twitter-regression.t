@@ -95,5 +95,8 @@ is    $t->request->uri->scheme, 'https', 'ssl used for Lists';
 ### v3.10001 ### netrc used $self->apiurl, which is only available via the API::REST trait
 lives_ok  { Net::Twitter->new(netrc => 1, traits => [qw/API::Lists/]) }
           'netrc with API::Lists lives';
+### v3.11004 ### single array ref arg to update_profile_image not proprerly handled
+$r  = $nt->update_profile_image([ undef, 'my_mug.jpg', Content_Type => 'image/jpeg', Content => '' ]);
+is    $t->request->content_type, 'multipart/form-data', 'multipart/form-data';
 
 done_testing
