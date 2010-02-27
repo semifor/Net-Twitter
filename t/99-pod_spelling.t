@@ -99,3 +99,4 @@ useragent
 username
 WOEID
 woeid
+xAuth

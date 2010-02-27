@@ -24,6 +24,7 @@ around BUILDARGS => sub {
         authentication_url => "http://twitter.com/oauth/authenticate",
         authorization_url  => "http://twitter.com/oauth/authorize",
         access_token_url   => "http://twitter.com/oauth/access_token",
+        xauth_url          => "https://twitter.com/oauth/access_token",
     };
 
     return { %$oauth_urls, %$args };
@@ -33,7 +34,7 @@ has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
 has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
 
 # url attributes
-for my $attribute ( qw/authentication_url authorization_url request_token_url access_token_url/ ) {
+for my $attribute ( qw/authentication_url authorization_url request_token_url access_token_url xauth_url/ ) {
     has $attribute => (
         isa    => 'Str', is => 'rw', required => 1,
         # inflate urls to URI objects when read
@@ -77,7 +78,8 @@ sub get_authorization_url { return shift->_get_auth_url(authorization_url => @_)
 sub _make_oauth_request {
     my ($self, $type, %params) = @_;
 
-    my $request = Net::OAuth->request($type)->new(
+    my $class = $type =~ s/^\+// ? $type : Net::OAuth->request($type);
+    my $request = $class->new(
         version          => '1.0',
         consumer_key     => $self->{consumer_key},
         consumer_secret  => $self->{consumer_secret},
@@ -203,6 +205,35 @@ override _authenticated_request => sub {
 
     return $self->ua->request($msg);
 };
+
+sub xauth {
+    my ( $self, $username, $password ) = @_;
+
+    require Net::Twitter::OAuth::XAuthRequest;
+    my $uri = $self->xauth_url;
+    my $request = $self->_make_oauth_request(
+        '+Net::Twitter::OAuth::XAuthRequest',
+        request_url     => $uri,
+        x_auth_username => $username,
+        x_auth_password => $password,
+        x_auth_mode     => 'client_auth',
+    );
+
+    my $res = $self->ua->get($request->to_url);
+    die "GET $uri failed: ".$res->status_line
+        unless $res->is_success;
+
+    # reuse $uri to extract parameters from content
+    $uri->query($res->content);
+    my %res_param = $uri->query_form;
+
+    return (
+        $self->access_token($res_param{oauth_token}),
+        $self->access_token_secret($res_param{oauth_token_secret}),
+        $res_param{user_id},
+        $res_param{screen_name},
+    );
+}
 
 # shortcuts defined in early releases
 # DEPRECATED
@@ -382,9 +413,17 @@ C<ouath_verifier> value, provided as a parameter to the oauth callback
 
 The user must have authorized this app at the url given by C<get_authorization_url> first.
 
-Returns the access token and access token secret but also sets them internally
-so that after calling this method, you can immediately call API methods
-requiring authentication.
+Returns the access_token, access_token_secret, user_id, and screen_name in a
+list.  Also sets them internally so that after calling this method, you can
+immediately call API methods requiring authentication.
+
+=item xauth($username, $password)
+
+Exchanges the C<$username> and C<$password> for access tokens.  This method has
+the same return value as C<request_access_token>: access_token, access_token_secret,
+user_id, and screen_name in a list. Also, like C<request_access_token>, it sets
+the access_token and access_secret, internally, so you can immediately call API
+methods requiring authentication.
 
 =item get_authorization_url(callback => $callback_url)
 
