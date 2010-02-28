@@ -1,3 +1,6 @@
+3.11007 2010-02-27
+    - xAuth implemented and tested
+
 3.11006_01 2010-02-26
     - xAuth implemented: @oauth = $nt->xauth($username, $password);
 

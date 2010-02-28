@@ -3,6 +3,7 @@ use warnings;
 use strict;
 use base 'Net::OAuth::Request';
 
+__PACKAGE__->add_extension_param_pattern(qr/x_auth_/);
 __PACKAGE__->add_required_message_params(qw/
     x_auth_username
     x_auth_password
