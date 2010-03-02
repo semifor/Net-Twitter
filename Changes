@@ -1,3 +1,7 @@
+3.11008 2010-03-02
+    - Added support for new api methods: reverse_geocode, geo_id
+    - Updated method "update" with new parameters: place_id, display_coordinates
+
 3.11007 2010-02-27
     - xAuth implemented and tested
 

@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.11007
+    This document describes Net::Twitter version 3.11008
 
 SYNOPSIS
       use Net::Twitter;
@@ -785,6 +785,17 @@ REST API Methods
 
         Returns: Bool
 
+    geo_id
+    geo_id(id)
+
+        Parameters: id
+        Required: id
+
+        Returns details of a place returned from the "reverse_geocode"
+        method.
+
+        Returns: HashRef
+
     home_timeline
 
         Parameters: since_id, max_id, count, page
@@ -909,7 +920,7 @@ REST API Methods
         Returns: Arrayref[Status]
 
     retweets_of_me
-    alias: rewtweeted_of_me
+    alias: retweeted_of_me
 
         Parameters: since_id, max_id, count, page
         Required: *none*
@@ -918,6 +929,54 @@ REST API Methods
         have been retweeted by others.
 
         Returns: ArrayRef[Status]
+
+    reverse_geocode
+    reverse_geocode(lat, long)
+
+        Parameters: lat, long, accuracy, granularity, max_results
+        Required: lat, long
+
+        Search for places (cities and neighborhoods) that can be attached to
+        a statuses/update. Given a latitude and a longitude, return a list
+        of all the valid places that can be used as a place_id when updating
+        a status. Conceptually, a query can be made from the user's
+        location, retrieve a list of places, have the user validate the
+        location he or she is at, and then send the ID of this location up
+        with a call to statuses/update.
+
+        There are multiple granularities of places that can be returned --
+        "neighborhoods", "cities", etc. At this time, only United States
+        data is available through this method.
+
+        lat Required. The latitude to query about. Valid ranges are -90.0 to
+            +90.0 (North is positive) inclusive.
+
+        long
+            Required. The longitude to query about. Valid ranges are -180.0
+            to +180.0 (East is positive) inclusive.
+
+        accuracy
+            Optional. A hint on the "region" in which to search. If a
+            number, then this is a radius in meters, but it can also take a
+            string that is suffixed with ft to specify feet. If this is not
+            passed in, then it is assumed to be 0m. If coming from a device,
+            in practice, this value is whatever accuracy the device has
+            measuring its location (whether it be coming from a GPS, WiFi
+            triangulation, etc.).
+
+        granularity
+            Optional. The minimal granularity of data to return. If this is
+            not passed in, then "neighborhood" is assumed. "city" can also
+            be passed.
+
+        max_results
+            Optional. A hint as to the number of results to return. This
+            does not guarantee that the number of results returned will
+            equal max_results, but instead informs how many "nearby" results
+            to return. Ideally, only pass in the number of places you intend
+            to display to the user here.
+
+        Returns: HashRef
 
     saved_searches
 
@@ -1037,17 +1096,51 @@ REST API Methods
     update
     update(status)
 
-        Parameters: status, lat, long, in_reply_to_status_id
+        Parameters: status, lat, long, place_id, display_coordinates,
+        in_reply_to_status_id
         Required: status
 
         Updates the authenticating user's status. Requires the status
         parameter specified. A status update with text identical to the
         authenticating user's current status will be ignored.
 
-        The optional "lat" and "long" parameters add location data to the
-        status for a geo enabled account. They expect values in the ranges
-        -90.0 to +90.0 and -180.0 to +180.0 respectively. They are ignored
-        unless the user's "geo_enabled" field is true.
+        status
+            Required. The text of your status update. URL encode as
+            necessary. Statuses over 140 characters will cause a 403 error
+            to be returned from the API.
+
+        in_reply_to_status_id
+            Optional. The ID of an existing status that the update is in
+            reply to. o Note: This parameter will be ignored unless the
+            author of the tweet this parameter references is mentioned
+            within the status text. Therefore, you must include @username,
+            where username is the author of the referenced tweet, within the
+            update.
+
+        lat Optional. The location's latitude that this tweet refers to. The
+            valid ranges for latitude is -90.0 to +90.0 (North is positive)
+            inclusive. This parameter will be ignored if outside that range,
+            if it is not a number, if geo_enabled is disabled, or if there
+            not a corresponding long parameter with this tweet.
+
+        long
+            Optional. The location's longitude that this tweet refers to.
+            The valid ranges for longitude is -180.0 to +180.0 (East is
+            positive) inclusive. This parameter will be ignored if outside
+            that range, if it is not a number, if geo_enabled is disabled,
+            or if there not a corresponding lat parameter with this tweet.
+
+        place_id
+            Optional. The place to attach to this status update. Valid
+            place_ids can be found by querying "reverse_geocode".
+
+        display_coordinates
+            Optional. By default, geo-tweets will have their coordinates
+            exposed in the status object (to remain backwards compatible
+            with existing API applications). To turn off the display of the
+            precise latitude and longitude (but keep the contextual location
+            information), pass "display_coordinates =" 0> on the status
+            update.
 
         Returns: Status
 

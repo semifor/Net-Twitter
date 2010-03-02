@@ -23,9 +23,12 @@ BasicUser
 CPAN
 DateTime
 DirectMessage
+EOT
 Etcheverry
 ExtendedUser
 geo
+GPS
+granularities
 Grennan
 IM
 IP
@@ -97,6 +100,7 @@ Unsubscribes
 url
 useragent
 username
+WiFi
 WOEID
 woeid
 xAuth

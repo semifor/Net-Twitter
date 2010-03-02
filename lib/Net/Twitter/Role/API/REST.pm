@@ -131,7 +131,7 @@ twitter_api_method retweets_of_me => (
 Returns the 20 most recent tweets of the authenticated user that have been
 retweeted by others.
 
-    aliases   => [qw/rewtweeted_of_me/],
+    aliases   => [qw/retweeted_of_me/],
     path      => 'statuses/retweets_of_me',
     method    => 'GET',
     params    => [qw/since_id max_id count page/],
@@ -196,23 +196,65 @@ status's author will be returned inline.
 );
 
 twitter_api_method update => (
-    description => <<EOT,
+    path       => 'statuses/update',
+    method     => 'POST',
+    params     => [qw/status lat long place_id display_coordinates in_reply_to_status_id/],
+    required   => [qw/status/],
+    booleans   => [qw/display_coordinates/],
+    add_source => 1,
+    returns    => 'Status',
+    description => <<'EOT',
+
 Updates the authenticating user's status.  Requires the status parameter
 specified.  A status update with text identical to the authenticating
 user's current status will be ignored.
 
-The optional C<lat> and C<long> parameters add location data to the status for
-a geo enabled account. They expect values in the ranges -90.0 to +90.0 and
--180.0 to +180.0 respectively.  They are ignored unless the user's
-C<geo_enabled> field is true.
+=over 4
+
+=item status
+
+Required.  The text of your status update. URL encode as necessary. Statuses
+over 140 characters will cause a 403 error to be returned from the API.
+
+=item in_reply_to_status_id
+
+Optional. The ID of an existing status that the update is in reply to.  o Note:
+This parameter will be ignored unless the author of the tweet this parameter
+references is mentioned within the status text. Therefore, you must include
+@username, where username is the author of the referenced tweet, within the
+update.
+
+=item lat
+
+Optional. The location's latitude that this tweet refers to.  The valid ranges
+for latitude is -90.0 to +90.0 (North is positive) inclusive.  This parameter
+will be ignored if outside that range, if it is not a number, if geo_enabled is
+disabled, or if there not a corresponding long parameter with this tweet.
+
+=item long
+
+Optional. The location's longitude that this tweet refers to.  The valid ranges
+for longitude is -180.0 to +180.0 (East is positive) inclusive.  This parameter
+will be ignored if outside that range, if it is not a number, if geo_enabled is
+disabled, or if there not a corresponding lat parameter with this tweet.
+
+=item place_id
+
+Optional. The place to attach to this status update.  Valid place_ids can be
+found by querying C<reverse_geocode>.
+
+=item display_coordinates
+
+Optional. By default, geo-tweets will have their coordinates exposed in the
+status object (to remain backwards compatible with existing API applications).
+To turn off the display of the precise latitude and longitude (but keep the
+contextual location information), pass C<display_coordinates => 0> on the
+status update.
+
+=back
+
 EOT
 
-    path       => 'statuses/update',
-    method     => 'POST',
-    params     => [qw/status lat long in_reply_to_status_id/],
-    required   => [qw/status/],
-    add_source => 1,
-    returns    => 'Status',
 );
 
 twitter_api_method destroy_status => (
@@ -854,6 +896,74 @@ minutes, and therefore users are discouraged from querying these endpoints
 faster than once every five minutes.  Global trends information is also
 available from this API by using a WOEID of 1.
 
+);
+
+twitter_api_method reverse_geocode => (
+    path        => 'geo/reverse_geocode',
+    method      => 'GET',
+    params      => [qw/lat long accuracy granularity max_results/],
+    required    => [qw/lat long/],
+    returns     => 'HashRef',
+    description => <<'EOT',
+
+Search for places (cities and neighborhoods) that can be attached to a
+statuses/update.  Given a latitude and a longitude, return a list of all the
+valid places that can be used as a place_id when updating a status.
+Conceptually, a query can be made from the user's location, retrieve a list of
+places, have the user validate the location he or she is at, and then send the
+ID of this location up with a call to statuses/update.
+
+There are multiple granularities of places that can be returned --
+"neighborhoods", "cities", etc.  At this time, only United States data is
+available through this method. 
+
+=over 4
+
+=item lat
+
+Required.  The latitude to query about.  Valid ranges are -90.0 to +90.0 (North
+is positive) inclusive.
+
+=item long
+
+Required. The longitude to query about.  Valid ranges are -180.0 to +180.0
+(East is positive) inclusive.
+
+=item accuracy
+
+Optional. A hint on the "region" in which to search.  If a number, then this is
+a radius in meters, but it can also take a string that is suffixed with ft to
+specify feet.  If this is not passed in, then it is assumed to be 0m.  If
+coming from a device, in practice, this value is whatever accuracy the device
+has measuring its location (whether it be coming from a GPS, WiFi
+triangulation, etc.).
+
+=item granularity
+
+Optional.  The minimal granularity of data to return.  If this is not passed
+in, then C<neighborhood> is assumed.  C<city> can also be passed.
+
+=item max_results
+
+Optional.  A hint as to the number of results to return.  This does not
+guarantee that the number of results returned will equal max_results, but
+instead informs how many "nearby" results to return.  Ideally, only pass in the
+number of places you intend to display to the user here. 
+
+=back
+
+EOT
+);
+
+twitter_api_method geo_id => (
+    path => 'geo/id/id',
+    method => 'GET',
+    params => [qw/id/],
+    required => [qw/id/],
+    returns  => 'HashRef',
+    description => <<'EOT',
+Returns details of a place returned from the C<reverse_geocode> method.
+EOT
 );
 
 1;

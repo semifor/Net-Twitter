@@ -68,6 +68,13 @@ sub twitter_api_method {
                          ? $synthetic_args->{authenticate}
                          : $options{authenticate}
                          ;
+        # promote boolean parameters
+        for my $boolean_arg ( @{ $options{booleans} } ) {
+            if ( exists $args->{$boolean_arg} ) {
+                next if $args->{$boolean_arg} =~ /^true|false$/;
+                $args->{$boolean_arg} = $args->{$boolean_arg} ? 'true' : 'false';
+            }
+        }
 
         my $local_path = $modify_path->($path, $args);
         
@@ -109,6 +116,7 @@ has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } )
 has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
 has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
+has booleans    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );
 
