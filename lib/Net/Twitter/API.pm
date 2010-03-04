@@ -80,8 +80,11 @@ sub twitter_api_method {
         
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
 
-        return $self->_parse_result(
-            $self->_authenticated_request($options{method}, $uri, $args, $authenticate),
+        return $self->_json_request(
+            $options{method},
+            $uri,
+            $args,
+            $authenticate,
             $synthetic_args,
             $options{datetime_parser},
         );

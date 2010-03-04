@@ -5,6 +5,8 @@ use DateTime::Format::Strptime;
 use URI::Escape();
 use Try::Tiny;
 
+requires qw/_json_request/;
+
 =head1 NAME
 
 Net::Twitter::Role::API::Lists - Twitter Lists API support for Net::Twitter
@@ -173,9 +175,14 @@ sub _lists_api_call {
 
     my $synthetic_args = $self->_extract_synthetic_args($args);
     my $authenticate = exists $synthetic_args->{authenticate} ? $synthetic_args->{authenticate} : 1;
-    my $res = $self->_authenticated_request($http_method, $uri, $args, $authenticate);
-
-    return $self->_parse_result($res, $synthetic_args, $self->_lists_dt_parser);
+    return $self->_json_request(
+        $http_method,
+        $uri,
+        $args,
+        $authenticate,
+        $synthetic_args,
+        $self->_lists_dt_parser,
+    );
 }
 
 sub _make_id_positional {

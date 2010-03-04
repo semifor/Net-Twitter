@@ -113,6 +113,16 @@ sub _encode_args {
     return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
+sub _json_request { 
+    my ($self, $http_method, $uri, $args, $authenticate, $synthetic_args, $dt_parser) = @_;
+    
+    return $self->_parse_result(
+        $self->_authenticated_request($http_method, $uri, $args, $authenticate),
+        $synthetic_args,
+        $dt_parser,
+    );
+}
+
 # Basic Auth, overridden by Role::OAuth, if included
 sub _authenticated_request {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
