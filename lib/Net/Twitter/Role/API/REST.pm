@@ -23,7 +23,8 @@ after BUILD => sub {
 around BUILDARGS => sub {
     my $next    = shift;
     my $class   = shift;
-    my %options = @_;
+
+    my %options = @_ == 1 ? %{$_[0]} : @_;
 
     if ( delete $options{identica} ) {
         %options = (
@@ -33,7 +34,7 @@ around BUILDARGS => sub {
         );
     }
 
-    return $next->($class, %options);
+    return $next->($class, \%options);
 };
 
 after credentials => sub {
