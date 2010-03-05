@@ -1,3 +1,4 @@
+    - Use newly documented "preferred" oauth endpoints: http://api.twitter.com/oauth/*
     - Added SimulateCursors trait for Identi.ca compatibility
 
 3.11008 2010-03-02
