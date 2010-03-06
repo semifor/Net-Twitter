@@ -9,6 +9,7 @@ This document describes Net::Twitter version [% VERSION %]
 =head1 SYNOPSIS
 
   use Net::Twitter;
+  use Scalar::Util 'blessed';
 
   my $nt = Net::Twitter->new(
       traits   => [qw/API::REST/],
