@@ -152,8 +152,10 @@ sub _authenticated_request {
     $msg->headers->authorization_basic($self->username, $self->password)
         if $authenticate && $self->has_username && $self->has_password;
 
-    return $self->ua->request($msg);
+    return $self->_send_request($msg);
 }
+
+sub _send_request { shift->ua->request(shift) }
 
 # Twitter returns HTML encoded entities in the "text" field of status messages.
 # Decode them.

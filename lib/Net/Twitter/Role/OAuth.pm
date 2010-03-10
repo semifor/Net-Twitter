@@ -203,7 +203,7 @@ override _authenticated_request => sub {
         croak "unexpected http_method: $http_method";
     }
 
-    return $self->ua->request($msg);
+    return $self->_send_request($msg);
 };
 
 sub xauth {
