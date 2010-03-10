@@ -23,7 +23,7 @@ to L<Net::Twitter> this role will provide automatic retries of API calls in a ve
 configurable way.
 
 It only retries when the response status code is E<gt>= 500.  Other error codes
-indicate a premanent error.  If the maximum number of retries is reached,
+indicate a permanent error.  If the maximum number of retries is reached,
 without success, an exception is thrown, as usual.
 
 

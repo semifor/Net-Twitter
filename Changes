@@ -1,3 +1,5 @@
+3.11009 2010-03-10
+    - Added RetryOnError trait (see perldoc Net::Twitter::Role::RetryOnError)
     - Import Sclar::Util::blessed in the POD Synopsis to make it clear callers need to do so (RT#55283)
     - Use newly documented "preferred" oauth endpoints: http://api.twitter.com/oauth/*
     - Added SimulateCursors trait for Identi.ca compatibility

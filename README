@@ -2,10 +2,11 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.11008
+    This document describes Net::Twitter version 3.11009
 
 SYNOPSIS
       use Net::Twitter;
+      use Scalar::Util 'blessed';
 
       my $nt = Net::Twitter->new(
           traits   => [qw/API::REST/],
