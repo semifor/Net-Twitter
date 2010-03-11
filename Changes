@@ -1,3 +1,6 @@
+3.11010 2010-03-11
+    - Added lookup_users API method
+
 3.11009 2010-03-10
     - Added RetryOnError trait (see perldoc Net::Twitter::Role::RetryOnError)
     - Import Sclar::Util::blessed in the POD Synopsis to make it clear callers need to do so (RT#55283)

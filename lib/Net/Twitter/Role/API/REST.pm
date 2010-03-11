@@ -967,6 +967,51 @@ Returns details of a place returned from the C<reverse_geocode> method.
 EOT
 );
 
+twitter_api_method lookup_users => (
+    path => 'users/lookup',
+    method => 'GET',
+    params => [qw/user_id screen_name/],
+    required => [],
+    returns => 'ArrayRef[User]',
+    description => <<'EOT'
+Return up to 20 users worth of extended information, specified by either ID,
+screen name, or combination of the two. The author's most recent status (if the
+authenticating user has permission) will be returned inline.  This method is
+rate limited to 1000 calls per hour.
+
+This method will accept user IDs or screen names as either a comma delimited
+string, or as an ARRAY ref.  It will also accept arguments in the normal
+HASHREF form or as a simple list of named arguments.  I.e., any of the
+following forms are acceptable:
+
+    $nt->lookup_users({ user_id => '1234,6543,3333' });
+    $nt->lookup_users(user_id => '1234,6543,3333');
+    $nt->lookup_users({ user_id => [ 1234, 6543, 3333 ] });
+    $nt->lookup_users({ screen_name => 'fred,barney,wilma' });
+    $nt->lookup_users(screen_name => ['fred', 'barney', 'wilma']);
+
+    $nt->lookup_users(
+        screen_name => ['fred', 'barney' ],
+        user_id     => '4321,6789',
+    );
+
+EOT
+);
+
+around lookup_users => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
+    $args = { %$args, @_ };
+
+    for ( qw/screen_name user_id/ ) {
+        $args->{$_} = join(',' => @{ $args->{$_} }) if ref $args->{$_} eq 'ARRAY';
+    }
+
+    return $orig->($self, $args);
+};
+
 1;
 
 __END__

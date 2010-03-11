@@ -24,6 +24,5 @@ throws_ok { $nt->relationship_exists(qw/one two three/) } qr/expected 2 args/, '
 throws_ok {
     Net::Twitter->new(useragent_class => 'NoSuchModule::Test7701')->verify_credentials
 } qr/Can't locate NoSuchModule/, 'bad useragent_class';
-        qr/must not be a reference/, 'extra args';
 
 exit 0;
