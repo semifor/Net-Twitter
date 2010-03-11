@@ -23,7 +23,10 @@ sub get_methods_for {
     return 
         sort { $a->name cmp $b->name }
         grep {
-            blessed $_  && $_->isa('Net::Twitter::Meta::Method')
+            $_->isa('Net::Twitter::Meta::Method')
+        }
+        map {
+            $_->isa('Class::MOP::Method::Wrapped') ? $_->get_original_method : $_
         } $nt->meta->get_all_methods;
 }
 
