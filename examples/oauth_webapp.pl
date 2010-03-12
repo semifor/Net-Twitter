@@ -45,7 +45,7 @@ sub my_last_tweet {
     # if the user is authorized, we'll get access tokens from a cookie
     my %sess = $q->cookie('sess');
 
-    unless ( %sess ) {
+    unless ( exists $sess{access_token_secret} ) {
         warn "User has no access_tokens\n";
         return $self->authorize($q);
     }
@@ -85,16 +85,28 @@ sub authorize {
 
     my $auth_url = $self->twitter->get_authorization_url(callback => "$ENV{SERVER_URL}oauth_callback");
 
+    # we'll store the request tokens in a session cookie
+    my $cookie = $q->cookie(-name => 'sess', -value => {
+        request_token        => $self->twitter->request_token,
+        request_token_secret => $self->twitter->request_token_secret,
+    });
+
     warn "Sending user to: $auth_url\n";
-    print $q->redirect(-nph => 1, -uri => $auth_url);
+    print $q->redirect(-nph => 1, -uri => $auth_url, -cookie => $cookie);
 }
 
 # Twitter returns the user here
 sub oauth_callback {
     my ($self, $q) = @_;
-    
+
     my $request_token = $q->param('oauth_token');
     my $verifier      = $q->param('oauth_verifier');
+
+    my %sess = $q->cookie(-name => 'sess');
+    die "Something is horribly wrong" unless $sess{request_token} eq $request_token;
+
+    $self->twitter->request_token($request_token);
+    $self->twitter->request_token_secret($sess{request_token_secret});
 
     warn <<"";
 User returned from Twitter with:
