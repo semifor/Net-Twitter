@@ -1,3 +1,6 @@
+3.11012 2010-03-13
+    - fixed: added fallback since Test::More 0.95_01 does not stringify in "is" (tokuhirom)
+
 3.11011 2010-03-11
     - fixed documentation to include lookup_users
 
