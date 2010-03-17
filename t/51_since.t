@@ -52,6 +52,11 @@ cmp_ok @$r, '==', 1,  'filtered with string in Twitter timestamp format';
 dies_ok { $r = $nt->friends_timeline({ since => 'not a date' }) } 'dies on invalid since';
 
 $nt = Net::Twitter->new(traits => [qw/API::Search/]);
+$nt->ua->add_handler(request_send => sub {
+        my $res = HTTP::Response->new(200);
+        $res->content('{"test":"done"}');
+        return $res;
+});
 lives_ok { $r = $nt->search({ q => 'perl', since => '2009-10-05' }) } 'YYYY-MM-DD';
 
 done_testing;

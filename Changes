@@ -1,3 +1,5 @@
+    - fixed: t/51_since.t was actually connecting to twitter
+
 3.11012 2010-03-13
     - fixed: added fallback since Test::More 0.95_01 does not stringify in "is" (tokuhirom)
 
