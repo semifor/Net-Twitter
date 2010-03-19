@@ -1010,7 +1010,7 @@ Returns up to 100 users who retweeted the status identified by C<id>.
 );
 
 twitter_api_method retweeted_by_ids => (
-    path     => 'statuses/:id/retweeted_by_ids',
+    path     => 'statuses/:id/retweeted_by/ids',
     method   => 'GET',
     params   => [qw/id count page/],
     required => [qw/id/],
