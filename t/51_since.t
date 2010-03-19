@@ -1,9 +1,9 @@
 #!perl
 use warnings;
 use strict;
+use Try::Tiny;
 use Scalar::Util qw/blessed/;
-use Test::More;
-use Test::Exception;
+use Test::More tests => 8;
 use lib qw(t/lib);
 
 eval 'use TestUA';
@@ -49,7 +49,12 @@ $r = $nt->friends_timeline({ since => $datetime_parser->format_datetime(
             $dt - DateTime::Duration->new(days => 1)) });
 cmp_ok @$r, '==', 1,  'filtered with string in Twitter timestamp format';
 
-dies_ok { $r = $nt->friends_timeline({ since => 'not a date' }) } 'dies on invalid since';
+my $test = 'dies on invalid since';
+try {
+    $r = $nt->friends_timeline({ since => 'not a date' });
+    fail $test;
+}
+catch { pass $test };
 
 $nt = Net::Twitter->new(traits => [qw/API::Search/]);
 $nt->ua->add_handler(request_send => sub {
@@ -57,6 +62,12 @@ $nt->ua->add_handler(request_send => sub {
         $res->content('{"test":"done"}');
         return $res;
 });
-lives_ok { $r = $nt->search({ q => 'perl', since => '2009-10-05' }) } 'YYYY-MM-DD';
 
-done_testing;
+$test = 'YYYY-MM-DD';
+try {
+    $r = $nt->search({ q => 'perl', since => '2009-10-05' });
+    pass $test;
+}
+catch {
+    fail "$test: $_";
+};
