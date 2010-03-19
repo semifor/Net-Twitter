@@ -87,7 +87,7 @@ twitter_api_method retweet => (
 Retweets a tweet. Requires the id parameter of the tweet you are retweeting.
 Returns the original tweet with retweet details embedded.
 
-    path      => 'statuses/retweet/id',
+    path      => 'statuses/retweet/:id',
     method    => 'POST',
     params    => [qw/id/],
     required  => [qw/id/],
@@ -98,7 +98,7 @@ twitter_api_method retweets => (
     description => <<'',
 Returns up to 100 of the first retweets of a given tweet.
 
-    path    => 'statuses/retweets/id',
+    path    => 'statuses/retweets/:id',
     method  => 'GET',
     params  => [qw/id count/],
     required => [qw/id/],
@@ -160,7 +160,7 @@ user. It's also possible to request another user's timeline via the id
 parameter. This is the equivalent of the Web /archive page for
 your own user, or the profile page for a third party.
 
-    path    => 'statuses/user_timeline/id',
+    path    => 'statuses/user_timeline/:id',
     method  => 'GET',
     params  => [qw/id user_id screen_name since_id max_id count page/],
     required => [],
@@ -189,7 +189,7 @@ twitter_api_method show_status => (
 Returns a single status, specified by the id parameter.  The
 status's author will be returned inline.
 
-    path     => 'statuses/show/id',
+    path     => 'statuses/show/:id',
     method   => 'GET',
     params   => [qw/id/],
     required => [qw/id/],
@@ -263,7 +263,7 @@ twitter_api_method destroy_status => (
 Destroys the status specified by the required ID parameter.  The
 authenticating user must be the author of the specified status.
 
-    path     => 'statuses/destroy/id',
+    path     => 'statuses/destroy/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -290,7 +290,7 @@ C<next_cursor> will be 0.
 EOT
 
     aliases  => [qw/following/],
-    path     => 'statuses/friends/id',
+    path     => 'statuses/friends/:id',
     method   => 'GET',
     params   => [qw/id user_id screen_name cursor/],
     required => [qw//],
@@ -316,7 +316,7 @@ C<previous_cursor> will be 0.  When there are no subsequent pages, the value of
 C<next_cursor> will be 0.
 EOT
 
-    path     => 'statuses/followers/id',
+    path     => 'statuses/followers/:id',
     method   => 'GET',
     params   => [qw/id user_id screen_name cursor/],
     required => [qw//],
@@ -331,7 +331,7 @@ design settings, so third party developers can theme their widgets
 according to a given user's preferences. You must be properly
 authenticated to request the page of a protected user.
 
-    path     => 'users/show/id',
+    path     => 'users/show/:id',
     method   => 'GET',
     params   => [qw/id/],
     required => [qw/id/],
@@ -382,7 +382,7 @@ Destroys the direct message specified in the required ID parameter.
 The authenticating user must be the recipient of the specified direct
 message.
 
-    path     => 'direct_messages/destroy/id',
+    path     => 'direct_messages/destroy/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -408,7 +408,7 @@ Returns the befriended user when successful.  Returns a string describing the
 failure condition when unsuccessful.
 
     aliases  => [qw/follow_new/],
-    path     => 'friendships/create/id',
+    path     => 'friendships/create/:id',
     method   => 'POST',
     params   => [qw/id user_id screen_name follow/],
     required => [qw/id/],
@@ -422,7 +422,7 @@ authenticating user.  Returns the un-friended user when successful.
 Returns a string describing the failure condition when unsuccessful.
 
     aliases  => [qw/unfollow/],
-    path     => 'friendships/destroy/id',
+    path     => 'friendships/destroy/:id',
     method   => 'POST',
     params   => [qw/id user_id screen_name/],
     required => [qw/id/],
@@ -458,7 +458,7 @@ there are no subsequent pages, the value of C<next_cursor> will be 0.
 EOT
 
     aliases  => [qw/following_ids/],
-    path     => 'friends/ids/id',
+    path     => 'friends/ids/:id',
     method   => 'GET',
     params   => [qw/id user_id screen_name cursor/],
     required => [qw/id/],
@@ -480,7 +480,7 @@ When there are no prior pages, the value of C<previous_cursor> will be 0.  When
 there are no subsequent pages, the value of C<next_cursor> will be 0.
 EOT
 
-    path     => 'followers/ids/id',
+    path     => 'followers/ids/:id',
     method   => 'GET',
     params   => [qw/id user_id screen_name cursor/],
     required => [qw/id/],
@@ -638,7 +638,7 @@ twitter_api_method favorites => (
 Returns the 20 most recent favorite statuses for the authenticating
 user or user specified by the ID parameter.
 
-    path     => 'favorites/id',
+    path     => 'favorites/:id',
     method   => 'GET',
     params   => [qw/id page/],
     required => [qw//],
@@ -650,7 +650,7 @@ twitter_api_method create_favorite => (
 Favorites the status specified in the ID parameter as the
 authenticating user.  Returns the favorite status when successful.
 
-    path     => 'favorites/create/id',
+    path     => 'favorites/create/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -662,7 +662,7 @@ twitter_api_method destroy_favorite => (
 Un-favorites the status specified in the ID parameter as the
 authenticating user.  Returns the un-favorited status.
 
-    path     => 'favorites/destroy/id',
+    path     => 'favorites/destroy/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -674,7 +674,7 @@ twitter_api_method enable_notifications  => (
 Enables notifications for updates from the specified user to the
 authenticating user.  Returns the specified user when successful.
 
-    path     => 'notifications/follow/id',
+    path     => 'notifications/follow/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -686,7 +686,7 @@ twitter_api_method disable_notifications => (
 Disables notifications for updates from the specified user to the
 authenticating user.  Returns the specified user when successful.
 
-    path     => 'notifications/leave/id',
+    path     => 'notifications/leave/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -699,7 +699,7 @@ Blocks the user specified in the ID parameter as the authenticating user.
 Returns the blocked user when successful.  You can find out more about
 blocking in the Twitter Support Knowledge Base.
 
-    path     => 'blocks/create/id',
+    path     => 'blocks/create/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -712,7 +712,7 @@ twitter_api_method destroy_block => (
 Un-blocks the user specified in the ID parameter as the authenticating user.
 Returns the un-blocked user when successful.
 
-    path     => 'blocks/destroy/id',
+    path     => 'blocks/destroy/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -725,7 +725,7 @@ twitter_api_method block_exists => (
 Returns if the authenticating user is blocking a target user. Will return the blocked user's
 object if a block exists, and error with HTTP 404 response code otherwise.
 
-    path     => 'blocks/exists/id',
+    path     => 'blocks/exists/:id',
     method   => 'GET',
     params   => [qw/id user_id screen_name/],
     required => [qw/id/],
@@ -795,7 +795,7 @@ twitter_api_method show_saved_search => (
     description => <<'',
 Retrieve the data for a saved search, by C<id>, owned by the authenticating user.
 
-    path     => 'saved_searches/show/id',
+    path     => 'saved_searches/show/:id',
     method   => 'GET',
     params   => [qw/id/],
     required => [qw/id/],
@@ -806,7 +806,7 @@ twitter_api_method show_saved_search => (
     description => <<'',
 Retrieve the data for a saved search, by ID, owned by the authenticating user.
 
-    path     => 'saved_searches/show/id',
+    path     => 'saved_searches/show/:id',
     method   => 'GET',
     params   => [qw/id/],
     required => [qw/id/],
@@ -829,7 +829,7 @@ twitter_api_method destroy_saved_search => (
 Destroys a saved search. The search, specified by C<id>, must be owned
 by the authenticating user.
 
-    path     => 'saved_searches/destroy/id',
+    path     => 'saved_searches/destroy/:id',
     method   => 'POST',
     params   => [qw/id/],
     required => [qw/id/],
@@ -957,7 +957,7 @@ EOT
 );
 
 twitter_api_method geo_id => (
-    path => 'geo/id/id',
+    path => 'geo/id/:id',
     method => 'GET',
     params => [qw/id/],
     required => [qw/id/],
@@ -996,6 +996,28 @@ following forms are acceptable:
     );
 
 EOT
+);
+
+twitter_api_method retweeted_by => (
+    path => 'statuses/:id/retweeted_by',
+    method => 'GET',
+    params => [qw/id count page/],
+    required => [qw/id/],
+    returns  => 'ArrayRef[User]',
+    description => <<''
+Returns up to 100 users who retweeted the status identified by C<id>.
+
+);
+
+twitter_api_method retweeted_by_ids => (
+    path     => 'statuses/:id/retweeted_by_ids',
+    method   => 'GET',
+    params   => [qw/id count page/],
+    required => [qw/id/],
+    returns  => 'ArrayRef[User]',
+    description => <<''
+Returns the IDs of up to 100 users who retweeted the status identified by C<id>.
+
 );
 
 around lookup_users => sub {

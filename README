@@ -918,6 +918,27 @@ REST API Methods
 
         Returns: Status
 
+    retweeted_by
+    retweeted_by(id)
+
+        Parameters: id, count, page
+        Required: id
+
+        Returns up to 100 users who retweeted the status identified by "id".
+
+        Returns: ArrayRef[User]
+
+    retweeted_by_ids
+    retweeted_by_ids(id)
+
+        Parameters: id, count, page
+        Required: id
+
+        Returns the IDs of up to 100 users who retweeted the status
+        identified by "id".
+
+        Returns: ArrayRef[User]
+
     retweeted_by_me
 
         Parameters: since_id, max_id, count, page

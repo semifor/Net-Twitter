@@ -25,18 +25,6 @@ sub authenticate { $do_auth = $_[1] }
 my $datetime_parser = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
 sub datetime_parser { $datetime_parser = $_[1] }
 
-my $with_url_arg = sub {
-    my ($path, $args) = @_;
-
-    if ( defined(my $id = delete $args->{id}) ) {
-        $path .= uri_escape($id);
-    }
-    else {
-        chop($path);
-    }
-    return $path;
-};
-
 sub twitter_api_method {
     my $caller = shift;
     my $name   = shift;
@@ -46,8 +34,6 @@ sub twitter_api_method {
 
     my ($arg_names, $path) = @options{qw/required path/};
     $arg_names = $options{params} if @$arg_names == 0 && @{$options{params}} == 1;
-
-    my $modify_path = $path =~ s,/id$,/, ? $with_url_arg : sub { $_[0] };
 
     my $code = sub {
         my $self = shift;
@@ -76,7 +62,10 @@ sub twitter_api_method {
             }
         }
 
-        my $local_path = $modify_path->($path, $args);
+        # replace placeholder arguments
+        my $local_path = $path;
+        $local_path =~ s,/:id$,, unless exists $args->{id}; # remove optional trailing id
+        $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
         
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
 

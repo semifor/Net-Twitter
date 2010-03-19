@@ -31,7 +31,7 @@ for my $pass ( 1, 2 ) {
 
         $pos_params = $entry->params if @$pos_params == 0 && @{$entry->params} == 1;
 
-        my $has_id = $path =~ s|/id$|/$params[0]|;
+        my $has_id = $path =~ s/:id\b/$params[0]/;
         if ( $has_id && @$pos_params == 0 ) {
             @$pos_params = 'id';
         }
@@ -53,7 +53,7 @@ for my $pass ( 1, 2 ) {
             my $args = $t->args;
             ok !$has_id || (
                     delete $expected{id} &&
-                    $t->path =~ /\/twitter_id\.json/
+                    $t->path =~ /\/twitter_id[\/.]/
                 ), "id test";
 
             is_deeply $args, \%expected,    "[$pass] $call args";

@@ -1,3 +1,4 @@
+    - added new API methods: retweeted_by and retweeted_by_ids
     - fixed: t/51_since.t was actually connecting to twitter
 
 3.11012 2010-03-13
