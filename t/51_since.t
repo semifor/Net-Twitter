@@ -3,11 +3,13 @@ use warnings;
 use strict;
 use Try::Tiny;
 use Scalar::Util qw/blessed/;
-use Test::More tests => 8;
+use Test::More;
 use lib qw(t/lib);
 
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
+
+plan tests => 8;
 
 use_ok 'Net::Twitter';
 
