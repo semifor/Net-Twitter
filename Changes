@@ -1,3 +1,4 @@
+    - added support and documentation for optional timeline parameter skip_user
     - fixed tests: plan was called twice when LWP was too old
     - added friends_incoming and friendships_outgoing methods
 

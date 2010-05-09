@@ -43,6 +43,14 @@ for my $pass ( 1, 2 ) {
             my %expected;
             my @local_params = @params[0..$#{$pos_params}];
             @expected{@$pos_params} = @local_params;
+
+            # HACK! Expect "true" or "false" for boolean params
+            for my $bool_param ( @{ $entry->booleans || [] } ) {
+                if ( exists $expected{$bool_param} ) {
+                    $expected{$bool_param} = $expected{$bool_param} ? 'true' : 'false';
+                }
+            }
+
             $expected{source} = $nt->source if $entry->add_source;
 
             my $r = eval { $nt->$call(@local_params) };

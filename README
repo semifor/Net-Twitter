@@ -443,27 +443,38 @@ REST API Methods
     These methods are provided when trait "API::REST" is included in the
     "traits" option to "new".
 
-    Several of these methods accept a user ID as the "id" parameter. The
-    user ID can be either a screen name, or the users numeric ID. To
-    disambiguate, use the "screen_name" or "user_id" parameters, instead.
+  Common Parameters
+    id  Several of these methods accept a user ID as the "id" parameter. The
+        user ID can be either a screen name, or the users numeric ID. To
+        disambiguate, use the "screen_name" or "user_id" parameters,
+        instead.
 
-    For example, These calls are equivalent:
+        For example, These calls are equivalent:
 
-        $nt->create_friend('perl_api');    # screen name
-        $nt->create_friend(1564061);       # numeric ID
-        $nt->create_friend({ id => 'perl_api' });
-        $nt->create_friend({ screen_name => 'perl_api' });
-        $nt->create_friend({ user_id     => 1564061 });
+            $nt->create_friend('perl_api');    # screen name
+            $nt->create_friend(1564061);       # numeric ID
+            $nt->create_friend({ id => 'perl_api' });
+            $nt->create_friend({ screen_name => 'perl_api' });
+            $nt->create_friend({ user_id     => 1564061 });
 
-    However user_id 911 and screen_name 911 are separate Twitter accounts.
-    These calls are NOT equivalent:
+        However user_id 911 and screen_name 911 are separate Twitter
+        accounts. These calls are NOT equivalent:
 
-        $nt->create_friend(911); # interpreted as screen name
-        $nt->create_friend({ user_id => 911 }); # screen name: richellis
+            $nt->create_friend(911); # interpreted as screen name
+            $nt->create_friend({ user_id => 911 }); # screen name: richellis
 
-    Whenever the "id" parameter is required and "user_id" and "screen_name"
-    are also parameters, using any one of them satisfies the requirement.
+        Whenever the "id" parameter is required and "user_id" and
+        "screen_name" are also parameters, using any one of them satisfies
+        the requirement.
 
+    skip_user
+        The timeline methods all accept an optional "skip_user" parameter.
+        When set to a true value, the statuses returned in a timeline will
+        not contain an entire embedded user HASH. Instead, the user node
+        will contain only an "id" element to indicate the numerical ID of
+        the Twitter user that sent the status.
+
+  Methods
     block_exists
     block_exists(id)
 
@@ -764,7 +775,7 @@ REST API Methods
     friends_timeline
     alias: following_timeline
 
-        Parameters: since_id, max_id, count, page
+        Parameters: since_id, max_id, count, page, skip_user
         Required: *none*
 
         Returns the 20 most recent statuses posted by the authenticating
@@ -823,7 +834,7 @@ REST API Methods
 
     home_timeline
 
-        Parameters: since_id, max_id, count, page
+        Parameters: since_id, max_id, count, page, skip_user
         Required: *none*
 
         Returns the 20 most recent statuses, including retweets, posted by
@@ -886,8 +897,9 @@ REST API Methods
         Returns: DirectMessage
 
     public_timeline
+    public_timeline(skip_user)
 
-        Parameters: *none*
+        Parameters: skip_user
         Required: *none*
 
         Returns the 20 most recent statuses from non-protected users who
@@ -1295,7 +1307,8 @@ REST API Methods
 
     user_timeline
 
-        Parameters: id, user_id, screen_name, since_id, max_id, count, page
+        Parameters: id, user_id, screen_name, since_id, max_id, count, page,
+        skip_user
         Required: *none*
 
         Returns the 20 most recent statuses posted from the authenticating
