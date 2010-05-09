@@ -361,19 +361,25 @@ non-authenticated call.
 
 =head1 API METHODS AND ARGUMENTS
 
-Most Twitter API methods take parameters.  All Net::Twitter API
-methods will accept a HASH ref of named parameters as specified in the Twitter
-API documentation.  For convenience, many Net::Twitter methods accept
-simple positional arguments as documented, below.  The positional parameter
-passing style is optional; you can always use the named parameters in a hash
-ref if you prefer.
+Most Twitter API methods take parameters.  All Net::Twitter API methods will
+accept a HASH ref of named parameters as specified in the Twitter API
+documentation.  For convenience, many Net::Twitter methods accept simple
+positional arguments.  The positional parameter passing style is optional; you
+can always use the named parameters in a HASH reference if you prefer.
+
+You may pass any number of required parameters as positional parameters.  You
+must pass them in the order specified in the documentation for each method.
+Optional parameters must be passed as named parameters in a HASH reference.  The
+HASH reference containing the named parameters must be the final parameter to
+the method call.  Any required parameters not passed as positional parameters,
+must be included in the named parameter HASH reference.
 
 For example, the REST API method C<update> has one required parameter,
 C<status>.  You can call C<update> with a HASH ref argument:
 
     $nt->update({ status => 'Hello world!' });
 
-Or, you can use the convenient form:
+Or, you can use the convenient, positional parameter form:
 
     $nt->update('Hello world!');
 
@@ -381,6 +387,11 @@ The C<update> method also has an optional parameter, C<in_reply_to_status_id>.
 To use it, you B<must> use the HASH ref form:
 
     $nt->update({ status => 'Hello world!', in_reply_to_status_id => $reply_to });
+
+You may use the convenient positional form for the required C<status> parameter
+with the optional parameters specified in the named parameter HASH reference:
+
+    $nt->update('Hello world!', { in_reply_to_status_id => $reply_to });
 
 Convenience form is provided for the required parameters of all API methods.
 So, these two calls are equivalent:
@@ -530,6 +541,14 @@ option to C<new>.
 
 [% INCLUDE APIDOC class='API::Search' %]
 
+=head1 Lists API Methods
+
+These methods are provided when trait C<API::Lists> is included in the C<traits>
+option to C<new>. All Lists API methods require a C<user> parameter.  It is the
+screen_name of the list owner.
+
+[% INCLUDE APIDOC class='API::Lists' %]
+
 =head1 TwitterVision API Methods
 
 These methods are provided when trait C<API::TwitterVision> is included in the
@@ -537,49 +556,6 @@ C<traits> option to C<new>.
 
 [% INCLUDE APIDOC class='API::TwitterVision' %]
 
-=head1 Lists API
-
-For Lists API support, add trait C<API::Lists> to the C<traits> option in
-C<new>.
-
-For full documentation of the Lists API, see L<Net::Twitter::Role::API::Lists>.
-
-  use Net::Twitter;
-
-  my $nt = Net::Twitter->new(traits => ['API::Lists'], ...);
-
-  $list = $nt->create_list($owner, { name => $name, description => $desc });
-  $list = $nt->update_list($owner, $list_id, { description => $desc });
-
-  $lists = $nt->get_lists($owner);
-  $lists = $nt->list_lists($owner);
-
-  $list = $nt->get_list($owner, $list_id);
-  $list = $nt->delete_list($owner, $list_id);
-
-  $statuses = $nt->list_statuses($owner, $list_id);
-
-  $lists = $nt->list_memberships($owner);
-  $lists = $nt->list_subscriptions($owner);
-
-  $users = $nt->list_members($owner, $list_id);
-
-  $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
-
-  $user = $nt->add_list_member($owner, $list_id, $user_id);
-
-  $user = $nt->delete_list_member($owner, $list_id, $user_id);
-  $user = $nt->remove_list_member($owner, $list_id, $user_id);
-
-  $user_or_undef = $nt->is_list_member($owner, $list_id, $user_id);
-
-  $users = $nt->list_subscribers($owner, $list_id);
-
-  $list = $nt->subscribe_list($owner, $list_id);
-  $list = $nt->unsubscribe_list($owner, $list_id);
-
-  $user_or_undef = $nt->is_subscribed_list($owner, $list_id, $user_id);
-  $user_or_undef = $nt->is_list_subscriber($owner, $list_id, $user_id);
 
 =head1 LEGACY COMPATIBILITY
 

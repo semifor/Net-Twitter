@@ -41,10 +41,17 @@ sub twitter_api_method {
         # copy callers args since we may add ->{source}
         my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
 
-        if ( @_ ) {
-            @_ == @$arg_names || croak "$name expected @{[ scalar @$arg_names ]} args";
-            @{$args}{@$arg_names} = @_;
+        croak sprintf "$name expected %d args", scalar @$arg_names if @_ > @$arg_names;
+
+        # promote positional args to named args
+        for ( my $i = 0; @_; ++$i ) {
+            my $param = $arg_names->[$i];
+            croak "duplicate param $param: both positional and named"
+                if exists $args->{$param};
+
+            $args->{$param} = shift;
         }
+
         $args->{source} ||= $self->source if $options{add_source};
 
         # save synthetic arguments; don't pass them to Twitter

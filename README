@@ -329,16 +329,24 @@ API METHODS AND ARGUMENTS
     Most Twitter API methods take parameters. All Net::Twitter API methods
     will accept a HASH ref of named parameters as specified in the Twitter
     API documentation. For convenience, many Net::Twitter methods accept
-    simple positional arguments as documented, below. The positional
-    parameter passing style is optional; you can always use the named
-    parameters in a hash ref if you prefer.
+    simple positional arguments. The positional parameter passing style is
+    optional; you can always use the named parameters in a HASH reference if
+    you prefer.
+
+    You may pass any number of required parameters as positional parameters.
+    You must pass them in the order specified in the documentation for each
+    method. Optional parameters must be passed as named parameters in a HASH
+    reference. The HASH reference containing the named parameters must be
+    the final parameter to the method call. Any required parameters not
+    passed as positional parameters, must be included in the named parameter
+    HASH reference.
 
     For example, the REST API method "update" has one required parameter,
     "status". You can call "update" with a HASH ref argument:
 
         $nt->update({ status => 'Hello world!' });
 
-    Or, you can use the convenient form:
+    Or, you can use the convenient, positional parameter form:
 
         $nt->update('Hello world!');
 
@@ -346,6 +354,12 @@ API METHODS AND ARGUMENTS
     "in_reply_to_status_id". To use it, you must use the HASH ref form:
 
         $nt->update({ status => 'Hello world!', in_reply_to_status_id => $reply_to });
+
+    You may use the convenient positional form for the required "status"
+    parameter with the optional parameters specified in the named parameter
+    HASH reference:
+
+        $nt->update('Hello world!', { in_reply_to_status_id => $reply_to });
 
     Convenience form is provided for the required parameters of all API
     methods. So, these two calls are equivalent:
@@ -1411,6 +1425,210 @@ Search API Methods
 
         Returns: HashRef
 
+Lists API Methods
+    These methods are provided when trait "API::Lists" is included in the
+    "traits" option to "new". All Lists API methods require a "user"
+    parameter. It is the screen_name of the list owner.
+
+    add_list_member
+    add_list_member(user, list_id, id)
+
+        Parameters: user, list_id, id
+        Required: user, list_id, id
+
+        Adds the user identified by "id" to the list.
+
+        Returns a reference the added user as a hash reference.
+
+        Returns: User
+
+    create_list
+    create_list(user, name)
+
+        Parameters: user, name, mode, description
+        Required: user, name
+
+        Creates a new list for the authenticated user. The "mode" parameter
+        may be either "public" or "private". If not specified, it defaults
+        to "public".
+
+        Returns: HashRef
+
+    delete_list
+    delete_list(user, list_id)
+
+        Parameters: user, list_id
+        Required: user, list_id
+
+        Deletes a list owned by the authenticating user. Returns the list as
+        a hash reference.
+
+        Returns:
+
+    delete_list_member
+    delete_list_member(user, list_id, id)
+    alias: remove_list_member
+
+        Parameters: user, list_id, id
+        Required: user, list_id, id
+
+        Deletes the user identified by "id" from the specified list.
+
+        Returns the deleted user as a hash reference.
+
+        Returns:
+
+    get_list
+    get_list(user, list_id)
+
+        Parameters: user, list_id
+        Required: user, list_id
+
+        Returns the specified list as a hash reference.
+
+        Returns: HashRef
+
+    get_lists
+    get_lists(user)
+    alias: list_lists
+
+        Parameters: user, cursor
+        Required: user
+
+        Returns a reference to an array of lists owned by the specified
+        user. If the user is the authenticated user, it returns both public
+        and private lists. Otherwise, it only returns public lists.
+
+        When the "cursor" parameter is used, a hash reference is returned;
+        the lists are returned in the "lists" element of the hash.
+
+        Returns: ArrayRef[List]
+
+    is_list_member
+    is_list_member(user, list_id, id)
+
+        Parameters: user, list_id, id
+        Required: user, list_id, id
+
+        Returns the list member as a HASH reference if "id" is a member of
+        the list. Otherwise, returns undef.
+
+        Returns: ArrayRef[User]
+
+    is_list_subscriber
+    is_list_subscriber(user, list_id, id)
+    alias: is_subscribed_list
+
+        Parameters: user, list_id, id
+        Required: user, list_id, id
+
+        Returns the subscriber as a HASH reference if "id" is a subscriber
+        to the list. Otherwise, returns undef.
+
+        Returns: ArrayRef[User]
+
+    list_members
+    list_members(user, list_id)
+    alias: is_list_member
+
+        Parameters: user, list_id, id, cursor
+        Required: user, list_id
+
+        Returns the list members as an array reference.
+
+        The optional "id" parameter can be used to determine if the user
+        specified by "id" is a member of the list. If so, the user is
+        returned as a hash reference; if not, "undef" is returned.
+
+        When the "cursor" parameter is used, a hash reference is returned;
+        the members are returned in the "users" element of the hash.
+
+        Returns: ArrayRef[User]
+
+    list_memberships
+    list_memberships(user)
+
+        Parameters: user, cursor
+        Required: user
+
+        Returns the lists the specified user is a member of as an array
+        reference.
+
+        When the "cursor" parameter is used, a hash reference is returned;
+        the lists are returned in the "lists" element of the hash.
+
+        Returns:
+
+    list_statuses
+    list_statuses(user, list_id)
+
+        Parameters: user, list_id, since_id, max_id, per_page, page
+        Required: user, list_id
+
+        Returns a timeline of list member statuses as an array reference.
+
+        Returns: ArrayRef[Status]
+
+    list_subscribers
+    list_subscribers(user, list_id)
+    alias: is_subscribed_list
+    alias: is_list_subscriber
+
+        Parameters: user, list_id, id, cursor
+        Required: user, list_id
+
+        Returns the subscribers to a list as an array reference.
+
+        When the "cursor" parameter is used, a hash reference is returned;
+        the subscribers are returned in the "users" element of the hash.
+
+        Returns: ArrayRef[User]
+
+    list_subscriptions
+    list_subscriptions(user)
+
+        Parameters: user, cursor
+        Required: user
+
+        Returns a lists to which the specified user is subscribed as an
+        array reference.
+
+        When the "cursor" parameter is used, a hash reference is returned;
+        the lists are returned in the "lists" element of the hash.
+
+        Returns:
+
+    subscribe_list
+    subscribe_list(user, list_id)
+
+        Parameters: user, list_id
+        Required: user, list_id
+
+        Subscribes the authenticated user to the specified list.
+
+        Returns: List
+
+    unsubscribe_list
+    unsubscribe_list(user, list_id)
+
+        Parameters: user, list_id
+        Required: user, list_id
+
+        Unsubscribes the authenticated user from the specified list.
+
+        Returns: List
+
+    update_list
+    update_list(user, list_id)
+
+        Parameters: user, list_id, name, mode, description
+        Required: user, list_id
+
+        Updates a list to change the name, mode, description, or any
+        combination thereof.
+
+        Returns: HashRef
+
 TwitterVision API Methods
     These methods are provided when trait "API::TwitterVision" is included
     in the "traits" option to "new".
@@ -1434,50 +1652,6 @@ TwitterVision API Methods
         Updates the location for the authenticated user.
 
         Returns: HashRef
-
-Lists API
-    For Lists API support, add trait "API::Lists" to the "traits" option in
-    "new".
-
-    For full documentation of the Lists API, see
-    Net::Twitter::Role::API::Lists.
-
-      use Net::Twitter;
-
-      my $nt = Net::Twitter->new(traits => ['API::Lists'], ...);
-
-      $list = $nt->create_list($owner, { name => $name, description => $desc });
-      $list = $nt->update_list($owner, $list_id, { description => $desc });
-
-      $lists = $nt->get_lists($owner);
-      $lists = $nt->list_lists($owner);
-
-      $list = $nt->get_list($owner, $list_id);
-      $list = $nt->delete_list($owner, $list_id);
-
-      $statuses = $nt->list_statuses($owner, $list_id);
-
-      $lists = $nt->list_memberships($owner);
-      $lists = $nt->list_subscriptions($owner);
-
-      $users = $nt->list_members($owner, $list_id);
-
-      $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
-
-      $user = $nt->add_list_member($owner, $list_id, $user_id);
-
-      $user = $nt->delete_list_member($owner, $list_id, $user_id);
-      $user = $nt->remove_list_member($owner, $list_id, $user_id);
-
-      $user_or_undef = $nt->is_list_member($owner, $list_id, $user_id);
-
-      $users = $nt->list_subscribers($owner, $list_id);
-
-      $list = $nt->subscribe_list($owner, $list_id);
-      $list = $nt->unsubscribe_list($owner, $list_id);
-
-      $user_or_undef = $nt->is_subscribed_list($owner, $list_id, $user_id);
-      $user_or_undef = $nt->is_list_subscriber($owner, $list_id, $user_id);
 
 LEGACY COMPATIBILITY
     This version of "Net::Twitter" automatically includes the "Legacy" trait
