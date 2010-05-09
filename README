@@ -786,6 +786,30 @@ REST API Methods
 
         Returns: Bool
 
+    friendships_incoming
+    friendships_incoming(cursor)
+
+        Parameters: cursor
+        Required: cursor
+
+        Returns an HASH ref with an array of numeric IDs in the "ids"
+        element for every user who has a pending request to follow the
+        authenticating user.
+
+        Returns: HashRef
+
+    friendships_outgoing
+    friendships_outgoing(cursor)
+
+        Parameters: cursor
+        Required: cursor
+
+        Returns an HASH ref with an array of numeric IDs in the "ids"
+        element for every protected user for whom the authenticating user
+        has a pending follow request.
+
+        Returns: HashRef
+
     geo_id
     geo_id(id)
 
