@@ -54,6 +54,7 @@ sub twitter_api_method {
                          ? $synthetic_args->{authenticate}
                          : $options{authenticate}
                          ;
+
         # promote boolean parameters
         for my $boolean_arg ( @{ $options{booleans} } ) {
             if ( exists $args->{$boolean_arg} ) {
@@ -62,11 +63,15 @@ sub twitter_api_method {
             }
         }
 
+        # Workaround Twitter bug: any value passed for skip_user is treated as true.
+        # The only way to get 'false' is to not pass the skip_user at all.
+        delete $args->{skip_user} if exists $args->{skip_user} && $args->{skip_user} eq 'false';
+
         # replace placeholder arguments
         my $local_path = $path;
         $local_path =~ s,/:id$,, unless exists $args->{id}; # remove optional trailing id
         $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
-        
+
         my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
 
         return $self->_json_request(
