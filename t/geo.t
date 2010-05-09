@@ -2,11 +2,13 @@
 use warnings;
 use strict;
 use Try::Tiny;
-use Test::More tests => 2;
+use Test::More;
 use Net::Twitter;
 
 eval "use LWP::UserAgent 5.819";
 plan skip_all => 'LWP::UserAgent >= 5.819 required' if $@;
+
+plan tests => 2;
 
 my $req;
 my $ua = LWP::UserAgent->new;
