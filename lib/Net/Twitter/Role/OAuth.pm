@@ -209,10 +209,9 @@ override _authenticated_request => sub {
 sub xauth {
     my ( $self, $username, $password ) = @_;
 
-    require Net::Twitter::OAuth::XAuthRequest;
     my $uri = $self->xauth_url;
     my $request = $self->_make_oauth_request(
-        '+Net::Twitter::OAuth::XAuthRequest',
+        'XauthAccessToken',
         request_url     => $uri,
         x_auth_username => $username,
         x_auth_password => $password,
