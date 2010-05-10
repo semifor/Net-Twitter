@@ -209,17 +209,23 @@ override _authenticated_request => sub {
 sub xauth {
     my ( $self, $username, $password ) = @_;
 
-    my $uri = $self->xauth_url;
-    my $request = $self->_make_oauth_request(
-        'XauthAccessToken',
-        request_url     => $uri,
+    my @args = (
         x_auth_username => $username,
         x_auth_password => $password,
         x_auth_mode     => 'client_auth',
     );
 
-    my $res = $self->ua->get($request->to_url);
-    die "GET $uri failed: ".$res->status_line
+    my $uri = $self->xauth_url;
+    my $request = $self->_make_oauth_request(
+        'XauthAccessToken',
+        request_url    => $uri,
+        request_method => 'POST',
+        @args,
+    );
+
+    my $res = $self->ua->request(
+        POST $uri, \@args, Authorization => $request->to_authorization_header);
+    die "POST $uri failed: ".$res->status_line
         unless $res->is_success;
 
     # reuse $uri to extract parameters from content
