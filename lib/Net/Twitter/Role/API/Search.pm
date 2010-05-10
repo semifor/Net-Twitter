@@ -4,7 +4,18 @@ use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 
-has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
+has searchapiurl         => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
+has search_api_versioned => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
+
+after BUILD => sub {
+    my $self = shift;
+
+    return unless $self->ssl;
+
+    for ( qw/searchapiurl search_api_versioned/ ) {
+        $self->{$_} =~ s/^http:/https:/;
+    }
+};
 
 base_url     'searchapiurl';
 authenticate 0;
@@ -30,6 +41,8 @@ EOT
     required => [qw/q/],
     returns  => 'HashRef',
 );
+
+base_url     'search_api_versioned';
 
 twitter_api_method trends => (
     description => <<'',
