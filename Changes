@@ -1,3 +1,9 @@
+    - moved trends methods to their own API class to accommodate a different base URL
+    - use POST with Authorization header for XAuth (per Twitter documentation)
+    - replace homegrown XAuth support with Net::OAuth's native support
+    - accommodate 2 base URLs for API::Search (search and trends* methods use different base URLs)
+    - enable SSL support for API::Search
+
 3.13000 2010-05-09
     - added support and documentation for optional timeline parameter skip_user
     - fixed tests: plan was called twice when LWP was too old

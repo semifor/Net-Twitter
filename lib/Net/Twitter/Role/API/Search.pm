@@ -4,7 +4,15 @@ use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 
-has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
+with 'Net::Twitter::Role::API::Search::Trends';
+
+has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
+
+after BUILD => sub {
+    my $self = shift;
+
+    $self->{searchapiurl} =~ s/^http:/https:/ if $self->ssl;
+};
 
 base_url     'searchapiurl';
 authenticate 0;
@@ -28,54 +36,6 @@ EOT
     method   => 'GET',
     params   => [qw/q callback lang rpp page since_id geocode show_user/],
     required => [qw/q/],
-    returns  => 'HashRef',
-);
-
-twitter_api_method trends => (
-    description => <<'',
-Returns the top ten queries that are currently trending on Twitter.  The
-response includes the time of the request, the name of each trending topic, and
-the url to the Twitter Search results page for that topic.
-
-    path     => 'trends',
-    method   => 'GET',
-    params   => [qw//],
-    required => [qw//],
-    returns  => 'ArrayRef[Query]',
-);
-
-twitter_api_method trends_current => (
-    description => <<'',
-Returns the current top ten trending topics on Twitter.  The response includes
-the time of the request, the name of each trending topic, and query used on
-Twitter Search results page for that topic.
-
-    path     => 'trends/current',
-    method   => 'GET',
-    params   => [qw/exclude/],
-    required => [qw//],
-    returns  => 'HashRef',
-);
-
-twitter_api_method trends_daily => (
-    description => <<'',
-Returns the top 20 trending topics for each hour in a given day.
-
-    path     => 'trends/daily',
-    method   => 'GET',
-    params   => [qw/date exclude/],
-    required => [qw//],
-    returns  => 'HashRef',
-);
-
-twitter_api_method trends_weekly => (
-    description => <<'',
-Returns the top 30 trending topics for each day in a given week.
-
-    path     => 'trends/weekly',
-    method   => 'GET',
-    params   => [qw/date exclude/],
-    required => [qw//],
     returns  => 'HashRef',
 );
 
