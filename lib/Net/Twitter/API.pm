@@ -11,10 +11,13 @@ Moose::Exporter->setup_import_methods(
     with_caller => [ qw/base_url authenticate datetime_parser twitter_api_method/ ],
 );
 
-# kludge: This is very transient!
-my $_base_url_accessor;
-sub base_url { $_base_url_accessor = $_[1] }
+sub base_url {
+    my ($caller, $name, %options) = @_;
 
+    Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
+}
+
+# kludge: This is very transient!
 my $do_auth;
 sub authenticate { $do_auth = $_[1] }
 
@@ -31,8 +34,6 @@ sub twitter_api_method {
 
     my ($arg_names, $path) = @options{qw/required path/};
     $arg_names = $options{params} if @$arg_names == 0 && @{$options{params}} == 1;
-
-    my $base_url_accessor = $_base_url_accessor;
 
     my $code = sub {
         my $self = shift;
@@ -71,7 +72,7 @@ sub twitter_api_method {
         $local_path =~ s,/:id$,, unless exists $args->{id}; # remove optional trailing id
         $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
 
-        my $uri = URI->new($self->$base_url_accessor . "/$local_path.json");
+        my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
 
         return $self->_json_request(
             $options{method},
