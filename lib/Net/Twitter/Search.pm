@@ -2,7 +2,7 @@ package Net::Twitter::Search;
 use Moose;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13000';
+our $VERSION = '3.13001';
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';

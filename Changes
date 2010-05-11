@@ -1,4 +1,4 @@
-    - moved trends methods to their own API class to accommodate a different base URL
+3.13001 2010-11
     - use POST with Authorization header for XAuth (per Twitter documentation)
     - replace homegrown XAuth support with Net::OAuth's native support
     - accommodate 2 base URLs for API::Search (search and trends* methods use different base URLs)
