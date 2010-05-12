@@ -11,11 +11,8 @@ Moose::Exporter->setup_import_methods(
     with_caller => [ qw/base_url authenticate datetime_parser twitter_api_method/ ],
 );
 
-sub base_url {
-    my ($caller, $name, %options) = @_;
-
-    Moose::Meta::Class->initialize($caller)->add_method(_base_url => sub { $_[1]->$name });
-}
+my $_base_url;
+sub base_url { $_base_url = $_[1] }
 
 # kludge: This is very transient!
 my $do_auth;
@@ -28,7 +25,12 @@ sub datetime_parser { $datetime_parser = $_[1] }
 sub twitter_api_method {
     my $caller = shift;
     my $name   = shift;
-    my %options = ( authenticate => $do_auth, datetime_parser => $datetime_parser, @_ );
+    my %options = (
+        authenticate    => $do_auth,
+        datetime_parser => $datetime_parser,
+        base_url_method => $_base_url,
+        @_,
+    );
 
     my $class = Moose::Meta::Class->initialize($caller);
 
@@ -79,7 +81,7 @@ sub twitter_api_method {
         $local_path =~ s,/:id$,, unless exists $args->{id}; # remove optional trailing id
         $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
 
-        my $uri = URI->new($caller->_base_url($self) . "/$local_path.json");
+        my $uri = URI->new($self->${ \$options{base_url_method} } . "/$local_path.json");
 
         return $self->_json_request(
             $options{method},
@@ -94,9 +96,9 @@ sub twitter_api_method {
     $class->add_method(
         $name,
         Net::Twitter::Meta::Method->new(
-            name => $name,
+            name         => $name,
             package_name => $caller,
-            body => $code,
+            body         => $code,
             %options,
         ),
     );
@@ -123,6 +125,7 @@ has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
 has booleans    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );
+has base_url_method => ( isa => 'Str', is => 'ro', required => 1 );
 
 # TODO: can MooseX::StrictConstructor be made to work here?
 my %valid_attribute_names = map { $_->init_arg => 1 }
