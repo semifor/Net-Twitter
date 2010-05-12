@@ -1,4 +1,7 @@
-3.13001 2010-11
+3.13002_01 2010-05-12
+    - Refactored the Lists API to use Net::Twitter::API
+
+3.13001 2010-05-11
     - use POST with Authorization header for XAuth (per Twitter documentation)
     - replace homegrown XAuth support with Net::OAuth's native support
     - accommodate 2 base URLs for API::Search (search and trends* methods use different base URLs)
