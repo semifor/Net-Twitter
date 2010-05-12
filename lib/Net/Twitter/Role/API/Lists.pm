@@ -201,7 +201,6 @@ twitter_api_method list_members => (
     params      => [qw/user list_id id cursor/],
     required    => [qw/user list_id/],
     returns     => 'ArrayRef[User]',
-    aliases     => [qw/is_list_member/],
     description => <<'EOT',
 Returns the list members as an array reference.
 
@@ -272,7 +271,6 @@ twitter_api_method list_subscribers => (
     params      => [qw/user list_id id cursor/],
     required    => [qw/user list_id/],
     returns     => 'ArrayRef[User]',
-    aliases     => [qw/is_subscribed_list is_list_subscriber/],
     description => <<'EOT',
 Returns the subscribers to a list as an array reference.
 

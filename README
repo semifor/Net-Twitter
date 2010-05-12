@@ -1529,7 +1529,6 @@ Lists API Methods
 
     list_members
     list_members(user, list_id)
-    alias: is_list_member
 
         Parameters: user, list_id, id, cursor
         Required: user, list_id
@@ -1571,8 +1570,6 @@ Lists API Methods
 
     list_subscribers
     list_subscribers(user, list_id)
-    alias: is_subscribed_list
-    alias: is_list_subscriber
 
         Parameters: user, list_id, id, cursor
         Required: user, list_id
