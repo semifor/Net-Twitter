@@ -1,3 +1,6 @@
+3.13002_02 2010-05-12
+    - fixed: removed redundant alias declarations
+
 3.13002_01 2010-05-12
     - Refactored the Lists API to use Net::Twitter::API
 
