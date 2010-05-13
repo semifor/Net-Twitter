@@ -117,14 +117,13 @@ sub _json_request {
     my ($self, $http_method, $uri, $args, $authenticate, $synthetic_args, $dt_parser) = @_;
     
     return $self->_parse_result(
-        $self->_authenticated_request($http_method, $uri, $args, $authenticate),
+        $self->_prepare_request($http_method, $uri, $args, $authenticate),
         $synthetic_args,
         $dt_parser,
     );
 }
 
-# Basic Auth, overridden by Role::OAuth, if included
-sub _authenticated_request {
+sub _prepare_request {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
     my $msg;
@@ -149,10 +148,17 @@ sub _authenticated_request {
         croak "unexpected HTTP method: $http_method";
     }
 
-    $msg->headers->authorization_basic($self->username, $self->password)
-        if $authenticate && $self->has_username && $self->has_password;
+    $self->_add_authorization_header($msg) if $authenticate;
 
     return $self->_send_request($msg);
+}
+
+# Basic Auth, overridden by Role::OAuth, if included
+sub _add_authorization_header {
+    my ( $self, $msg ) = @_;
+
+    $msg->headers->authorization_basic($self->username, $self->password)
+        if $self->has_username && $self->has_password;
 }
 
 sub _send_request { shift->ua->request(shift) }

@@ -111,6 +111,11 @@ has retry_delay_code => (
 around _send_request => sub {
     my ( $orig, $self, $msg ) = @_;
 
+    my $is_oauth = do {
+        my $auth_header = $msg->header('authorization');
+        $auth_header && $auth_header =~ /^OAuth /;
+    };
+
     my $delay = $self->initial_retry_delay;
     my $retries = $self->max_retries;
     while () {
@@ -121,6 +126,10 @@ around _send_request => sub {
         $self->retry_delay_code->($delay);
         $delay *= $self->retry_delay_multiplier;
         $delay  = $self->max_retry_delay if $delay > $self->max_retry_delay;
+
+        # If this is an OAuth request, we need a new Authorization header
+        # (the nonce may be invalid, now).
+        $self->_add_authorization_header($msg) if $is_oauth;
     }
 };
 

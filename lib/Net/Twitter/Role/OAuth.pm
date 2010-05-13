@@ -6,7 +6,7 @@ use URI;
 use Digest::SHA;
 use List::Util qw/first/;
 
-requires qw/_authenticated_request ua/;
+requires qw/_add_authorization_header ua/;
 
 use namespace::autoclean;
 
@@ -152,58 +152,35 @@ sub request_access_token {
     );
 }
 
-override _authenticated_request => sub {
+around _prepare_request => sub {
+    my $orig = shift;
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
 
-    delete $args->{source}; # not necessary with OAuth requests
+    delete $args->{source};
+    $orig->(@_);
+};
 
-    my $msg;
-    if ( $authenticate && $self->authorized ) {
-        local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
+override _add_authorization_header => sub {
+    my ($self, $msg) = @_;
 
-        my $is_multipart = first { ref } %$args;
+    return unless $self->authorized;
 
-        my $request = $self->_make_oauth_request(
-            'protected resource',
-            request_url    => $uri,
-            request_method => $http_method,
-            token          => $self->access_token,
-            token_secret   => $self->access_token_secret,
-            extra_params   => $is_multipart ? {} : $args,
-        );
+    my $uri = $msg->uri->clone;
+    $uri->query($msg->content) if $msg->content_type eq 'application/x-www-form-urlencoded';
+    my $args = { $uri->query_form };
 
-        if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-            $msg = HTTP::Request->new($http_method, $request->to_url);
-        }
-        elsif ( $http_method eq 'POST' ) {
-            $msg = $is_multipart
-                 ? POST($request->request_url,
-                        Authorization => $request->to_authorization_header,
-                        Content_Type  => 'form-data',
-                        Content       => [ %$args ],
-                   )
-                 : POST($uri, Content => $request->to_post_body)
-                 ;
-        }
-        else {
-            croak "unexpected http_method: $http_method";
-        }
-    }
-    elsif ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-        $self->_encode_args($args);
-        $uri->query_form($args);
-        $args = {};
-        $msg = HTTP::Request->new($http_method, $uri);
-    }
-    elsif ( $http_method eq 'POST' ) {
-        $self->_encode_args($args);
-        $msg = POST($uri, $args);
-    }
-    else {
-        croak "unexpected http_method: $http_method";
-    }
+    local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
 
-    return $self->_send_request($msg);
+    my $request = $self->_make_oauth_request(
+        'protected resource',
+        request_url    => $msg->uri,
+        request_method => $msg->method,
+        token          => $self->access_token,
+        token_secret   => $self->access_token_secret,
+        extra_params   => $args,
+    );
+
+    $msg->header(authorization => $request->to_authorization_header);
 };
 
 sub xauth {
