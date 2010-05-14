@@ -1,3 +1,4 @@
+3.13002_03 2010-05-13
     - fixed: generate new OAuth authorization hearder on retry (RetryOnError trait)
 
 3.13002_02 2010-05-12
