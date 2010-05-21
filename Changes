@@ -1,3 +1,6 @@
+3.13003 2010-05-21
+    - production release with Lists API refactor and OAuth changes
+
 3.13002_03 2010-05-13
     - fixed: generate new OAuth authorization hearder on retry (RetryOnError trait)
 
