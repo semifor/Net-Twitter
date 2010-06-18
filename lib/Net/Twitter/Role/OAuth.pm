@@ -161,13 +161,9 @@ around _prepare_request => sub {
 };
 
 override _add_authorization_header => sub {
-    my ($self, $msg) = @_;
+    my ( $self, $msg, $args ) = @_;
 
     return unless $self->authorized;
-
-    my $uri = $msg->uri->clone;
-    $uri->query($msg->content) if $msg->content_type eq 'application/x-www-form-urlencoded';
-    my $args = { $uri->query_form };
 
     local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
 

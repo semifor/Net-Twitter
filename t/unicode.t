@@ -9,7 +9,7 @@ use Net::Twitter;
 eval "use LWP::UserAgent 5.819";
 plan skip_all => 'LWP::UserAgent >= 5.819 required' if $@;
 
-plan tests => 9;
+plan tests => 12;
 
 my $req;
 my $ua = LWP::UserAgent->new;
@@ -35,6 +35,16 @@ my $nt = Net::Twitter->new(
 );
 $nt->access_token('token');
 $nt->access_token_secret('secret');
+
+my $meta = $nt->meta;
+$meta->make_mutable;
+$meta->add_around_method_modifier('_make_oauth_request', sub {
+		my ($orig, $self, $type, %args) = @_;
+
+		ok utf8::is_utf8($args{extra_params}{status}), "status must be decoded";
+		$self->$orig($type, %args);
+	});
+$meta->make_immutable;
 
 # "Hello world!" in traditional Chinese if Google translate is correct
 my $status = "\x{4E16}\x{754C}\x{60A8}\x{597D}\x{FF01}";
