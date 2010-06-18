@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13003';
+our $VERSION = '3.13004';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -148,7 +148,7 @@ sub _prepare_request {
         croak "unexpected HTTP method: $http_method";
     }
 
-    $self->_add_authorization_header($msg) if $authenticate;
+    $self->_add_authorization_header($msg, $args) if $authenticate;
 
     return $self->_send_request($msg);
 }

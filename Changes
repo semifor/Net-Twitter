@@ -1,3 +1,6 @@
+3.13004 2010-06-18
+    - fixed: OAuth signature error with unicode args (RT#58493)
+
 3.13003 2010-05-21
     - production release with Lists API refactor and OAuth changes
 

@@ -19,6 +19,7 @@ __DATA__
 ACKNOWLEDGEMENTS
 API
 APIs
+Akira
 BasicUser
 CPAN
 DateTime
@@ -26,9 +27,7 @@ DirectMessage
 EOT
 Etcheverry
 ExtendedUser
-geo
 GPS
-granularities
 Grennan
 IM
 IP
@@ -36,6 +35,7 @@ IRC
 Identi
 InflateObjects
 JSON
+KATOU
 Laconica
 Marc
 Mims
@@ -43,6 +43,7 @@ Miyagawa
 OAuth
 OMG
 Prather
+RateLimit
 RateLimitStatus
 Retweets
 SMS
@@ -53,6 +54,9 @@ Tatsuhiko
 Twitter
 TwitterVision
 Un
+Unsubscribes
+WOEID
+WiFi
 WrapError
 apihost
 apirealm
@@ -63,7 +67,9 @@ clienturl
 clientver
 favorited
 friended
+geo
 geocode
+granularities
 identi
 identica
 inline
@@ -75,7 +81,6 @@ ok
 online
 params
 perigrin
-RateLimit
 refactored
 requester's
 return's
@@ -96,11 +101,8 @@ twittervision
 ua
 un
 unfollow
-Unsubscribes
 url
 useragent
 username
-WiFi
-WOEID
 woeid
 xAuth
