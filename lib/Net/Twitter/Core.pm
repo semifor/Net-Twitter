@@ -254,7 +254,7 @@ sub _filter_since {
                 last if $datetime_parser->parse_datetime($data->[$i]{created_at}) <= $since_dt;
                 ++$i;
             }
-            $#{$data} = $i;
+            $#{$data} = $i - 1;
         }
     );
 
