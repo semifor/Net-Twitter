@@ -44,11 +44,11 @@ cmp_ok @$r, '==', 2,  'got 2 statuses';
 $r = $nt->friends_timeline({ since => $dt - DateTime::Duration->new(days => 1) });
 cmp_ok @$r, '==', 1,  'filtered with DateTime';
 
-$r = $nt->friends_timeline({ since => time - 3600*24 });
+$r = $nt->friends_timeline({ since => time - 3600*25 });
 cmp_ok @$r, '==', 1,  'filtered with epoch';
 
 $r = $nt->friends_timeline({ since => $datetime_parser->format_datetime(
-            $dt - DateTime::Duration->new(days => 1)) });
+            $dt - DateTime::Duration->new(hours => 25)) });
 cmp_ok @$r, '==', 1,  'filtered with string in Twitter timestamp format';
 
 my $test = 'dies on invalid since';

@@ -1,3 +1,4 @@
+3.13005 2010-06-18
     - fixed: since (synthetic arg) filtering
     - fixed: don't use args for OAuth signature on multi-part mime posts
 
