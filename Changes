@@ -1,3 +1,6 @@
+    - fixed: since (synthetic arg) filtering
+    - fixed: don't use args for OAuth signature on multi-part mime posts
+
 3.13004 2010-06-18
     - fixed: OAuth signature error with unicode args (RT#58493)
 

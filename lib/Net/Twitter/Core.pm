@@ -248,20 +248,13 @@ sub _filter_since {
 
             return unless $self->_contains_statuses($data);
 
-            # $obj may have inflated created_at attributes, already
-            my $get_created_at_dt = ref $data->[0]{created_at} ? sub { shift->{created_at} }
-                                  : sub { $datetime_parser->parse_datetime(shift->{created_at}) };
-
-            # filter out statuses that are too old
+            # truncate $data when we reach an item as old or older than $since_dt
             my $i = 0;
             while ( $i < @$data ) {
-                unless ( $get_created_at_dt->($data->[$i]) > $since_dt ) {
-                    splice @$data, $i, 1;
-                }
-                else {
-                    $i++;
-                }
+                last if $datetime_parser->parse_datetime($data->[$i]{created_at}) <= $since_dt;
+                ++$i;
             }
+            $#{$data} = $i;
         }
     );
 
