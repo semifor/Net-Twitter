@@ -69,7 +69,7 @@ ok !utf8::is_utf8($latin1), "latin-1 not promoted to utf8";
 
 SKIP: {
     eval "use Encode::DoubleEncodedUTF8";
-    skip "requires Encode::DoubleEncodedUTF8", 2 if $@;
+    skip "requires Encode::DoubleEncodedUTF8", 3 if $@;
 
     try { $nt->update(encode_utf8 $status) };
 

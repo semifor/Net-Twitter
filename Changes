@@ -1,3 +1,6 @@
+3.13006 2010-06-18
+    - test fix: bump the skip count for a new test in t/unicode.t for optional module
+
 3.13005 2010-06-18
     - fixed: since (synthetic arg) filtering
     - fixed: don't use args for OAuth signature on multi-part mime posts
