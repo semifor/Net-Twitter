@@ -165,6 +165,8 @@ override _add_authorization_header => sub {
 
     return unless $self->authorized;
 
+    my $is_multipart = grep { ref } %$args;
+
     local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
 
     my $request = $self->_make_oauth_request(
@@ -173,7 +175,7 @@ override _add_authorization_header => sub {
         request_method => $msg->method,
         token          => $self->access_token,
         token_secret   => $self->access_token_secret,
-        extra_params   => $args,
+        extra_params   => $is_multipart ? {} : $args,
     );
 
     $msg->header(authorization => $request->to_authorization_header);
