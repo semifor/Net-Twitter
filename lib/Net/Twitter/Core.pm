@@ -192,6 +192,11 @@ sub _parse_result {
     my $obj = eval { $self->_from_json($content) };
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
+    # filter before inflating objects
+    if ( (my $since = delete $synthetic_args->{since}) && defined $obj ) {
+        $self->_filter_since($datetime_parser, $obj, $since);
+    }
+
     # inflate the twitter object(s) if possible
     $self->_inflate_objects($datetime_parser, $obj);
 
@@ -200,12 +205,7 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    if  ( $res->is_success && defined $obj ) {
-        if ( my $since = delete $synthetic_args->{since} ) {
-            $self->_filter_since($datetime_parser, $obj, $since);
-        }
-        return $obj;
-    }
+    return $obj if $res->is_success && defined $obj;
 
     my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if ref $obj;
