@@ -51,7 +51,7 @@ Net::Twitter::Role::Legacy - A Net::Twitter legacy compatibility layer as a Moos
 
     my $nt = Net::Twitter->new(
         username => $username,
-        password => $password
+        password => $password,
         traits   => [qw/Legacy/],
     );
 
