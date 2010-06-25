@@ -347,7 +347,7 @@ secret to upgrade the request token to access token.
       my %cookie = $c->request->cookies->{oauth}->value;
       my $verifier = $c->req->params->{oauth_verifier};
 
-      my $nt = Net::Twitter::OAuth->new(traits => [qw/API::REST OAuth/], %param);
+      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
       $nt->request_token($cookie{token});
       $nt->request_token_secret($cookie{token_secret});
 
@@ -365,7 +365,7 @@ before calling any Twitter API methods.
 
       my($access_token, $access_token_secret) = ...;
 
-      my $nt = Net::Twitter::OAuth->new(traits => [qw/API::REST OAuth/], %param);
+      my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %param);
       $nt->access_token($access_token);
       $nt->access_token_secret($access_token_secret);
 
