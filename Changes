@@ -1,3 +1,6 @@
+    - Role::OAuth doc patch by Doug Bell <doug@plainblack.com>
+    - fixed: incompatibility between "since" and InflateObjects
+
 3.13006 2010-06-18
     - test fix: bump the skip count for a new test in t/unicode.t for optional module
 
