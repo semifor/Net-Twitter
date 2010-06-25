@@ -345,7 +345,7 @@ secret to upgrade the request token to access token.
       my($self, $c) = @_;
 
       my %cookie = $c->request->cookies->{oauth}->value;
-      my $verifier = $c->req->params->{ouath_verifier};
+      my $verifier = $c->req->params->{oauth_verifier};
 
       my $nt = Net::Twitter::OAuth->new(traits => [qw/API::REST OAuth/], %param);
       $nt->request_token($cookie{token});
@@ -388,7 +388,7 @@ Note that the credentials may be wrong and so the request may fail.
 
 Request the access token, access token secret, user id and screen name for
 this user. You must pass the PIN# (for desktop applications) or the
-C<ouath_verifier> value, provided as a parameter to the oauth callback
+C<oauth_verifier> value, provided as a parameter to the oauth callback
 (for web applications) as C<$verifier>.
 
 The user must have authorized this app at the url given by C<get_authorization_url> first.
