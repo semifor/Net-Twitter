@@ -20,10 +20,10 @@ around BUILDARGS => sub {
 
     my $args = $class->$orig(@_);
     my $oauth_urls = delete $args->{oauth_urls} || {
-        request_token_url  => "http://api.twitter.com/oauth/request_token",
-        authentication_url => "http://api.twitter.com/oauth/authenticate",
-        authorization_url  => "http://api.twitter.com/oauth/authorize",
-        access_token_url   => "http://api.twitter.com/oauth/access_token",
+        request_token_url  => "https://api.twitter.com/oauth/request_token",
+        authentication_url => "https://api.twitter.com/oauth/authenticate",
+        authorization_url  => "https://api.twitter.com/oauth/authorize",
+        access_token_url   => "https://api.twitter.com/oauth/access_token",
         xauth_url          => "https://api.twitter.com/oauth/access_token",
     };
 

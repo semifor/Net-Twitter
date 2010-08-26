@@ -1,3 +1,5 @@
+    - use HTTPS for all OAuth token negotiation steps
+
 3.13007 2010-07-06
     - decode_html_entities now decodes all fields (incl source in search results)
     - Role::OAuth doc patch by Doug Bell <doug@plainblack.com>
