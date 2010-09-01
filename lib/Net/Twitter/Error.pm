@@ -1,24 +1,54 @@
 package Net::Twitter::Error;
 use Moose;
+use Try::Tiny;
+use Devel::StackTrace;
 
-use overload '""' => \&error,,
+use overload '""' => \&error,
              'fallback' => 1;
 
-has twitter_error   => ( isa => 'HashRef|Object', is => 'rw', predicate => 'has_twitter_error' );
+has twitter_error   => ( is => 'rw', predicate => 'has_twitter_error' );
 has http_response   => ( isa => 'HTTP::Response', is => 'rw', required => 1, handles => [qw/code message/] );
+has stack_trace     => ( is => 'ro', init_arg => undef, builder => '_build_stack_trace' );
+
+sub _build_stack_trace {
+    my $seen;
+    Devel::StackTrace->new(frame_filter => sub {
+        # skip stack frames until we get into Net::Twitter*
+        # then skip them until we emerge from Net::Twitter*
+        my $in_nt = shift->{caller}[3] =~ /^Net::Twitter/; # subroutine
+        ($seen ||= $in_nt) && !$in_nt || 0;
+    });
+}
 
 sub error {
     my $self = shift;
 
-    # We MUST stringyfy to something that evaluates to true, or testing $@ will fail!
-    $self->has_twitter_error && $self->twitter_error->{error}
-        || ( $self->message . ": " . $self->code )
-        || '[unknown]';
+    # Twitter does not return a consintent error structure, so we have to
+    # try each known (or guessed) variant to find a suitable message...
+    my $error = $self->has_twitter_error && do {
+        my $e = $self->twitter_error;
+
+        # the newest: array of errors
+        try { exists $e->{errors} && exists $e->{errors}[0] && exists $e->{errors}[0]{message}
+            && $e->{errors}[0]{message} }
+
+        # it's single error variant
+        || try { exists $e->{error} && exists $e->{error}{message} && $e->{error}{message} }
+
+        # or maybe it's not that deep (documentation would be helpful, here, Twitter!)
+        || try { exists $e->{message} && $e->{message} }
+
+        # the original error structure
+        || try { exists $e->{error} && $e->{error} }
+    } || $self->http_response->status_line;
+
+    my ($location) = $self->stack_trace->frame(0)->as_string =~ /( at .*)/;
+    return $error . ($location || '');
 }
 
-no Moose;
-
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

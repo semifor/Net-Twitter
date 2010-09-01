@@ -1,3 +1,5 @@
+    - extract error from the various disparate error formats
+
 3.13008 2010-08-26
     - use HTTPS for all OAuth token negotiation steps
 

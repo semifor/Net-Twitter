@@ -22,6 +22,7 @@ requires    'Scalar::Util';
 requires    'Data::Visitor::Callback';
 requires    'DateTime'                  => 0.51;
 requires    'DateTime::Format::Strptime'=> 1.09;
+requires    'Devel::StackTrace';
 requires    'Encode';
 requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
