@@ -1,5 +1,7 @@
 package Net::Twitter::Role::WrapError;
 use Moose::Role;
+use Try::Tiny;
+use Scalar::Util qw/blessed/;
 
 requires qw/_parse_result/;
 
@@ -30,12 +32,13 @@ around _parse_result => sub {
     $self->_clear_error;
     $self->_http_response($res);
 
-    my $r = eval { $next->($self, $res, $sythetic_args, $datetime_parser) };
-    if ( $@ ) {
-        die $@ unless UNIVERSAL::isa($@, 'Net::Twitter::Error');
+    my $r = try { $next->($self, $res, $sythetic_args, $datetime_parser) }
+    catch {
+        $DB::single = 1;
+        die $_ unless blessed $_ && $_->isa('Net::Twitter::Error');
 
-        $self->_twitter_error($@->has_twitter_error
-            ? $@->twitter_error
+        $self->_twitter_error($_->has_twitter_error
+            ? $_->twitter_error
             : $self->_inflate_objects(
                 $datetime_parser,
                 {
@@ -44,8 +47,8 @@ around _parse_result => sub {
                 }
               )
         );
-        $r = $self->_error_return_val;
-    }
+        return $self->_error_return_val;
+    };
 
     return $r;
 };

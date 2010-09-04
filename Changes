@@ -1,3 +1,8 @@
+3.13008_02 2010-09-04
+    - fixed stack frame filter
+    - fixed missing dependency
+    - detect Twitter's errors array as an error object
+
 3.13008_01 2010-08-31
     - extract error from the various disparate error formats
 
