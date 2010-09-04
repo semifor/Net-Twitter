@@ -12,10 +12,10 @@ has stack_trace     => ( is => 'ro', init_arg => undef, builder => '_build_stack
 
 sub _build_stack_trace {
     my $seen;
+    my $this_sub = (caller 0)[3];
     Devel::StackTrace->new(frame_filter => sub {
-        # skip stack frames until we get into Net::Twitter*
-        # then skip them until we emerge from Net::Twitter*
-        my $in_nt = shift->{caller}[3] =~ /^Net::Twitter/; # subroutine
+        my $caller = shift->{caller};
+        my $in_nt = $caller->[0] =~ /^Net::Twitter::/ || $caller->[3] eq $this_sub;
         ($seen ||= $in_nt) && !$in_nt || 0;
     });
 }

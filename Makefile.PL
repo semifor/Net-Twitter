@@ -36,7 +36,7 @@ requires    'namespace::autoclean'      => 0.09;
 requires    'Net::OAuth'                => 0.25;
 requires    'URI'                       => 1.40;
 requires    'URI::Escape';
-requires    'Try::Tiny';
+requires    'Try::Tiny'                 => 0.03;
 
 test_requires 'Test::More' => 0.88; # for done_testing
 

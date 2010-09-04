@@ -17,7 +17,7 @@ use Data::Visitor::Callback;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13008_01';
+our $VERSION = '3.13008_02';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -203,7 +203,7 @@ sub _parse_result {
     $self->_inflate_objects($datetime_parser, $obj);
 
     # Twitter sometimes returns an error with status code 200
-    if ( ref $obj && reftype $obj eq 'HASH' && exists $obj->{error} ) {
+    if ( ref $obj && reftype $obj eq 'HASH' && (exists $obj->{error} || exists $obj->{errors}) ) {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
