@@ -9,6 +9,7 @@ use overload '""' => \&error,
 has twitter_error   => ( is => 'rw', predicate => 'has_twitter_error' );
 has http_response   => ( isa => 'HTTP::Response', is => 'rw', required => 1, handles => [qw/code message/] );
 has stack_trace     => ( is => 'ro', init_arg => undef, builder => '_build_stack_trace' );
+has _stringified    => ( is => 'rw', init_arg => undef, default => undef );
 
 sub _build_stack_trace {
     my $seen;
@@ -22,6 +23,11 @@ sub _build_stack_trace {
 
 sub error {
     my $self = shift;
+
+    return $self->_stringified if $self->_stringified;
+
+    # Don't walk on $@
+    local $@;
 
     # Twitter does not return a consintent error structure, so we have to
     # try each known (or guessed) variant to find a suitable message...
@@ -43,7 +49,7 @@ sub error {
     } || $self->http_response->status_line;
 
     my ($location) = $self->stack_trace->frame(0)->as_string =~ /( at .*)/;
-    return $error . ($location || '');
+    return $self->_stringified($error . ($location || ''));
 }
 
 __PACKAGE__->meta->make_immutable;

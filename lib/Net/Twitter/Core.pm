@@ -13,6 +13,7 @@ use HTML::Entities ();
 use Encode qw/encode_utf8/;
 use DateTime;
 use Data::Visitor::Callback;
+use Try::Tiny;
 
 use namespace::autoclean;
 
@@ -191,7 +192,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = eval { $self->_from_json($content) };
+    my $obj = try { $self->_from_json($content) };
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects

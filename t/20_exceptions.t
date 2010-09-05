@@ -9,7 +9,7 @@ use Net::Twitter;
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 
-plan tests => 10;
+plan tests => 11;
 
 my $nt = Net::Twitter->new(
     traits   => [qw/API::REST/],
@@ -25,6 +25,15 @@ $response->content(JSON::Any->to_json({
     error   => 'No direct message with that ID found.',
 }));
 $t->response($response);
+
+eval { $nt->destroy_direct_message(456) };
+my $message = '$@ valid after stringification';
+if( $@ ) {
+    ok $@, $message;
+}
+else {
+   fail $message;
+}
 
 dies_ok { $nt->destroy_direct_message(456) } 'TwitterException';
 my $e = $@;
