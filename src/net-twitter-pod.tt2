@@ -11,10 +11,16 @@ This document describes Net::Twitter version [% VERSION %]
   use Net::Twitter;
   use Scalar::Util 'blessed';
 
+  # When no authentication is required:
+  my $nt = Net::Twitter->new(legacy => 0);
+
+  # As of 13-Aug-2010, Twitter requires OAuth for authenticated requests
   my $nt = Net::Twitter->new(
-      traits   => [qw/API::REST/],
-      username => $user,
-      password => $password
+      traits   => [qw/OAuth API::REST/],
+      consumer_key        => $consumer_key,
+      consumer_secret     => $consumer_secret,
+      access_token        => $token,
+      access_token_secret => $token_secret,
   );
 
   my $result = $nt->update('Hello, world!');
@@ -37,8 +43,16 @@ This document describes Net::Twitter version [% VERSION %]
 =head1 DESCRIPTION
 
 This module provides a perl interface to the Twitter APIs.  See
-L<http://apiwiki.twitter.com/Twitter-API-Documentation> for a full description
-of the Twitter APIs.
+L<http://dev.twitter.com/doc> for a full description of the Twitter APIs.
+
+=head1 NOTICE! BASIC AUTHENTICATION IS DEAD
+
+As of 31-Aug-2010, Twitter no longer supports Basic Authentication.  OAuth is
+now required for authenticated requests.  For more information, please see
+L<http://github.com/semifor/Net-Twitter/wiki/Net::Twitter-and-the-death-of-Basic-Authentication>.
+
+Other Twitter compatible services may still accept Basic Authentication, so
+support for it remains in C<Net::Twitter>.
 
 =head1 OMG! THE MOOSE!
 
@@ -65,7 +79,7 @@ Instead, rely on the online Twitter API documentation and inspection of the
 returned data.
 
 The Twitter API online documentation is located at
-L<http://apiwiki.twitter.com/Twitter-API-Documentation>.
+L<http://dev.twitter.com/doc>.
 
 To inspect the data, use L<Data::Dumper> or similar module of your choice.
 Here's a simple example using Data::Dumper:
@@ -204,16 +218,20 @@ is a shortcut for:
 
 =item username
 
-This is the screen name or email used to authenticate with Twitter.
+This is the username for Basic Authentication. NOTE: as of 31-Aug-2010,
+Twitter no longer supports Basic Authentication. Use OAuth instead.  Other
+Twitter compatible services may, however, accept Basic Authentication, so
+support for it remains in C<Net::Twitter>.
 
 =item password
 
-This is the password used to authenticate with Twitter.
+This is the password used for Basic Authentication.
 
 =item clientname
 
 The value for the C<X-Twitter-Client-Name> HTTP header. It defaults to "Perl
-Net::Twitter".
+Net::Twitter".  Note: This option has nothing to do with the "via" application
+byline.
 
 =item clientver
 
@@ -244,17 +262,9 @@ C<Net::Twitter>.
 
 =item source
 
-The value used in the C<source> parameter of API method calls. It is currently
-only used in the C<update> method in the REST API.  It defaults to
-"twitterpm".  This results in the text "from Net::Twitter" rather than "from
-web" for status messages posted from C<Net::Twitter> when displayed via the
-Twitter web interface.
-
-Twitter is no longer registering source parameters.  New applications should
-implement OAuth and register via L<http://twitter.com/oauth_clients>.
-
-Only use the C<source> parameter if you have an existing, registered source
-parameter from Twitter.
+Twitter on longer uses the C<source> parameter. Support for it remains in
+C<Net::Twitter> for any compatible services that may use it.  It was
+originally used by Twitter to provide an "via" application byline.
 
 =item apiurl
 
@@ -336,17 +346,16 @@ C<Net::Twitter>.  Use it with caution.
 
 =head1 AUTHENTICATION
 
-Twitter currently provides two authentication strategies: Basic Authentication and
-OAuth.  OAuth is officially in beta, however, Twitter has expressed a desire to
-deprecate Basic Authentication in the future, so consider using OAuth in your
-applications.
-
-To set up Basic Authentication in C<Net::Twitter>, provide the C<username> and
-C<password> options to L</new> or call the L</credentials> method.
+As of 31-Aug-2010, Twitter requires OAuth for authenticated requests.  Other
+Twitter compatible services, like Identi.ca, accept Basic Authentication.  So,
+C<Net::Twitter> provides support for both.
 
 To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
 C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
 more information on using OAuth, including examples.
+
+To set up Basic Authentication in C<Net::Twitter>, provide the C<username> and
+C<password> options to L</new> or call the L</credentials> method.
 
 In addition to the arguments specified for each API method described below, an
 additional C<authenticate> parameter can be passed.  To request an
@@ -686,7 +695,7 @@ parameters, only existing register source parameters are valid.
 
 The C<Net::Twitter> exception object.
 
-=item L<http://apiwiki.twitter.com/Twitter-API-Documentation>
+=item L<http://dev.twitter.com/doc>
 
 This is the official Twitter API documentation. It describes the methods and their
 parameters in more detail and may be more current than the documentation provided
