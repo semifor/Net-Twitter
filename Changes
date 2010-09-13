@@ -1,3 +1,4 @@
+    - "identica => 1" sets OAuth URLs (assist from barbie)
     - updated Synopsis with OAuth (closes RT#61273)
 
 3.13008_02 2010-09-04
