@@ -30,17 +30,18 @@ around BUILDARGS => sub {
         %options = (
             apiurl => 'http://identi.ca/api',
             apirealm => 'Laconica API',
+            oauth_urls => {
+                request_token_url  => "https://identi.ca/api/oauth/request_token",
+                authentication_url => "https://identi.ca/api/oauth/authenticate",
+                authorization_url  => "https://identi.ca/api/oauth/authorize",
+                access_token_url   => "https://identi.ca/api/oauth/access_token",
+                xauth_url          => "https://identi.ca/api/oauth/access_token",
+            },
             %options,
         );
     }
 
     return $next->($class, \%options);
-};
-
-after credentials => sub {
-    my $self = shift;
-
-    $self->ua->credentials($self->apihost, $self->apirealm, $self->username, $self->password);
 };
 
 base_url     'apiurl';

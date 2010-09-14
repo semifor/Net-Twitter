@@ -22,6 +22,7 @@ requires    'Scalar::Util';
 requires    'Data::Visitor::Callback';
 requires    'DateTime'                  => 0.51;
 requires    'DateTime::Format::Strptime'=> 1.09;
+requires    'Devel::StackTrace';
 requires    'Encode';
 requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
@@ -35,7 +36,7 @@ requires    'namespace::autoclean'      => 0.09;
 requires    'Net::OAuth'                => 0.25;
 requires    'URI'                       => 1.40;
 requires    'URI::Escape';
-requires    'Try::Tiny';
+requires    'Try::Tiny'                 => 0.03;
 
 test_requires 'Test::More' => 0.88; # for done_testing
 

@@ -13,11 +13,12 @@ use HTML::Entities ();
 use Encode qw/encode_utf8/;
 use DateTime;
 use Data::Visitor::Callback;
+use Try::Tiny;
 
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.13008';
+our $VERSION = '3.13008_02';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -191,7 +192,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = eval { $self->_from_json($content) };
+    my $obj = try { $self->_from_json($content) };
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects
@@ -203,7 +204,7 @@ sub _parse_result {
     $self->_inflate_objects($datetime_parser, $obj);
 
     # Twitter sometimes returns an error with status code 200
-    if ( ref $obj && reftype $obj eq 'HASH' && exists $obj->{error} ) {
+    if ( ref $obj && reftype $obj eq 'HASH' && (exists $obj->{error} || exists $obj->{errors}) ) {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 

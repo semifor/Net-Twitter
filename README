@@ -2,16 +2,22 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.13008
+    This document describes Net::Twitter version 3.13008_02
 
 SYNOPSIS
       use Net::Twitter;
       use Scalar::Util 'blessed';
 
+      # When no authentication is required:
+      my $nt = Net::Twitter->new(legacy => 0);
+
+      # As of 13-Aug-2010, Twitter requires OAuth for authenticated requests
       my $nt = Net::Twitter->new(
-          traits   => [qw/API::REST/],
-          username => $user,
-          password => $password
+          traits   => [qw/OAuth API::REST/],
+          consumer_key        => $consumer_key,
+          consumer_secret     => $consumer_secret,
+          access_token        => $token,
+          access_token_secret => $token_secret,
       );
 
       my $result = $nt->update('Hello, world!');
@@ -32,8 +38,17 @@ SYNOPSIS
 
 DESCRIPTION
     This module provides a perl interface to the Twitter APIs. See
-    <http://apiwiki.twitter.com/Twitter-API-Documentation> for a full
-    description of the Twitter APIs.
+    <http://dev.twitter.com/doc> for a full description of the Twitter APIs.
+
+NOTICE! BASIC AUTHENTICATION IS DEAD
+    As of 31-Aug-2010, Twitter no longer supports Basic Authentication.
+    OAuth is now required for authenticated requests. For more information,
+    please see
+    <http://github.com/semifor/Net-Twitter/wiki/Net::Twitter-and-the-death-o
+    f-Basic-Authentication>.
+
+    Other Twitter compatible services may still accept Basic Authentication,
+    so support for it remains in "Net::Twitter".
 
 OMG! THE MOOSE!
     Net::Twitter is Moose based. Moose provides some advantages, including
@@ -58,7 +73,7 @@ RETURN VALUES
     the returned data.
 
     The Twitter API online documentation is located at
-    <http://apiwiki.twitter.com/Twitter-API-Documentation>.
+    <http://dev.twitter.com/doc>.
 
     To inspect the data, use Data::Dumper or similar module of your choice.
     Here's a simple example using Data::Dumper:
@@ -185,15 +200,19 @@ METHODS AND ARGUMENTS
                 Net::Twitter->new(traits => ['Legacy']);
 
         username
-            This is the screen name or email used to authenticate with
-            Twitter.
+            This is the username for Basic Authentication. NOTE: as of
+            31-Aug-2010, Twitter no longer supports Basic Authentication.
+            Use OAuth instead. Other Twitter compatible services may,
+            however, accept Basic Authentication, so support for it remains
+            in "Net::Twitter".
 
         password
-            This is the password used to authenticate with Twitter.
+            This is the password used for Basic Authentication.
 
         clientname
             The value for the "X-Twitter-Client-Name" HTTP header. It
-            defaults to "Perl Net::Twitter".
+            defaults to "Perl Net::Twitter". Note: This option has nothing
+            to do with the "via" application byline.
 
         clientver
             The value for the "X-Twitter-Client-Version" HTTP header. It
@@ -220,19 +239,10 @@ METHODS AND ARGUMENTS
             version of "Net::Twitter".
 
         source
-            The value used in the "source" parameter of API method calls. It
-            is currently only used in the "update" method in the REST API.
-            It defaults to "twitterpm". This results in the text "from
-            Net::Twitter" rather than "from web" for status messages posted
-            from "Net::Twitter" when displayed via the Twitter web
-            interface.
-
-            Twitter is no longer registering source parameters. New
-            applications should implement OAuth and register via
-            <http://twitter.com/oauth_clients>.
-
-            Only use the "source" parameter if you have an existing,
-            registered source parameter from Twitter.
+            Twitter on longer uses the "source" parameter. Support for it
+            remains in "Net::Twitter" for any compatible services that may
+            use it. It was originally used by Twitter to provide an "via"
+            application byline.
 
         apiurl
             The URL for the Twitter API. This defaults to
@@ -300,18 +310,17 @@ METHODS AND ARGUMENTS
         by "Net::Twitter". Use it with caution.
 
 AUTHENTICATION
-    Twitter currently provides two authentication strategies: Basic
-    Authentication and OAuth. OAuth is officially in beta, however, Twitter
-    has expressed a desire to deprecate Basic Authentication in the future,
-    so consider using OAuth in your applications.
-
-    To set up Basic Authentication in "Net::Twitter", provide the "username"
-    and "password" options to "new" or call the "credentials" method.
+    As of 31-Aug-2010, Twitter requires OAuth for authenticated requests.
+    Other Twitter compatible services, like Identi.ca, accept Basic
+    Authentication. So, "Net::Twitter" provides support for both.
 
     To set up OAuth, include the "OAuth" trait and include the
     "consumer_key" and "consumer_secret" options to "new". See
     Net::Twitter::Role::OAuth for more information on using OAuth, including
     examples.
+
+    To set up Basic Authentication in "Net::Twitter", provide the "username"
+    and "password" options to "new" or call the "credentials" method.
 
     In addition to the arguments specified for each API method described
     below, an additional "authenticate" parameter can be passed. To request
@@ -1772,7 +1781,7 @@ SEE ALSO
     Net::Twitter::Error
         The "Net::Twitter" exception object.
 
-    <http://apiwiki.twitter.com/Twitter-API-Documentation>
+    <http://dev.twitter.com/doc>
         This is the official Twitter API documentation. It describes the
         methods and their parameters in more detail and may be more current
         than the documentation provided with this module.
