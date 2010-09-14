@@ -6,7 +6,7 @@ our $VERSION = '3.13008_02';
 $VERSION     = eval $VERSION; # numify for warning-free dev releases
 
 extends 'Net::Twitter::Core';
-with map "Net::Twitter::Role::$_", qw/OAuth Legacy/;
+with map "Net::Twitter::Role::$_", qw/Legacy/;
 
 has '+apiurl'    => ( default => 'http://identi.ca/api' );
 has '+apirealm'  => ( default => 'Laconica API'         );
