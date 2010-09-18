@@ -107,8 +107,11 @@ sub _request_request_token {
         %params,
     );
 
-    my $res = $self->ua->get($request->to_url);
-    die "GET $uri failed: ".$res->status_line
+    my $msg = HTTP::Request->new(GET => $uri);
+    $msg->header(authorization => $request->to_authorization_header);
+
+    my $res = $self->_send_request($msg);
+    croak "GET $uri failed: ".$res->status_line
         unless $res->is_success;
 
     # reuse $uri to extract parameters from the response content
@@ -132,8 +135,11 @@ sub request_access_token {
         %params, # verifier => $verifier
     );
 
-    my $res = $self->ua->get($request->to_url);
-    die "GET $uri failed: ".$res->status_line
+    my $msg = HTTP::Request->new(GET => $uri);
+    $msg->header(authorization => $request->to_authorization_header);
+
+    my $res = $self->_send_request($msg);
+    croak "GET $uri failed: ".$res->status_line
         unless $res->is_success;
 
     # discard request tokens, they're no longer valid
