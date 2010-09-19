@@ -87,6 +87,9 @@ sub new {
 
     $traits ||= [ qw/Legacy/ ];
 
+    # ensure we have the OAuth trait if we have a consumer key
+    $traits = [ (grep $_ ne 'OAuth', @$traits), 'OAuth' ] if $args{consumer_key};
+
     my $package_suffix = 'with__' . join '__',
        map { (my $part = $_) =~ s/::/_/g; $part =~ s/\W//; $part } sort @$traits;
 
