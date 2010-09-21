@@ -38,6 +38,9 @@ requires    'URI'                       => 1.40;
 requires    'URI::Escape';
 requires    'Try::Tiny'                 => 0.03;
 
+# optional
+recommends  'Crypt::SSLeay'             => 0.50;
+
 test_requires 'Test::More' => 0.88; # for done_testing
 
 # Don't rely on the JSON::Any requirement to pull in a suitable JSON backend.

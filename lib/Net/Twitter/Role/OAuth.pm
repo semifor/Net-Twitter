@@ -33,6 +33,13 @@ around BUILDARGS => sub {
 has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
 has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
 
+after BUILD => sub {
+    my $self = shift;
+
+    eval "require Crypt::SSLeay; Crypt::SSLeay->VERSION >= 0.50"
+        || croak "Crypt::SSLeay 0.50 or later required for OAuth support";
+};
+
 # url attributes
 for my $attribute ( qw/authentication_url authorization_url request_token_url access_token_url xauth_url/ ) {
     has $attribute => (

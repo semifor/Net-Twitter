@@ -63,6 +63,11 @@ sub _extract_synthetic_args {
 sub BUILD {
     my $self = shift;
 
+    if ( $self->ssl ) {
+        eval "require Crypt::SSLeay; Crypt::SSLeay->VERSION >= 0.50"
+            || croak "Crypt::SSLeay 0.50 or later required for SSL support";
+    }
+
     if ( $self->has_netrc ) {
         require Net::Netrc;
 
