@@ -2,6 +2,7 @@ package Net::Twitter::Role::RateLimit;
 use Moose::Role;
 use namespace::autoclean;
 use Try::Tiny;
+use Scalar::Util qw/weaken/;
 
 =head1 NAME
 
@@ -61,6 +62,8 @@ for my $method ( qw/rate_remaining rate_limit/ ) {
 
 after BUILD => sub {
     my $self = shift;
+
+    weaken $self;
 
     $self->ua->add_handler(response_done => sub {
         my $res = shift;

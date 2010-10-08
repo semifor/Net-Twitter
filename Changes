@@ -1,3 +1,5 @@
+    - fixed: memory leak in RateLimit trait
+
 3.13009 2010-09-17
     - use Athorization header for OAuth token requests rather than query params
     - "identica => 1" sets OAuth URLs (assist from barbie)
