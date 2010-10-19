@@ -122,11 +122,10 @@ sub _encode_args {
 sub _json_request { 
     my ($self, $http_method, $uri, $args, $authenticate, $synthetic_args, $dt_parser) = @_;
     
-    return $self->_parse_result(
-        $self->_prepare_request($http_method, $uri, $args, $authenticate),
-        $synthetic_args,
-        $dt_parser,
-    );
+    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
+    my $res = $self->_send_request($msg);
+
+    return $self->_parse_result($res, $synthetic_args, $dt_parser);
 }
 
 sub _prepare_request {
@@ -156,7 +155,7 @@ sub _prepare_request {
 
     $self->_add_authorization_header($msg, $args) if $authenticate;
 
-    return $self->_send_request($msg);
+    return $msg;
 }
 
 # Basic Auth, overridden by Role::OAuth, if included

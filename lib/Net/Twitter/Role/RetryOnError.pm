@@ -1,6 +1,7 @@
 package Net::Twitter::Role::RetryOnError;
 use Moose::Role;
 use namespace::autoclean;
+use Time::HiRes;
 
 requires '_send_request';
 
@@ -99,7 +100,6 @@ has retry_delay_code => (
     is      => 'rw',
     isa     => 'CodeRef',
     default => sub {
-        require Time::HiRes;
         sub { Time::HiRes::sleep(shift) };
     },
 );
@@ -119,7 +119,7 @@ around _send_request => sub {
     my $delay = $self->initial_retry_delay;
     my $retries = $self->max_retries;
     while () {
-        my $res = $orig->($self, $msg);
+        my $res = $self->$orig($msg);
 
         return $res if $res->is_success || $retries-- == 0 || $res->code < 500;
 
