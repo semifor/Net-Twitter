@@ -79,8 +79,10 @@ authenticating user and that user's friends. This is the equivalent of
 
     path      => 'statuses/home_timeline',
     method    => 'GET',
-    params    => [qw/since_id max_id count page skip_user/],
-    booleans  => [qw/skip_user/],
+    params    => [qw/since_id max_id count page skip_user exclude_replies contributor_details
+                  include_rts include_entities trim_user include_my_retweet/],
+    booleans  => [qw/skip_user exclude_replies contributor_details include_rts include_entities
+                  trim_user include_my_retweet/],
     required  => [],
     returns   => 'ArrayRef[Status]',
 );
@@ -596,13 +598,15 @@ twitter_api_method update_profile_background_image => (
     description => <<'',
 Updates the authenticating user's profile background image. The C<image>
 parameter must be an arrayref with the same interpretation as the C<image>
-parameter in the C<update_profile_image> method.  See that method's
-documentation for details.
+parameter in the C<update_profile_image> method.  The C<use> parameter allows
+you to specify whether to use the  uploaded profile background or not. See
+that method's documentation for details.
 
     path     => 'account/update_profile_background_image',
     method   => 'POST',
-    params   => [qw/image/],
+    params   => [qw/image use/],
     required => [qw/image/],
+    booleans => [qw/use/],
     returns  => 'ExtendedUser',
 );
 
@@ -921,7 +925,7 @@ ID of this location up with a call to statuses/update.
 
 There are multiple granularities of places that can be returned --
 "neighborhoods", "cities", etc.  At this time, only United States data is
-available through this method. 
+available through this method.
 
 =over 4
 
@@ -954,7 +958,7 @@ in, then C<neighborhood> is assumed.  C<city> can also be passed.
 Optional.  A hint as to the number of results to return.  This does not
 guarantee that the number of results returned will equal max_results, but
 instead informs how many "nearby" results to return.  Ideally, only pass in the
-number of places you intend to display to the user here. 
+number of places you intend to display to the user here.
 
 =back
 
@@ -1050,20 +1054,173 @@ request.
 
 );
 
+# new in 3.14000 2010-10-19
 
-around lookup_users => sub {
-    my $orig = shift;
-    my $self = shift;
+twitter_api_method account_totals => (
+    path        => 'account/totals',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'HashRef',
+    description => <<''
+Returns the current count of friends, followers, updates (statuses)
+and favorites of the authenticating user.
 
-    my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
-    $args = { %$args, @_ };
+);
 
-    for ( qw/screen_name user_id/ ) {
-        $args->{$_} = join(',' => @{ $args->{$_} }) if ref $args->{$_} eq 'ARRAY';
-    }
+twitter_api_method account_settings => (
+    path => 'account/settings',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'HashRef',
+    description => <<''
+Returns the current trend, geo and sleep time information for the
+authenticating user.
 
-    return $orig->($self, $args);
-};
+);
+
+twitter_api_method suggestion_categories => (
+    path        => 'users/suggestions',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'ArrayRef',
+    description => <<''
+Returns the list of suggested user categories. The category slug can be used in
+the C<user_suggestions> API method get the users in that category .  Does not
+require authentication.
+
+);
+
+twitter_api_method user_suggestions => (
+    aliases     => [qw/follow_suggestions/],
+    path        => 'users/suggestions/:category/members',
+    method      => 'GET',
+    params      => [qw/category lang/],
+    required    => [qw/category/],
+    returns     => 'ArrayRef',
+    description => <<''
+Access the users in a given category of the Twitter suggested user list and
+return their most recent status if they are not a protected user. Currently
+supported values for optional parameter C<lang> are C<en>, C<fr>, C<de>, C<es>,
+C<it>.  Does not require authentication.
+
+);
+
+twitter_api_method show_direct_message => (
+    path => 'direct_messages/show/:id',
+    method      => 'GET',
+    params      => [qw/id/],
+    required    => [qw/id/],
+    returns     => 'HashRef',
+    description => <<''
+Returns a single direct message, specified by an id parameter. Like
+the C<direct_messages> request, this method will include the
+user objects of the sender and recipient.  Requires authentication.
+
+);
+
+twitter_api_method retweeted_to_user => (
+    path => 'statuses/retweeted_to_user',
+    method      => 'GET',
+    params      => [qw/id user_id screen_name/],
+    required    => [qw/id/],
+    returns     => 'ArrayRef',
+    description => <<''
+Returns the 20 most recent retweets posted by users the specified user
+follows. The user is specified using the user_id or screen_name
+parameters. This method is identical to C<retweeted_to_me>
+except you can choose the user to view.
+Does not require authentication, unless the user is protected.
+
+);
+
+twitter_api_method retweeted_by_user => (
+    path        => 'statuses/retweeted_by_user',
+    method      => 'GET',
+    params      => [qw/id user_id screen_name/],
+    required    => [qw/id/],
+    returns     => 'ArrayRef',
+    description => <<''
+Returns the 20 most recent retweets posted by the specified user. The user is
+specified using the user_id or screen_name parameters. This method is identical
+to C<retweeted_by_me> except you can choose the user to view.  Does not require
+authentication, unless the user is protected.
+
+);
+
+twitter_api_method lookup_friendships => (
+    path        => 'friendships/lookup',
+    method      => 'GET',
+    params      => [qw/user_id screen_name/],
+    required    => [],
+    returns     => 'ArrayRef',
+    description => <<''
+Returns the relationship of the authenticating user to the comma separated list
+or ARRAY ref of up to 100 screen_names or user_ids provided. Values for
+connections can be: following, following_requested, followed_by, none.
+Requires authentication.
+
+);
+
+twitter_api_method update_friendship => (
+    path        => 'friendships/update',
+    method      => 'POST',
+    params      => [qw/id user_id screen_name device retweets/],
+    required    => [qw/id/],
+    booleans    => [qw/device retweets/],
+    returns     => 'HashRef',
+    description => <<''
+Allows you enable or disable retweets and device notifications from the
+specified user. All other values are assumed to be false.  Requires
+authentication.
+
+);
+
+twitter_api_method all_lists => (
+    path        => 'lists/all',
+    method      => 'GET',
+    params      => [qw/id user_id screen_name/],
+    required    => [qw/id/],
+    returns     => 'ArrayRef[List]',
+    description => <<''
+Returns all lists the authenticating or specified user subscribes to, including
+their own. The user is specified using the C<user_id> or C<screen_name
+parameters>. If no user is given, the authenticating user is used.  Requires
+authentication unless requesting for another user.
+
+);
+
+twitter_api_method related_results => (
+    path        => 'related_results/show/:id',
+    method      => 'GET',
+    params      => [qw/id/],
+    required    => [qw/id/],
+    returns     => 'ArrayRef[Status]',
+    description => <<''
+If available, returns an array of replies and mentions related to the specified
+status. There is no guarantee there will be any replies or mentions in the
+response. This method is only available to users who have access to
+#newtwitter.  Requires authentication.
+
+);
+
+for ( qw/lookup_users lookup_friendships/ ) {
+    around $_ => sub {
+        my $orig = shift;
+        my $self = shift;
+
+        my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
+        $args = { %$args, @_ };
+
+        for ( qw/screen_name user_id/ ) {
+            $args->{$_} = join(',' => @{ $args->{$_} }) if ref $args->{$_} eq 'ARRAY';
+        }
+
+        return $orig->($self, $args);
+    };
+}
 
 1;
 

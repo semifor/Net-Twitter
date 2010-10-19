@@ -1,3 +1,8 @@
+3.14000 2010-10-19
+    - Added #newtwitter API methods (account_totals, account_settings,
+      suggestion_categories, user_suggestions, show_direct_message,
+      retweeted_to_user, retweeted_by_user, lookup_friendships,
+      update_friendship, all_lists, related_results)
     - fixed: memory leak in RateLimit trait
 
 3.13009 2010-09-17

@@ -498,6 +498,40 @@ REST API Methods
         the Twitter user that sent the status.
 
   Methods
+    account_settings
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the current trend, geo and sleep time information for the
+        authenticating user.
+
+        Returns: HashRef
+
+    account_totals
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the current count of friends, followers, updates (statuses)
+        and favorites of the authenticating user.
+
+        Returns: HashRef
+
+    all_lists
+    all_lists(id)
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        Returns all lists the authenticating or specified user subscribes
+        to, including their own. The user is specified using the "user_id"
+        or "screen_name parameters". If no user is given, the authenticating
+        user is used. Requires authentication unless requesting for another
+        user.
+
+        Returns: ArrayRef[List]
+
     block_exists
     block_exists(id)
 
@@ -857,7 +891,9 @@ REST API Methods
 
     home_timeline
 
-        Parameters: since_id, max_id, count, page, skip_user
+        Parameters: since_id, max_id, count, page, skip_user,
+        exclude_replies, contributor_details, include_rts, include_entities,
+        trim_user, include_my_retweet
         Required: *none*
 
         Returns the 20 most recent statuses, including retweets, posted by
@@ -865,6 +901,18 @@ REST API Methods
         equivalent of /timeline/home on the Web.
 
         Returns: ArrayRef[Status]
+
+    lookup_friendships
+
+        Parameters: user_id, screen_name
+        Required: *none*
+
+        Returns the relationship of the authenticating user to the comma
+        separated list or ARRAY ref of up to 100 screen_names or user_ids
+        provided. Values for connections can be: following,
+        following_requested, followed_by, none. Requires authentication.
+
+        Returns: ArrayRef
 
     lookup_users
 
@@ -954,6 +1002,19 @@ REST API Methods
 
         Returns: RateLimitStatus
 
+    related_results
+    related_results(id)
+
+        Parameters: id
+        Required: id
+
+        If available, returns an array of replies and mentions related to
+        the specified status. There is no guarantee there will be any
+        replies or mentions in the response. This method is only available
+        to users who have access to #newtwitter. Requires authentication.
+
+        Returns: ArrayRef[Status]
+
     report_spam
     report_spam(id)
 
@@ -1008,6 +1069,20 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
+    retweeted_by_user
+    retweeted_by_user(id)
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        Returns the 20 most recent retweets posted by the specified user.
+        The user is specified using the user_id or screen_name parameters.
+        This method is identical to "retweeted_by_me" except you can choose
+        the user to view. Does not require authentication, unless the user
+        is protected.
+
+        Returns: ArrayRef
+
     retweeted_to_me
 
         Parameters: since_id, max_id, count, page
@@ -1017,6 +1092,20 @@ REST API Methods
         user's friends.
 
         Returns: ArrayRef[Status]
+
+    retweeted_to_user
+    retweeted_to_user(id)
+
+        Parameters: id, user_id, screen_name
+        Required: id
+
+        Returns the 20 most recent retweets posted by users the specified
+        user follows. The user is specified using the user_id or screen_name
+        parameters. This method is identical to "retweeted_to_me" except you
+        can choose the user to view. Does not require authentication, unless
+        the user is protected.
+
+        Returns: ArrayRef
 
     retweets
     retweets(id)
@@ -1107,6 +1196,18 @@ REST API Methods
 
         Returns: ArrayRef[DirectMessage]
 
+    show_direct_message
+    show_direct_message(id)
+
+        Parameters: id
+        Required: id
+
+        Returns a single direct message, specified by an id parameter. Like
+        the "direct_messages" request, this method will include the user
+        objects of the sender and recipient. Requires authentication.
+
+        Returns: HashRef
+
     show_friendship
     show_friendship(id)
     alias: show_relationship
@@ -1154,6 +1255,17 @@ REST API Methods
         properly authenticated to request the page of a protected user.
 
         Returns: ExtendedUser
+
+    suggestion_categories
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the list of suggested user categories. The category slug can
+        be used in the "user_suggestions" API method get the users in that
+        category . Does not require authentication.
+
+        Returns: ArrayRef
 
     test
 
@@ -1265,6 +1377,18 @@ REST API Methods
 
         Returns: BasicUser
 
+    update_friendship
+    update_friendship(id)
+
+        Parameters: id, user_id, screen_name, device, retweets
+        Required: id
+
+        Allows you enable or disable retweets and device notifications from
+        the specified user. All other values are assumed to be false.
+        Requires authentication.
+
+        Returns: HashRef
+
     update_profile
 
         Parameters: name, email, url, location, description
@@ -1280,13 +1404,15 @@ REST API Methods
     update_profile_background_image
     update_profile_background_image(image)
 
-        Parameters: image
+        Parameters: image, use
         Required: image
 
         Updates the authenticating user's profile background image. The
         "image" parameter must be an arrayref with the same interpretation
-        as the "image" parameter in the "update_profile_image" method. See
-        that method's documentation for details.
+        as the "image" parameter in the "update_profile_image" method. The
+        "use" parameter allows you to specify whether to use the uploaded
+        profile background or not. See that method's documentation for
+        details.
 
         Returns: ExtendedUser
 
@@ -1327,6 +1453,20 @@ REST API Methods
         passing "undef" as the first array value.
 
         Returns: ExtendedUser
+
+    user_suggestions
+    user_suggestions(category)
+    alias: follow_suggestions
+
+        Parameters: category, lang
+        Required: category
+
+        Access the users in a given category of the Twitter suggested user
+        list and return their most recent status if they are not a protected
+        user. Currently supported values for optional parameter "lang" are
+        "en", "fr", "de", "es", "it". Does not require authentication.
+
+        Returns: ArrayRef
 
     user_timeline
 

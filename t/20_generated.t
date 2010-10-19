@@ -15,13 +15,13 @@ my $nt = Net::Twitter->new(
     username => 'me', password => 'secret',
 );
 my $t  = TestUA->new($nt->ua);
-my @params = qw/twitter_id another_id/;
+my @params = qw/one two three four five/;
 
 my @api_methods =
     grep { blessed $_  && $_->isa('Net::Twitter::Meta::Method') }
     $nt->meta->get_all_methods;
 
-plan tests => 5 * 2 * sum map 1 + @{$_->aliases}, @api_methods;
+plan tests => 6 * 2 * sum map 1 + @{$_->aliases}, @api_methods;
 
 # 2 passes to ensure nothing on the first pass changes internal state affecting the 2nd
 for my $pass ( 1, 2 ) {
@@ -31,10 +31,12 @@ for my $pass ( 1, 2 ) {
 
         $pos_params = $entry->params if @$pos_params == 0 && @{$entry->params} == 1;
 
-        my $has_id = $path =~ s/:id\b/$params[0]/;
-        if ( $has_id && @$pos_params == 0 ) {
-            @$pos_params = 'id';
+        my @named_params = $path =~ /:(\w+)/g;
+        for ( my $i = 0; $i < @named_params; ++$i ) {
+            $path =~ s/:$named_params[$i]/$params[$i]/;
         }
+
+        @$pos_params = @named_params;
 
         $path = "/$path.json";
 
@@ -57,12 +59,18 @@ for my $pass ( 1, 2 ) {
             diag "$@\n" if $@;
             ok $r,                          "[$pass] $call(@{[ join ', ' => @$pos_params ]})";
 
-            # horrible kludge
             my $args = $t->args;
-            ok !$has_id || (
-                    delete $expected{id} &&
-                    $t->path =~ /\/twitter_id[\/.]/
-                ), "id test";
+
+            {
+                my $expected_count = 0;
+                my $got_count      = 0;
+                for ( my $i = 0; $i < @named_params; ++$i ) {
+                    delete $expected{$named_params[$i]} && ++$expected_count;
+                    $t->path =~ m{/$params[$i] [/.]}x  && ++$got_count;
+                }
+                is $got_count, $expected_count,      "[$pass] got expected named params";
+                is $got_count, scalar @named_params, "[$pass] named params count";
+            }
 
             is_deeply $args, \%expected,    "[$pass] $call args";
             is $t->path, $path,             "[$pass] $call path";
