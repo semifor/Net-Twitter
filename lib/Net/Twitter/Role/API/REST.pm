@@ -1054,7 +1054,7 @@ request.
 
 );
 
-# new in 3.14000 2010-10-19
+# new in 3.14001 2010-10-19
 
 twitter_api_method account_totals => (
     path        => 'account/totals',

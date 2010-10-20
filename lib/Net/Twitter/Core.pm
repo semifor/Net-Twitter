@@ -18,7 +18,7 @@ use Try::Tiny;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.14000';
+our $VERSION = '3.14001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -62,11 +62,6 @@ sub _extract_synthetic_args {
 
 sub BUILD {
     my $self = shift;
-
-    if ( $self->ssl ) {
-        eval "require Crypt::SSLeay; Crypt::SSLeay->VERSION >= 0.50"
-            || croak "Crypt::SSLeay 0.50 or later required for SSL support";
-    }
 
     if ( $self->has_netrc ) {
         require Net::Netrc;

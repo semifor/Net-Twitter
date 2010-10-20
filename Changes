@@ -1,3 +1,6 @@
+3.14001 2010-10-19
+    - Make Crypt::SSLeay a hard requirement (really no longer practical without it)
+
 3.14000 2010-10-19
     - Added #newtwitter API methods (account_totals, account_settings,
       suggestion_categories, user_suggestions, show_direct_message,

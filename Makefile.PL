@@ -19,6 +19,8 @@ requires    'Net::Netrc';
 requires    'Scalar::Util';
 
 # CPAN
+requires    'Crypt::SSLeay'             => 0.50;
+
 requires    'Data::Visitor::Callback';
 requires    'DateTime'                  => 0.51;
 requires    'DateTime::Format::Strptime'=> 1.09;
@@ -39,9 +41,6 @@ requires    'Time::HiRes';
 requires    'URI'                       => 1.40;
 requires    'URI::Escape';
 requires    'Try::Tiny'                 => 0.03;
-
-# optional
-recommends  'Crypt::SSLeay'             => 0.50;
 
 test_requires 'Test::More' => 0.88; # for done_testing
 
