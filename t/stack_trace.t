@@ -2,6 +2,7 @@
 use warnings;
 use strict;
 use Test::More tests => 4;
+use File::Spec;
 
 {
     package Foo;
@@ -38,8 +39,9 @@ catch {
     like $_->error, qr/suspended/, 'stringified error contains twitter error message';
     
     my $frame = $_->stack_trace->frame(0);
-    my $file = __FILE__;
-    is $frame->{filename}, $file, "first stack frame file";
+    my $file = File::Spec->canonpath(__FILE__);
+    my $file_in_frame = File::Spec->canonpath($frame->{filename});
+    is $file_in_frame, $file, "first stack frame file";
     is $frame->{line}, $line, "first stack frame line";
-    like $_->error, qr( at $file line $line$), 'error contains first stack frame';
+    like $_->error, qr( at \Q$file\E line $line$), 'error contains first stack frame';
 };
