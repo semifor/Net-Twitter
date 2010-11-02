@@ -1,3 +1,6 @@
+3.14002 2010-11-02
+   - Fixed: use File::Spec tests that failed in Win32 (turugina)
+
 3.14001 2010-10-19
     - Make Crypt::SSLeay a hard requirement (really no longer practical without it)
 

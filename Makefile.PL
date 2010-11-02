@@ -14,6 +14,7 @@ all_from    'lib/Net/Twitter.pod';
 # core
 requires    'Carp';
 requires    'Digest::SHA';
+requires    'File::Spec';
 requires    'List::Util';
 requires    'Net::Netrc';
 requires    'Scalar::Util';
