@@ -70,6 +70,8 @@ no_index    directory => 'examples';
 homepage   'http://github.com/semifor/Net-Twitter';
 bugtracker 'http://rt.cpan.org/Public/Dist/Display.html?Name=Net-Twitter';
 
+install_script 'script/*';
+
 auto_set_repository;
 auto_manifest;
 auto_install;

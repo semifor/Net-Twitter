@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+#
+# Net::Twitter - script to get an access token for your application
+#
+use warnings;
+use strict;
+use Net::Twitter;
+
+our $VERSION = '0.001';
+
+=head1 NAME
+
+net_twitter_get_access_token - a simple console application for fetching an access token for your application
+
+=head1 VERSION
+
+version 0.001
+
+=cut
+
+my $consumer_key = shift;
+my $consumer_secret = shift;
+
+if (!$consumer_key or !$consumer_secret) {
+	print "\nUsage: ".$0." consumer_key consumer_secret\n\n";
+	exit 1;
+}
+
+my %consumer_tokens = (
+	consumer_key    => $consumer_key,
+	consumer_secret => $consumer_secret,
+);
+
+my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %consumer_tokens);
+
+my $auth_url = $nt->get_authorization_url;
+print "\nAuthorize this application at: $auth_url\nThen, enter the PIN# provided to continue: ";
+
+my $pin = <STDIN>; # wait for input
+chomp $pin;
+    
+my @access_tokens = $nt->request_access_token(verifier => $pin);
+
+if (@access_tokens) {
+	print "\n";
+	print "Access Token        : ".$access_tokens[0]."\n";
+	print "Access Token Secret : ".$access_tokens[1]."\n";
+	print "Twitter User ID     : ".$access_tokens[2]."\n";
+	print "Twitter Username    : ".$access_tokens[3]."\n";
+} else {
+	print "I dont get any access token :(\n";
+}
+
+print "\n";
+
+=head1 AUTHOR
+
+Torsten Raudssus <torsten@raudssus.de> L<http://www.raudssus.de/>
+
+=head1 BUGS
+
+Please report any bugs or feature requests through the web interface at
+L<http://rt.cpan.org>.
+
+=head1 COPYRIGHT
+
+Copyright 2010 Torsten Raudssus, all rights reserved.
+
+This program is free software; you may redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
