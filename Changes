@@ -1,3 +1,7 @@
+3.14003 2011-02-07
+    - Fixed: trends_location (closes RT #65506)
+    - Added parameters trim_user, include_entities, include_rts (frank cuny, closes RT #62542)
+
 3.14002 2010-11-02
    - Fixed: use File::Spec tests that failed in Win32 (turugina)
 

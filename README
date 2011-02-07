@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.14002
+    This document describes Net::Twitter version 3.14003
 
 SYNOPSIS
       use Net::Twitter;
@@ -535,7 +535,7 @@ REST API Methods
     block_exists
     block_exists(id)
 
-        Parameters: id, user_id, screen_name
+        Parameters: id, user_id, screen_name, include_entities
         Required: id
 
         Returns if the authenticating user is blocking a target user. Will
@@ -545,9 +545,8 @@ REST API Methods
         Returns: BasicUser
 
     blocking
-    blocking(page)
 
-        Parameters: page
+        Parameters: page, include_entities
         Required: *none*
 
         Returns an array of user objects that the authenticating user is
@@ -568,7 +567,7 @@ REST API Methods
     create_block
     create_block(id)
 
-        Parameters: id
+        Parameters: id, user_id, screen_name, include_entities
         Required: id
 
         Blocks the user specified in the ID parameter as the authenticating
@@ -580,7 +579,7 @@ REST API Methods
     create_favorite
     create_favorite(id)
 
-        Parameters: id
+        Parameters: id, include_entities
         Required: id
 
         Favorites the status specified in the ID parameter as the
@@ -592,7 +591,7 @@ REST API Methods
     create_friend(id)
     alias: follow_new
 
-        Parameters: id, user_id, screen_name, follow
+        Parameters: id, user_id, screen_name, follow, include_entities
         Required: id
 
         Befriends the user specified in the ID parameter as the
@@ -614,7 +613,7 @@ REST API Methods
     destroy_block
     destroy_block(id)
 
-        Parameters: id
+        Parameters: id, user_idscreen_name
         Required: id
 
         Un-blocks the user specified in the ID parameter as the
@@ -625,7 +624,7 @@ REST API Methods
     destroy_direct_message
     destroy_direct_message(id)
 
-        Parameters: id
+        Parameters: id, include_entities
         Required: id
 
         Destroys the direct message specified in the required ID parameter.
@@ -637,7 +636,7 @@ REST API Methods
     destroy_favorite
     destroy_favorite(id)
 
-        Parameters: id
+        Parameters: id, include_entities
         Required: id
 
         Un-favorites the status specified in the ID parameter as the
@@ -649,7 +648,7 @@ REST API Methods
     destroy_friend(id)
     alias: unfollow
 
-        Parameters: id, user_id, screen_name
+        Parameters: id, user_id, screen_name, include_entities
         Required: id
 
         Discontinues friendship with the user specified in the ID parameter
@@ -673,7 +672,7 @@ REST API Methods
     destroy_status
     destroy_status(id)
 
-        Parameters: id
+        Parameters: id, trim_user, include_entities
         Required: id
 
         Destroys the status specified by the required ID parameter. The
@@ -682,9 +681,10 @@ REST API Methods
         Returns: Status
 
     direct_messages
+    direct_messages(include_entities)
 
-        Parameters: since_id, max_id, count, page
-        Required: *none*
+        Parameters: since_id, max_id, count, page, include_entities
+        Required: include_entities
 
         Returns a list of the 20 most recent direct messages sent to the
         authenticating user including detailed information about the sending
@@ -695,7 +695,7 @@ REST API Methods
     disable_notifications
     disable_notifications(id)
 
-        Parameters: id
+        Parameters: id, screen_name, include_entities
         Required: id
 
         Disables notifications for updates from the specified user to the
@@ -706,7 +706,7 @@ REST API Methods
     enable_notifications
     enable_notifications(id)
 
-        Parameters: id
+        Parameters: id, screen_name, include_entities
         Required: id
 
         Enables notifications for updates from the specified user to the
@@ -727,7 +727,7 @@ REST API Methods
 
     favorites
 
-        Parameters: id, page
+        Parameters: id, page, include_entities
         Required: *none*
 
         Returns the 20 most recent favorite statuses for the authenticating
@@ -737,7 +737,7 @@ REST API Methods
 
     followers
 
-        Parameters: id, user_id, screen_name, cursor
+        Parameters: id, user_id, screen_name, cursor, include_entities
         Required: *none*
 
         Returns a reference to an array of the user's followers. If "id",
@@ -784,7 +784,7 @@ REST API Methods
     friends
     alias: following
 
-        Parameters: id, user_id, screen_name, cursor
+        Parameters: id, user_id, screen_name, cursor, include_entities
         Required: *none*
 
         Returns a reference to an array of the user's friends. If "id",
@@ -832,7 +832,8 @@ REST API Methods
     friends_timeline
     alias: following_timeline
 
-        Parameters: since_id, max_id, count, page, skip_user
+        Parameters: since_id, max_id, count, page, skip_user, trim_user,
+        include_entities, include_rts
         Required: *none*
 
         Returns the 20 most recent statuses posted by the authenticating
@@ -916,7 +917,7 @@ REST API Methods
 
     lookup_users
 
-        Parameters: user_id, screen_name
+        Parameters: user_id, screen_name, include_entities
         Required: *none*
 
         Return up to 20 users worth of extended information, specified by
@@ -945,7 +946,8 @@ REST API Methods
     mentions
     alias: replies
 
-        Parameters: since_id, max_id, count, page
+        Parameters: since_id, max_id, count, page, trim_user, include_rts,
+        include_entities
         Required: *none*
 
         Returns the 20 most recent mentions (statuses containing @username)
@@ -956,7 +958,7 @@ REST API Methods
     new_direct_message
     new_direct_message(user, text)
 
-        Parameters: user, text, screen_name, user_id
+        Parameters: user, text, screen_name, user_id, include_entities
         Required: user, text
 
         Sends a new direct message to the specified user from the
@@ -968,9 +970,8 @@ REST API Methods
         Returns: DirectMessage
 
     public_timeline
-    public_timeline(skip_user)
 
-        Parameters: skip_user
+        Parameters: skip_user, trim_user, include_entities
         Required: *none*
 
         Returns the 20 most recent statuses from non-protected users who
@@ -1018,7 +1019,7 @@ REST API Methods
     report_spam
     report_spam(id)
 
-        Parameters: id, user_id, screen_name
+        Parameters: id, user_id, screen_name, include_entities
         Required: id
 
         The user specified in the id is blocked by the authenticated user
@@ -1029,7 +1030,7 @@ REST API Methods
     retweet
     retweet(id)
 
-        Parameters: id
+        Parameters: id, include_entities, trim_user
         Required: id
 
         Retweets a tweet. Requires the id parameter of the tweet you are
@@ -1041,7 +1042,7 @@ REST API Methods
     retweeted_by
     retweeted_by(id)
 
-        Parameters: id, count, page
+        Parameters: id, count, page, trim_user, include_entities
         Required: id
 
         Returns up to 100 users who retweeted the status identified by "id".
@@ -1051,7 +1052,7 @@ REST API Methods
     retweeted_by_ids
     retweeted_by_ids(id)
 
-        Parameters: id, count, page
+        Parameters: id, count, page, trim_user, include_entities
         Required: id
 
         Returns the IDs of up to 100 users who retweeted the status
@@ -1061,7 +1062,8 @@ REST API Methods
 
     retweeted_by_me
 
-        Parameters: since_id, max_id, count, page
+        Parameters: since_id, max_id, count, page, trim_user,
+        include_entities
         Required: *none*
 
         Returns the 20 most recent retweets posted by the authenticating
@@ -1110,7 +1112,7 @@ REST API Methods
     retweets
     retweets(id)
 
-        Parameters: id, count
+        Parameters: id, count, trim_user, include_entities
         Required: id
 
         Returns up to 100 of the first retweets of a given tweet.
@@ -1120,7 +1122,8 @@ REST API Methods
     retweets_of_me
     alias: retweeted_of_me
 
-        Parameters: since_id, max_id, count, page
+        Parameters: since_id, max_id, count, page, trim_user,
+        include_entities
         Required: *none*
 
         Returns the 20 most recent tweets of the authenticated user that
@@ -1187,7 +1190,7 @@ REST API Methods
 
     sent_direct_messages
 
-        Parameters: since_id, max_id, page
+        Parameters: since_id, max_id, page, count, include_entities
         Required: *none*
 
         Returns a list of the 20 most recent direct messages sent by the
@@ -1199,7 +1202,7 @@ REST API Methods
     show_direct_message
     show_direct_message(id)
 
-        Parameters: id
+        Parameters: id, include_entities
         Required: id
 
         Returns a single direct message, specified by an id parameter. Like
@@ -1234,7 +1237,7 @@ REST API Methods
     show_status
     show_status(id)
 
-        Parameters: id
+        Parameters: id, trim_user, include_entities
         Required: id
 
         Returns a single status, specified by the id parameter. The status's
@@ -1245,7 +1248,7 @@ REST API Methods
     show_user
     show_user(id)
 
-        Parameters: id
+        Parameters: id, screen_name, include_entities
         Required: id
 
         Returns extended information of a given user, specified by ID or
@@ -1318,7 +1321,7 @@ REST API Methods
     update(status)
 
         Parameters: status, lat, long, place_id, display_coordinates,
-        in_reply_to_status_id
+        in_reply_to_status_id, trim_user, include_entities
         Required: status
 
         Updates the authenticating user's status. Requires the status
@@ -1391,7 +1394,8 @@ REST API Methods
 
     update_profile
 
-        Parameters: name, email, url, location, description
+        Parameters: name, email, url, location, description,
+        include_entities
         Required: *none*
 
         Sets values that users are able to set under the "Account" tab of
@@ -1471,7 +1475,7 @@ REST API Methods
     user_timeline
 
         Parameters: id, user_id, screen_name, since_id, max_id, count, page,
-        skip_user
+        skip_user, trim_user, include_entities, include_rts
         Required: *none*
 
         Returns the 20 most recent statuses posted from the authenticating
@@ -1486,7 +1490,7 @@ REST API Methods
     alias: find_people
     alias: search_users
 
-        Parameters: q, per_page, page
+        Parameters: q, per_page, page, include_entities
         Required: q
 
         Run a search for users similar to Find People button on Twitter.com;
@@ -1498,8 +1502,9 @@ REST API Methods
         Returns: ArrayRef[Users]
 
     verify_credentials
+    verify_credentials(include_entities)
 
-        Parameters: *none*
+        Parameters: include_entities
         Required: *none*
 
         Returns an HTTP 200 OK response code and a representation of the
