@@ -892,7 +892,7 @@ EOT
 );
 
 twitter_api_method trends_location => (
-    path        => 'trends/location',
+    path        => 'trends/:woeid',
     method      => 'GET',
     params      => [qw/woeid/],
     required    => [qw/woeid/],
