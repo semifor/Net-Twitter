@@ -26,6 +26,7 @@ requires    'Data::Visitor::Callback';
 requires    'DateTime'                  => 0.51;
 requires    'DateTime::Format::Strptime'=> 1.09;
 requires    'Devel::StackTrace'         => 1.21;
+requires    'Digest::HMAC_SHA1';
 requires    'Encode';
 requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
