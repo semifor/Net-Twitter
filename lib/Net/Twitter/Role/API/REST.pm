@@ -66,8 +66,8 @@ EOT
     path     => 'statuses/public_timeline',
     method   => 'GET',
     returns  => 'ArrayRef[Status]',
-    params   => [qw/skip_user/],
-    booleans => [qw/skip_user/],
+    params   => [qw/skip_user trim_user include_entities/],
+    booleans => [qw/skip_user trim_user include_entities/],
     required => [],
 );
 
@@ -94,7 +94,8 @@ Returns the original tweet with retweet details embedded.
 
     path      => 'statuses/retweet/:id',
     method    => 'POST',
-    params    => [qw/id/],
+    params    => [qw/id include_entities trim_user/],
+    booleans  => [qw/include_entities trim_user/],
     required  => [qw/id/],
     returns   => 'Status',
 );
@@ -103,9 +104,10 @@ twitter_api_method retweets => (
     description => <<'',
 Returns up to 100 of the first retweets of a given tweet.
 
-    path    => 'statuses/retweets/:id',
-    method  => 'GET',
-    params  => [qw/id count/],
+    path     => 'statuses/retweets/:id',
+    method   => 'GET',
+    params   => [qw/id count trim_user include_entities/],
+    booleans => [qw/trim_user include_entities/],
     required => [qw/id/],
     returns  => 'Arrayref[Status]',
 );
@@ -116,7 +118,8 @@ Returns the 20 most recent retweets posted by the authenticating user.
 
     path      => 'statuses/retweeted_by_me',
     method    => 'GET',
-    params    => [qw/since_id max_id count page/],
+    params    => [qw/since_id max_id count page trim_user include_entities/],
+    booleans  => [qw/trim_user include_entities/],
     required  => [],
     returns   => 'ArrayRef[Status]',
 );
@@ -140,7 +143,8 @@ retweeted by others.
     aliases   => [qw/retweeted_of_me/],
     path      => 'statuses/retweets_of_me',
     method    => 'GET',
-    params    => [qw/since_id max_id count page/],
+    params    => [qw/since_id max_id count page trim_user include_entities/],
+    booleans  => [qw/trim_user include_entities/],
     required  => [],
     returns   => 'ArrayRef[Status]',
 );
@@ -153,8 +157,8 @@ and that user's friends. This is the equivalent of /home on the Web.
     aliases   => [qw/following_timeline/],
     path      => 'statuses/friends_timeline',
     method    => 'GET',
-    params    => [qw/since_id max_id count page skip_user/],
-    booleans  => [qw/skip_user/],
+    params    => [qw/since_id max_id count page skip_user trim_user include_entities include_rts/],
+    booleans  => [qw/skip_user trim_user include_entities include_rts/],
     required  => [],
     returns   => 'ArrayRef[Status]',
 );
@@ -168,8 +172,8 @@ your own user, or the profile page for a third party.
 
     path     => 'statuses/user_timeline/:id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name since_id max_id count page skip_user/],
-    booleans => [qw/skip_user/],
+    params   => [qw/id user_id screen_name since_id max_id count page skip_user trim_user include_entities include_rts/],
+    booleans => [qw/skip_user trim_user include_entities include_rts/],
     required => [],
     returns  => 'ArrayRef[Status]',
 );
@@ -186,7 +190,8 @@ authenticating user.
     aliases => [qw/replies/],
     path    => 'statuses/replies',
     method  => 'GET',
-    params  => [qw/since_id max_id count page/],
+    params  => [qw/since_id max_id count page trim_user include_rts include_entities/],
+    booleans => [qw/trim_user include_rts include_entities/],
     required => [],
     returns => 'ArrayRef[Status]',
 );
@@ -198,7 +203,8 @@ status's author will be returned inline.
 
     path     => 'statuses/show/:id',
     method   => 'GET',
-    params   => [qw/id/],
+    params   => [qw/id trim_user include_entities/],
+    booleans => [qw/trim_user include_entities/],
     required => [qw/id/],
     returns  => 'Status',
 );
@@ -206,9 +212,9 @@ status's author will be returned inline.
 twitter_api_method update => (
     path       => 'statuses/update',
     method     => 'POST',
-    params     => [qw/status lat long place_id display_coordinates in_reply_to_status_id/],
+    params     => [qw/status lat long place_id display_coordinates in_reply_to_status_id trim_user include_entities/],
     required   => [qw/status/],
-    booleans   => [qw/display_coordinates/],
+    booleans   => [qw/display_coordinates trim_user include_entities/],
     add_source => 1,
     returns    => 'Status',
     description => <<'EOT',
@@ -272,7 +278,8 @@ authenticating user must be the author of the specified status.
 
     path     => 'statuses/destroy/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id trim_user include_entities/],
+    booleans => [qw/trim_user include_entities/],
     required => [qw/id/],
     returns  => 'Status',
 );
@@ -299,7 +306,8 @@ EOT
     aliases  => [qw/following/],
     path     => 'statuses/friends/:id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name cursor/],
+    params   => [qw/id user_id screen_name cursor include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'Hashref|ArrayRef[User]',
 );
@@ -325,7 +333,8 @@ EOT
 
     path     => 'statuses/followers/:id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name cursor/],
+    params   => [qw/id user_id screen_name cursor include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'HashRef|ArrayRef[User]',
 );
@@ -340,7 +349,8 @@ authenticated to request the page of a protected user.
 
     path     => 'users/show/:id',
     method   => 'GET',
-    params   => [qw/id/],
+    params   => [qw/id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'ExtendedUser',
 );
@@ -352,8 +362,8 @@ user including detailed information about the sending and recipient users.
 
     path     => 'direct_messages',
     method   => 'GET',
-    params   => [qw/since_id max_id count page/],
-    required => [qw//],
+    params   => [qw/since_id max_id count page include_entities/],
+    required => [qw/include_entities/],
     returns  => 'ArrayRef[DirectMessage]',
 );
 
@@ -364,7 +374,8 @@ user including detailed information about the sending and recipient users.
 
     path     => 'direct_messages/sent',
     method   => 'GET',
-    params   => [qw/since_id max_id page/],
+    params   => [qw/since_id max_id page count include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'ArrayRef[DirectMessage]',
 );
@@ -378,7 +389,8 @@ C<user_id> parameters may be used instead of C<user>.
 
     path     => 'direct_messages/new',
     method   => 'POST',
-    params   => [qw/user text screen_name user_id/],
+    params   => [qw/user text screen_name user_id include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/user text/],
     returns  => 'DirectMessage',
 );
@@ -391,7 +403,8 @@ message.
 
     path     => 'direct_messages/destroy/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'DirectMessage',
 );
@@ -417,7 +430,8 @@ failure condition when unsuccessful.
     aliases  => [qw/follow_new/],
     path     => 'friendships/create/:id',
     method   => 'POST',
-    params   => [qw/id user_id screen_name follow/],
+    params   => [qw/id user_id screen_name follow include_entities/],
+    booleans => [qw/include_entities follow/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -431,7 +445,8 @@ Returns a string describing the failure condition when unsuccessful.
     aliases  => [qw/unfollow/],
     path     => 'friendships/destroy/:id',
     method   => 'POST',
-    params   => [qw/id user_id screen_name/],
+    params   => [qw/id user_id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -503,7 +518,8 @@ user credentials are valid.
 
     path     => 'account/verify_credentials',
     method   => 'GET',
-    params   => [qw//],
+    params   => [qw/include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'ExtendedUser',
 );
@@ -637,7 +653,8 @@ in your request.
 
     path     => 'account/update_profile',
     method   => 'POST',
-    params   => [qw/ name email url location description /],
+    params   => [qw/ name email url location description include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'ExtendedUser',
 );
@@ -649,7 +666,8 @@ user or user specified by the ID parameter.
 
     path     => 'favorites/:id',
     method   => 'GET',
-    params   => [qw/id page/],
+    params   => [qw/id page include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'ArrayRef[Status]',
 );
@@ -661,7 +679,8 @@ authenticating user.  Returns the favorite status when successful.
 
     path     => 'favorites/create/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'Status',
 );
@@ -673,7 +692,8 @@ authenticating user.  Returns the un-favorited status.
 
     path     => 'favorites/destroy/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'Status',
 );
@@ -685,7 +705,8 @@ authenticating user.  Returns the specified user when successful.
 
     path     => 'notifications/follow/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -697,7 +718,8 @@ authenticating user.  Returns the specified user when successful.
 
     path     => 'notifications/leave/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -710,7 +732,8 @@ blocking in the Twitter Support Knowledge Base.
 
     path     => 'blocks/create/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id user_id screen_name include_entities/],
+    booleans => [qw/include_entities/],    
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -723,7 +746,8 @@ Returns the un-blocked user when successful.
 
     path     => 'blocks/destroy/:id',
     method   => 'POST',
-    params   => [qw/id/],
+    params   => [qw/id user_idscreen_name/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -736,7 +760,8 @@ object if a block exists, and error with HTTP 404 response code otherwise.
 
     path     => 'blocks/exists/:id',
     method   => 'GET',
-    params   => [qw/id user_id screen_name/],
+    params   => [qw/id user_id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -748,7 +773,8 @@ Returns an array of user objects that the authenticating user is blocking.
 
     path     => 'blocks/blocking',
     method   => 'GET',
-    params   => [qw/page/],
+    params   => [qw/page include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw//],
     returns  => 'ArrayRef[BasicUser]',
 );
@@ -851,7 +877,8 @@ The user specified in the id is blocked by the authenticated user and reported a
 
     path     => 'report_spam',
     method   => 'POST',
-    params   => [qw/id user_id screen_name/],
+    params   => [qw/id user_id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'User',
 );
@@ -860,7 +887,8 @@ twitter_api_method users_search => (
     aliases     => [qw/find_people search_users/],
     path        => 'users/search',
     method      => 'GET',
-    params      => [qw/q per_page page/],
+    params      => [qw/q per_page page include_entities/],
+    booleans    => [qw/include_entities/],
     required    => [qw/q/],
     returns     => 'ArrayRef[Users]',
     description => <<'',
@@ -979,7 +1007,8 @@ EOT
 twitter_api_method lookup_users => (
     path => 'users/lookup',
     method => 'GET',
-    params => [qw/user_id screen_name/],
+    params => [qw/user_id screen_name include_entities/],
+    booleans => [qw/include_entities/],
     required => [],
     returns => 'ArrayRef[User]',
     description => <<'EOT'
@@ -1010,7 +1039,8 @@ EOT
 twitter_api_method retweeted_by => (
     path => 'statuses/:id/retweeted_by',
     method => 'GET',
-    params => [qw/id count page/],
+    params => [qw/id count page trim_user include_entities/],
+    booleans => [qw/include_entities trim_user/],
     required => [qw/id/],
     returns  => 'ArrayRef[User]',
     description => <<''
@@ -1021,7 +1051,8 @@ Returns up to 100 users who retweeted the status identified by C<id>.
 twitter_api_method retweeted_by_ids => (
     path     => 'statuses/:id/retweeted_by/ids',
     method   => 'GET',
-    params   => [qw/id count page/],
+    params   => [qw/id count page trim_user include_entities/],
+    booleans => [qw/include_entities trim_user/],
     required => [qw/id/],
     returns  => 'ArrayRef[User]',
     description => <<''
@@ -1111,7 +1142,8 @@ C<it>.  Does not require authentication.
 twitter_api_method show_direct_message => (
     path => 'direct_messages/show/:id',
     method      => 'GET',
-    params      => [qw/id/],
+    params      => [qw/id include_entities/],
+    booleans => [qw/include_entities/],
     required    => [qw/id/],
     returns     => 'HashRef',
     description => <<''
