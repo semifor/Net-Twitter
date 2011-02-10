@@ -2,17 +2,18 @@ package Net::Twitter::Role::API::REST;
 use Moose::Role;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
+use URI;
 
 requires qw/ua username password credentials/;
 
-my $build_api_host = sub {
+has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1'  );
+has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, builder => '_build_apihost' );
+has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
+
+sub _build_apihost {
     my $uri = URI->new(shift->apiurl);
     join ':', $uri->host, $uri->port;
-};
-
-has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1'  );
-has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, default => $build_api_host  );
-has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
+}
 
 after BUILD => sub {
     my $self = shift;

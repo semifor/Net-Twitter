@@ -21,7 +21,7 @@ $VERSION = eval $VERSION; # numify for warning-free dev releases
 # with the 'Legacy' trait.
 
 # transform_trait and resolve_traits stolen from MooseX::Traits
-my $transform_trait = sub {
+sub _transform_trait {
     my ($class, $name) = @_;
     my $namespace = $class->meta->find_attribute_by_name('_trait_namespace');
     my $base;
@@ -35,39 +35,39 @@ my $transform_trait = sub {
     return $name unless $base;
     return $1 if $name =~ /^[+](.+)$/;
     return "$base\::$name";
-};
+}
 
-my $resolve_traits = sub {
+sub _resolve_traits {
     my ($class, @traits) = @_;
     return map {
-        my $transformed = $class->$transform_trait($_);
+        my $transformed = $class->_transform_trait($_);
         Class::MOP::load_class($transformed);
         $transformed;
     } @traits;
-};
+}
 
-my $isa = sub {
+sub _isa {
     my $self = shift;
     my $isa  = shift;
 
     return $isa eq __PACKAGE__ || $self->SUPER::isa($isa)
 };
 
-my $create_anon_class = sub {
+sub _create_anon_class {
     my ($superclasses, $traits, $immutable, $package) = @_;
 
     my $meta;
     $meta = Net::Twitter::Core->meta->create_anon_class(
         superclasses => $superclasses,
         roles        => $traits,
-        methods      => { meta => sub { $meta }, isa => $isa },
+        methods      => { meta => sub { $meta }, isa => \&_isa },
         cache        => 1,
         package      => $package,
     );
     $meta->make_immutable(inline_constructor => $immutable);
 
     return $meta;
-};
+}
 
 sub new {
     my $class = shift;
@@ -93,10 +93,10 @@ sub new {
     my $package_suffix = 'with__' . join '__',
        map { (my $part = $_) =~ s/::/_/g; $part =~ s/\W//; $part } sort @$traits;
 
-    $traits = [ $class->$resolve_traits(@$traits) ];
+    $traits = [ $class->_resolve_traits(@$traits) ];
 
     my $superclasses = [ 'Net::Twitter::Core' ];
-    my $meta = $create_anon_class->($superclasses, $traits, 1, __PACKAGE__ . '::' . $package_suffix);
+    my $meta = _create_anon_class($superclasses, $traits, 1, __PACKAGE__ . '::' . $package_suffix);
 
     # create a Net::Twitter::Core object with roles applied
     my $new = $meta->name->new(%args);
@@ -104,7 +104,7 @@ sub new {
     # rebless it to include a superclass, if we're being subclassed
     if ( $class ne __PACKAGE__ ) {
         unshift @$superclasses, $class;
-        my $final_meta = $create_anon_class->(
+        my $final_meta = _create_anon_class(
             $superclasses, $traits, 0, join '::', $class, __PACKAGE__, $package_suffix
         );
         bless $new, $final_meta->name;
