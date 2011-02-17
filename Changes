@@ -1,3 +1,5 @@
+    - added tests dependency: Test::Exception (closes RT #65786)
+
 3.14003 2011-02-07
     - Fixed: trends_location (closes RT #65506)
     - Added parameters trim_user, include_entities, include_rts (frank cuny, closes RT #62542)
