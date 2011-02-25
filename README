@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.14003
+    This document describes Net::Twitter version 3.15000
 
 SYNOPSIS
       use Net::Twitter;
@@ -1748,6 +1748,21 @@ Lists API Methods
         the lists are returned in the "lists" element of the hash.
 
         Returns:
+
+    members_create_all
+    members_create_all(user, list_id)
+    alias: add_list_members
+
+        Parameters: user, list_id, screen_name, user_id
+        Required: user, list_id
+
+        Adds multiple users "id" to the list. Users are specified with the
+        "screen_name" or "user_id" parameter with a reference to an ARRAY of
+        values.
+
+        Returns a reference the added user as a hash reference.
+
+        Returns: ArrayRef[User]
 
     subscribe_list
     subscribe_list(user, list_id)
