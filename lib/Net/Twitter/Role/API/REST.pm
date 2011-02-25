@@ -1239,22 +1239,6 @@ response. This method is only available to users who have access to
 
 );
 
-for ( qw/lookup_users lookup_friendships/ ) {
-    around $_ => sub {
-        my $orig = shift;
-        my $self = shift;
-
-        my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
-        $args = { %$args, @_ };
-
-        for ( qw/screen_name user_id/ ) {
-            $args->{$_} = join(',' => @{ $args->{$_} }) if ref $args->{$_} eq 'ARRAY';
-        }
-
-        return $orig->($self, $args);
-    };
-}
-
 1;
 
 __END__

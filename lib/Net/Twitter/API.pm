@@ -43,6 +43,11 @@ sub twitter_api_method {
         # copy callers args since we may add ->{source}
         my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
 
+        # flatten array arguments
+        for ( qw/user_id screen_name/ ) {
+            $args->{$_} = join ',' => @{ $args->{$_} } if ref $args->{$_} eq 'ARRAY';
+        }
+
         croak sprintf "$name expected %d args", scalar @$arg_names if @_ > @$arg_names;
 
         # promote positional args to named args

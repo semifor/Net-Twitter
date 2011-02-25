@@ -33,6 +33,7 @@ Net::Twitter::Role::API::Lists - Twitter Lists API support for Net::Twitter
   $user_or_undef = $nt->list_members($owner, $list_id, { id => $user_id });
 
   $user = $nt->add_list_member($owner, $list_id, $user_id);
+  $users = $nt->add_list_members($owner, $list_id, { screen_name => \@screen_names });
 
   $user = $nt->delete_list_member($owner, $list_id, $user_id);
   $user = $nt->remove_list_member($owner, $list_id, $user_id);
@@ -247,6 +248,21 @@ twitter_api_method add_list_member => (
     required    => [qw/user list_id id/],
     description => <<'EOT',
 Adds the user identified by C<id> to the list.
+
+Returns a reference the added user as a hash reference.
+EOT
+);
+
+twitter_api_method members_create_all => (
+    aliases     => [qw/add_list_members/],
+    path        => ':user/:list_id/members/create_all',
+    method      => 'POST',
+    returns     => 'ArrayRef[User]',
+    params      => [qw/user list_id screen_name user_id/],
+    required    => [qw/user list_id/],
+    description => <<'EOT',
+Adds multiple users C<id> to the list. Users are specified with the C<screen_name>
+or C<user_id> parameter with a reference to an ARRAY of values.
 
 Returns a reference the added user as a hash reference.
 EOT

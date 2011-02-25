@@ -1,3 +1,4 @@
+    - added Lists API method members_create_all (alias add_list_members)
     - added tests dependency: Test::Exception (closes RT #65786)
 
 3.14003 2011-02-07
