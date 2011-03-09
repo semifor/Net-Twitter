@@ -1,7 +1,7 @@
 #!perl
 use warnings;
 use strict;
-use Test::Exception;
+use Test::Fatal;
 use Test::More;
 use lib qw(t/lib);
 
@@ -23,7 +23,7 @@ ok defined $r && !defined $nt->get_error, 'api call success';
 
 $t->response(HTTP::Response->new(500, $msg));
 
-lives_ok { $r = $nt->public_timeline } 'exception trapped';
+is exception { $r = $nt->public_timeline }, undef, 'exception trapped';
 is       $nt->http_message, $msg, 'http_message';
 isa_ok   $nt->get_error, 'HASH',  'get_error returns a HASH ref';
 ok       !defined $r,             'result is undef';

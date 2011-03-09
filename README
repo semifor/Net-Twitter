@@ -1521,8 +1521,8 @@ Search API Methods
     search
     search(q)
 
-        Parameters: q, callback, lang, rpp, page, since_id, geocode,
-        show_user
+        Parameters: q, callback, lang, locale, rpp, page, since_id, until,
+        geocode, show_user, result_type
         Required: q
 
         Returns a HASH reference with some meta-data about the query

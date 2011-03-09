@@ -1,7 +1,7 @@
 #!perl
 use warnings;
 use strict;
-use Test::Exception;
+use Test::Fatal;
 use Test::More;
 use lib qw(t/lib);
 
@@ -26,7 +26,7 @@ ok $nt->update_twittervision(90210), 'update_twittervision called';
 
 $t->response(HTTP::Response->new(500, $msg));
 
-lives_ok { $nt->public_timeline } 'exception trapped';
+is exception { $nt->public_timeline }, undef, 'exception trapped';
 is       $nt->http_message, $msg, 'http_message';
 
 exit 0;

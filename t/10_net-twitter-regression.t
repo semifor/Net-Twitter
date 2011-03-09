@@ -2,7 +2,7 @@
 use Carp;
 use strict;
 use Test::More;
-use Test::Exception;
+use Test::Fatal;
 use lib qw(t/lib);
 
 {
@@ -39,7 +39,7 @@ $t->response->content('true');
 my $r;
 
 # back compat: 1.23 accepts scalar args
-lives_ok { $r = $nt->relationship_exists('homer', 'marge') } 'relationship_exists scalar args';
+is exception { $r = $nt->relationship_exists('homer', 'marge') }, undef, 'relationship_exists scalar args';
 
 ok       $r = $nt->relationship_exists({ user_a => 'homer', user_b => 'marge' }),
             'relationship_exists hashref';
@@ -93,8 +93,7 @@ $r  = $nt->list_lists('perl_api');
 is    $t->request->uri->scheme, 'https', 'ssl used for Lists';
 
 ### v3.10001 ### netrc used $self->apiurl, which is only available via the API::REST trait
-lives_ok  { Net::Twitter->new(netrc => 1, traits => [qw/API::Lists/]) }
-          'netrc with API::Lists lives';
+is exception  { Net::Twitter->new(netrc => 1, traits => [qw/API::Lists/]) }, undef, 'netrc with API::Lists lives';
 ### v3.11004 ### single array ref arg to update_profile_image not proprerly handled
 $r  = $nt->update_profile_image([ undef, 'my_mug.jpg', Content_Type => 'image/jpeg', Content => '' ]);
 is    $t->request->content_type, 'multipart/form-data', 'multipart/form-data';

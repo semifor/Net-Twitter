@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 use Test::More;
-use Test::Exception;
+use Test::Fatal;
 use lib qw(t/lib);
 use Net::Twitter;
 
@@ -17,11 +17,11 @@ isa_ok $nt, 'Net::Twitter';
 $nt = Net::Twitter->new(legacy => 0);
 my $t = TestUA->new($nt->ua);
 
-lives_ok { $nt->user_timeline } "lives without credentials";
+is exception { $nt->user_timeline }, undef, "lives without credentials";
 ok       !$t->request->header('Authorization'), "no auth header without credentials";
 
 $nt->credentials(homer => 'doh!');
-lives_ok { $nt->user_timeline } "lives with credentials";
+is exception { $nt->user_timeline }, undef,  "lives with credentials";
 like     $t->request->header('Authorization'), qr/Basic/, "has Basic Auth header";
 
 $nt->public_timeline;
@@ -46,9 +46,9 @@ $nt = Net::Twitter->new(
 );
 $t = TestUA->new($nt->ua);
 
-lives_ok { $nt->user_timeline } "lives without oauth tokens";
+is exception { $nt->user_timeline }, undef, "lives without oauth tokens";
 ok      !$t->request->header('Authorization'), "no auth header without access tokens";
 
 $nt->access_token('1234');
 $nt->access_token_secret('5678');
-lives_ok { $nt->user_timeline } "lives with access tokens";
+is exception { $nt->user_timeline }, undef, "lives with access tokens";

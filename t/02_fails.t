@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 use Test::More;
-use Test::Exception;
+use Test::Fatal;
 use lib qw(t/lib);
 use Net::Twitter;
 
@@ -20,9 +20,8 @@ my $nt = Net::Twitter->new(
 my $t = TestUA->new($nt->ua);
 
 # things that should fail
-throws_ok { $nt->relationship_exists(qw/one two three/) } qr/expected 2 args/, 'too many args';
-throws_ok {
-    Net::Twitter->new(useragent_class => 'NoSuchModule::Test7701')->verify_credentials
-} qr/Can't locate NoSuchModule/, 'bad useragent_class';
+like exception { $nt->relationship_exists(qw/one two three/) }, qr/expected 2 args/, 'too many args';
+like exception { Net::Twitter->new(useragent_class => 'NoSuchModule::Test7701')->verify_credentials },
+     qr/Can't locate NoSuchModule/, 'bad useragent_class';
 
 exit 0;
