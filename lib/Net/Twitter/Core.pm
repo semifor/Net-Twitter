@@ -60,6 +60,31 @@ sub _extract_synthetic_args {
     return $synthetic_args;
 }
 
+around BUILDARGS => sub {
+    my $next    = shift;
+    my $class   = shift;
+
+    my %options = @_ == 1 ? %{$_[0]} : @_;
+
+    if ( delete $options{identica} ) {
+        %options = (
+            apiurl => 'http://identi.ca/api',
+            searchapiurl => 'http://identi.ca/api',
+            apirealm => 'Laconica API',
+            oauth_urls => {
+                request_token_url  => "https://identi.ca/api/oauth/request_token",
+                authentication_url => "https://identi.ca/api/oauth/authenticate",
+                authorization_url  => "https://identi.ca/api/oauth/authorize",
+                access_token_url   => "https://identi.ca/api/oauth/access_token",
+                xauth_url          => "https://identi.ca/api/oauth/access_token",
+            },
+            %options,
+        );
+    }
+
+    return $next->($class, \%options);
+};
+
 sub BUILD {
     my $self = shift;
 

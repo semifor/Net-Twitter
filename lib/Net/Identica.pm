@@ -31,6 +31,33 @@ Net::Identica - A perl interface to the Identi.ca Twitter Compatible API
 
   $nt->update('Hello, Identica friends!');
 
+=head1 DEPRECATED
+
+This module is a backwards compatibility wrapper for applications that used
+L<Net::Identica> packaged with C<Net::Twitter> versions 2.12 and earlier.
+Instead, use L<Net::Twitter> with the C<identica> option to gain all of the new
+features and functionality (OAuth, Search, exceptions on error, etc.).
+
+  use Net::Twitter;
+
+  # A simple, backwards compatible replacement for Net::Identica
+  my $identica = Net::Twitter->new(
+      legacy   => 1,
+      identica => 1,
+      username => $username,
+      password => $password,
+  );
+
+  # A more complex object with OAuth and some optional traits
+  my $identica = Net::Twitter->new(
+      traits => [qw/API::REST API::Search OAuth InflateObjects/],
+      identica            => 1,
+      consumer_key        => $consumer_key,
+      consumer_secret     => $consumer_secret,
+      access_token        => $token,
+      access_token_secret => $token_secret,
+  );
+
 =head1 DESCRIPTION
 
 The micro-blogging service L<http://identi.ca> provides a Twitter compatible API.

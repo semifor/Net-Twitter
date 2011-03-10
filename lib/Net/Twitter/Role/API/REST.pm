@@ -21,30 +21,6 @@ after BUILD => sub {
     $self->{apiurl} =~ s/^http:/https:/ if $self->ssl;
 };
 
-around BUILDARGS => sub {
-    my $next    = shift;
-    my $class   = shift;
-
-    my %options = @_ == 1 ? %{$_[0]} : @_;
-
-    if ( delete $options{identica} ) {
-        %options = (
-            apiurl => 'http://identi.ca/api',
-            apirealm => 'Laconica API',
-            oauth_urls => {
-                request_token_url  => "https://identi.ca/api/oauth/request_token",
-                authentication_url => "https://identi.ca/api/oauth/authenticate",
-                authorization_url  => "https://identi.ca/api/oauth/authorize",
-                access_token_url   => "https://identi.ca/api/oauth/access_token",
-                xauth_url          => "https://identi.ca/api/oauth/access_token",
-            },
-            %options,
-        );
-    }
-
-    return $next->($class, \%options);
-};
-
 base_url     'apiurl';
 authenticate 1;
 

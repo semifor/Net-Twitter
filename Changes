@@ -1,3 +1,5 @@
+    - modify searchapiurl for identica option
+    - added deprecation notice to Net::Identica with Net::Twitter examples
     - replaced Test::Exception with Test::Fatal in tests
 
 3.15000 2011-02-25
