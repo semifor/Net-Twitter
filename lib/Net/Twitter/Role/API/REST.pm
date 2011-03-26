@@ -441,6 +441,18 @@ user_a follows user_b, otherwise will return false.
     returns  => 'Bool',
 );
 
+twitter_api_method no_retweet_ids => (
+    description => <<'',
+Returns an ARRAY ref of user IDs for which the authenticating user does not
+want to receive retweets.
+
+    path     => 'friendships/no_retweet_ids',
+    method   => 'GET',
+    params   => [],
+    required => [],
+    returns  => 'ArrayRef[UserIDs]',
+);
+
 twitter_api_method friends_ids => (
     description => <<'EOT',
 Returns a reference to an array of numeric IDs for every user followed the
