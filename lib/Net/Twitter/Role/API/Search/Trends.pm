@@ -1,66 +1,19 @@
 package Net::Twitter::Role::API::Search::Trends;
-
 use Moose::Role;
-use Net::Twitter::API;
-
-has search_trends_api_url   => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
 
 after BUILD => sub {
     my $self = shift;
 
-    $self->{search_trends_api_url} =~ s/^http:/https:/ if $self->ssl;
+    unless ( $self->can('trends') || $ENV{NET_TWITTER_NO_TRENDS_WARNING} ) {
+        warn <<EOT;
+The "trends" methods have been moved to the API::REST trait. This warning
+will be removed in a future release. You can supress it by:
+   
+   - including the API::REST trait
+   - or setting the environment variable NET_TWITTER_NO_TRENDS_WARNING=1
+EOT
+    }
 };
-
-base_url     'search_trends_api_url';
-authenticate 0;
-
-twitter_api_method trends => (
-    description => <<'',
-Returns the top ten queries that are currently trending on Twitter.  The
-response includes the time of the request, the name of each trending topic, and
-the url to the Twitter Search results page for that topic.
-
-    path     => 'trends',
-    method   => 'GET',
-    params   => [qw//],
-    required => [qw//],
-    returns  => 'ArrayRef[Query]',
-);
-
-twitter_api_method trends_current => (
-    description => <<'',
-Returns the current top ten trending topics on Twitter.  The response includes
-the time of the request, the name of each trending topic, and query used on
-Twitter Search results page for that topic.
-
-    path     => 'trends/current',
-    method   => 'GET',
-    params   => [qw/exclude/],
-    required => [qw//],
-    returns  => 'HashRef',
-);
-
-twitter_api_method trends_daily => (
-    description => <<'',
-Returns the top 20 trending topics for each hour in a given day.
-
-    path     => 'trends/daily',
-    method   => 'GET',
-    params   => [qw/date exclude/],
-    required => [qw//],
-    returns  => 'HashRef',
-);
-
-twitter_api_method trends_weekly => (
-    description => <<'',
-Returns the top 30 trending topics for each day in a given week.
-
-    path     => 'trends/weekly',
-    method   => 'GET',
-    params   => [qw/date exclude/],
-    required => [qw//],
-    returns  => 'HashRef',
-);
 
 1;
 
@@ -68,21 +21,15 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Role::API::Search::Trends - A definition of the Twitter Search Trends API as a Moose role
+Net::Twitter::Role::API::Search::Trends - DEPRECATED: use API::REST
 
 =head1 SYNOPSIS
 
-  package My::Twitter;
-  use Moose;
-  with 'Net::Twitter::API::Search';
+  my $nt = Net::Twitter->new(taits => [qw/API::Search API::REST/], ...);
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Role::API::Search::Trends> provides definitions for all the
-Twitter Search Trends API methods. You probably don't want to use it directly.
-It is included when you use C<Search::API>.  The trends methods were factored
-out into their own class when Twitter changed the base URL for trends so that
-it differs from search.
+The C<trends> methods have been move to the C<API::REST> trait.
 
 =head1 AUTHOR
 

@@ -11,7 +11,7 @@ plan tests => 5;
 
 use Net::Twitter;
 
-my $nt = Net::Twitter->new(traits => [qw/API::Search/]);
+my $nt = Net::Twitter->new(traits => [qw/API::Search API::REST/]);
 
 my $request;
 my %args;

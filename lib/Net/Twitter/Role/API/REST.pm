@@ -893,6 +893,7 @@ twitter_api_method trends_available => (
     method      => 'GET',
     params      => [qw/lat long/],
     required    => [],
+    authenticate => 0,
     returns     => 'ArrayRef[Location]',
     description => <<EOT,
 Returns the locations with trending topic information. The response is an
@@ -914,6 +915,7 @@ twitter_api_method trends_location => (
     params      => [qw/woeid/],
     required    => [qw/woeid/],
     returns     => 'ArrayRef[Trend]',
+    authenticate => 0,
     description => <<'',
 Returns the top 10 trending topics for a specific location. The response is an
 array of "trend" objects that encode the name of the trending topic, the query
@@ -923,6 +925,58 @@ minutes, and therefore users are discouraged from querying these endpoints
 faster than once every five minutes.  Global trends information is also
 available from this API by using a WOEID of 1.
 
+);
+
+twitter_api_method trends => (
+    description => <<'',
+Returns the top ten queries that are currently trending on Twitter.  The
+response includes the time of the request, the name of each trending topic, and
+the url to the Twitter Search results page for that topic.
+
+    path     => 'trends',
+    method   => 'GET',
+    params   => [qw//],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'ArrayRef[Query]',
+);
+
+twitter_api_method trends_current => (
+    description => <<'',
+Returns the current top ten trending topics on Twitter.  The response includes
+the time of the request, the name of each trending topic, and query used on
+Twitter Search results page for that topic.
+
+    path     => 'trends/current',
+    method   => 'GET',
+    params   => [qw/exclude/],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'HashRef',
+);
+
+twitter_api_method trends_daily => (
+    description => <<'',
+Returns the top 20 trending topics for each hour in a given day.
+
+    path     => 'trends/daily',
+    method   => 'GET',
+    params   => [qw/date exclude/],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'HashRef',
+);
+
+twitter_api_method trends_weekly => (
+    description => <<'',
+Returns the top 30 trending topics for each day in a given week.
+
+    path     => 'trends/weekly',
+    method   => 'GET',
+    params   => [qw/date exclude/],
+    required => [qw//],
+    authenticate => 0,
+    returns  => 'HashRef',
 );
 
 twitter_api_method reverse_geocode => (

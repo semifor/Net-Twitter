@@ -4,6 +4,7 @@ version_from      'lib/Net/Twitter/Core.pm';
 perl_version_from 'lib/Net/Twitter/Core.pm';
 
 if ( $Module::Install::AUTHOR ) {
+    $ENV{NET_TWITTER_NO_TRENDS_WARNING} = 1;
     system $^X, "src/build.pl", version, 'src/net-twitter-pod.tt2', 'lib/Net/Twitter.pod';
     system 'pod2text lib/Net/Twitter.pod > README';
 }

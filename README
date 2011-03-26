@@ -969,6 +969,16 @@ REST API Methods
 
         Returns: DirectMessage
 
+    no_retweet_ids
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns an ARRAY ref of user IDs for which the authenticating user
+        does not want to receive retweets.
+
+        Returns: ArrayRef[UserIDs]
+
     public_timeline
 
         Parameters: skip_user, trim_user, include_entities
@@ -1279,6 +1289,18 @@ REST API Methods
 
         Returns: Str
 
+    trends
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the top ten queries that are currently trending on Twitter.
+        The response includes the time of the request, the name of each
+        trending topic, and the url to the Twitter Search results page for
+        that topic.
+
+        Returns: ArrayRef[Query]
+
     trends_available
 
         Parameters: lat, long
@@ -1300,6 +1322,27 @@ REST API Methods
 
         Returns: ArrayRef[Location]
 
+    trends_current
+    trends_current(exclude)
+
+        Parameters: exclude
+        Required: *none*
+
+        Returns the current top ten trending topics on Twitter. The response
+        includes the time of the request, the name of each trending topic,
+        and query used on Twitter Search results page for that topic.
+
+        Returns: HashRef
+
+    trends_daily
+
+        Parameters: date, exclude
+        Required: *none*
+
+        Returns the top 20 trending topics for each hour in a given day.
+
+        Returns: HashRef
+
     trends_location
     trends_location(woeid)
 
@@ -1316,6 +1359,15 @@ REST API Methods
         this API by using a WOEID of 1.
 
         Returns: ArrayRef[Trend]
+
+    trends_weekly
+
+        Parameters: date, exclude
+        Required: *none*
+
+        Returns the top 30 trending topics for each day in a given week.
+
+        Returns: HashRef
 
     update
     update(status)
@@ -1534,48 +1586,6 @@ Search API Methods
             for my $status ( @{$r->{results}} ) {
                 print "$status->{text}\n";
             }
-
-        Returns: HashRef
-
-    trends
-
-        Parameters: *none*
-        Required: *none*
-
-        Returns the top ten queries that are currently trending on Twitter.
-        The response includes the time of the request, the name of each
-        trending topic, and the url to the Twitter Search results page for
-        that topic.
-
-        Returns: ArrayRef[Query]
-
-    trends_current
-    trends_current(exclude)
-
-        Parameters: exclude
-        Required: *none*
-
-        Returns the current top ten trending topics on Twitter. The response
-        includes the time of the request, the name of each trending topic,
-        and query used on Twitter Search results page for that topic.
-
-        Returns: HashRef
-
-    trends_daily
-
-        Parameters: date, exclude
-        Required: *none*
-
-        Returns the top 20 trending topics for each hour in a given day.
-
-        Returns: HashRef
-
-    trends_weekly
-
-        Parameters: date, exclude
-        Required: *none*
-
-        Returns the top 30 trending topics for each day in a given week.
 
         Returns: HashRef
 

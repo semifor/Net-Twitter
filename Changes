@@ -1,3 +1,4 @@
+    - Moved trends methods to API::REST; added warning to API::Search::Trends
     - Added no_retweet_ids method
     - modify searchapiurl for identica option
     - added deprecation notice to Net::Identica with Net::Twitter examples

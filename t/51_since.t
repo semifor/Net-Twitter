@@ -58,7 +58,7 @@ try {
 }
 catch { pass $test };
 
-$nt = Net::Twitter->new(traits => [qw/API::Search/]);
+$nt = Net::Twitter->new(traits => [qw/API::Search API::REST/]);
 $nt->ua->add_handler(request_send => sub {
         my $res = HTTP::Response->new(200);
         $res->content('{"test":"done"}');

@@ -32,6 +32,6 @@ use_ok 'Net::Twitter';
 }
 
 {
-    my $nt = Net::Twitter->new(traits => ['API::Search'], identica => 1);
+    my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search/], identica => 1);
     like $nt->searchapiurl, qr/identi\.ca/, 'use identica url for search';
 }
