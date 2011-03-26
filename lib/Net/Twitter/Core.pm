@@ -18,7 +18,7 @@ use Try::Tiny;
 use namespace::autoclean;
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.15000';
+our $VERSION = '3.16000';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
