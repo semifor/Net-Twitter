@@ -2,6 +2,7 @@ package Net::Twitter;
 use Moose;
 use Carp;
 use Net::Twitter::Core;
+use Digest::SHA1 qw/sha1_hex/;
 
 use namespace::autoclean;
 
@@ -39,10 +40,13 @@ sub _transform_trait {
 
 sub _resolve_traits {
     my ($class, @traits) = @_;
+
     return map {
-        my $transformed = $class->_transform_trait($_);
-        Class::MOP::load_class($transformed);
-        $transformed;
+        unless ( ref ) {
+            $_ = $class->_transform_trait($_);
+            Class::MOP::load_class($_);
+        }
+        $_;
     } @traits;
 }
 
@@ -56,6 +60,9 @@ sub _isa {
 sub _create_anon_class {
     my ($superclasses, $traits, $immutable, $package) = @_;
 
+    # Do we already have a meta class?
+    return $package->meta if $package->can('meta');
+
     my $meta;
     $meta = Net::Twitter::Core->meta->create_anon_class(
         superclasses => $superclasses,
@@ -67,6 +74,24 @@ sub _create_anon_class {
     $meta->make_immutable(inline_constructor => $immutable);
 
     return $meta;
+}
+
+sub _name_for_anon_class {
+    my @t = @{$_[0]};
+
+    my @comps;
+    while ( @t ) {
+        my $t = shift @t;
+        if ( ref $t[0] eq 'HASH' ) {
+            my $r = shift @t;
+            my $sig = sha1_hex(JSON::Any->to_json($r));
+            $t .= "_$sig";
+        }
+        $t =~ s/(?:::|\W)/_/g;
+        push @comps, $t;
+    }
+
+    return join '', __PACKAGE__, '::',  join '__', 'with', sort @comps;
 }
 
 sub new {
@@ -90,13 +115,13 @@ sub new {
     # ensure we have the OAuth trait if we have a consumer key
     $traits = [ (grep $_ ne 'OAuth', @$traits), 'OAuth' ] if $args{consumer_key};
 
-    my $package_suffix = 'with__' . join '__',
-       map { (my $part = $_) =~ s/::/_/g; $part =~ s/\W//; $part } sort @$traits;
+    # create a unique name for the created class based on trait names and parameters
+    my $anon_class_name = _name_for_anon_class($traits);
 
     $traits = [ $class->_resolve_traits(@$traits) ];
 
     my $superclasses = [ 'Net::Twitter::Core' ];
-    my $meta = _create_anon_class($superclasses, $traits, 1, __PACKAGE__ . '::' . $package_suffix);
+    my $meta = _create_anon_class($superclasses, $traits, 1, $anon_class_name);
 
     # create a Net::Twitter::Core object with roles applied
     my $new = $meta->name->new(%args);
@@ -105,7 +130,7 @@ sub new {
     if ( $class ne __PACKAGE__ ) {
         unshift @$superclasses, $class;
         my $final_meta = _create_anon_class(
-            $superclasses, $traits, 0, join '::', $class, __PACKAGE__, $package_suffix
+            $superclasses, $traits, 0, join '::', $class, $anon_class_name
         );
         bless $new, $final_meta->name;
     }

@@ -1,0 +1,41 @@
+#!perl
+use warnings;
+use strict;
+use Test::More;
+use Net::Twitter;
+use JSON::Any;
+use HTTP::Response;
+
+{
+    my $nt_with_max_calls_2 = Net::Twitter->new(traits => ['API::REST',  AutoCursor => { max_calls => 2 }]);
+    my $class_for_max_calls_2 = ref $nt_with_max_calls_2;
+
+    my $nt_with_max_calls_4 = Net::Twitter->new(traits => ['API::REST',  AutoCursor => { max_calls => 4 }]);
+    my $class_for_max_calls_4 = ref $nt_with_max_calls_4;
+
+    my $json_result = JSON::Any->to_json({ ids => ['test'], next_cursor => 1 });
+
+    $_->ua->add_handler(request_send => sub {
+        my $resp = HTTP::Response->new(200);
+        $resp->content($json_result);
+        return $resp;
+    }) for $nt_with_max_calls_2, $nt_with_max_calls_4;
+
+    my $r = $nt_with_max_calls_2->friends_ids({ cursor => -1 });
+    is scalar @$r, 2, 'max_calls => 2';
+
+    $r = $nt_with_max_calls_4->friends_ids({ cursor => -1 });
+    is scalar @$r, 4, 'max_calls => 4';
+
+    my $nt = Net::Twitter->new(traits => ['API::REST',  AutoCursor => { max_calls => 2 }]);
+    is ref $nt, $class_for_max_calls_2, 'clone max_calls => 2, class name';
+    $r = $nt_with_max_calls_4->friends_ids({ cursor => -1 });
+    is scalar @$r, 2, 'cloned max_calls => 2';
+
+    $nt = Net::Twitter->new(traits => ['API::REST',  AutoCursor => { max_calls => 4 }]);
+    is ref $nt, $class_for_max_calls_4, 'clone max_calls => 4, class name';
+    $r = $nt_with_max_calls_4->friends_ids({ cursor => -1 });
+    is scalar @$r, 4, 'cloned max_calls => 4';
+}
+
+done_testing;
