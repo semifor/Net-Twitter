@@ -79,6 +79,7 @@ netrc
 oauth
 ok
 online
+parameterized
 params
 perigrin
 Pecorella

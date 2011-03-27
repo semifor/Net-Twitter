@@ -12,7 +12,7 @@ has '_trait_namespace' => (
 );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.16000';
+our $VERSION = '3.16000_1';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 

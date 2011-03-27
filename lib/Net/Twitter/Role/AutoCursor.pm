@@ -102,7 +102,7 @@ with the next cursor, until it has received all results or 16 calls have been
 made (yielding 80,000 results).  It returns an ARRAY reference to the combined
 results.
 
-If the C<cursor> paramter is passed to C<friends_ids> or C<followers_ids>,
+If the C<cursor> parameter is passed to C<friends_ids> or C<followers_ids>,
 C<Net::Twitter> uses cursored access from the start, i.e., it does not
 attempt an initial non-cursored call.
 
