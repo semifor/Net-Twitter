@@ -35,6 +35,9 @@ sub mock_ua {
     $r = $nt_with_max_calls_4->friends_ids({ cursor => -1 });
     is scalar @$r, 4, 'max_calls => 4';
 
+    $r = $nt_with_max_calls_4->followers_ids({ cursor => -1, max_calls => 10 });
+    is scalar @$r, 10, 'max_calls per call override';
+
     my $nt = Net::Twitter->new(traits => ['API::REST',  AutoCursor => { max_calls => 2 }]);
     mock_ua($nt);
     is ref $nt, $class_for_max_calls_2, 'clone max_calls => 2, class name';

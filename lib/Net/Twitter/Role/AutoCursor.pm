@@ -20,6 +20,8 @@ role {
 
         $args->{cursor} = -1 if !exists $args->{cursor} && $p->force_cursor;
 
+        my $max_calls = delete $args->{max_calls} || $p->max_calls;
+
         my $calls = 0;
         my $results;
         if ( !exists $args->{cursor} ) {
@@ -35,7 +37,7 @@ role {
             }
         }
 
-        while ( $args->{cursor} && $calls++ < $p->max_calls ) {
+        while ( $args->{cursor} && $calls++ < $max_calls ) {
             my $r = $orig->($self, $args);
             push @$results, @{$r->{$p->array_accessor}};
             $args->{cursor} = $r->{next_cursor};

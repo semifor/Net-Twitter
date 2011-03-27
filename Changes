@@ -1,3 +1,6 @@
+3.16000_1 2011-03-27
+    - Added AutoCursor trait
+
 3.16000 2011-03-26
     - Moved trends methods to API::REST; added warning to API::Search::Trends
     - Added no_retweet_ids method
