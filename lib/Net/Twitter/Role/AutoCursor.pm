@@ -123,6 +123,9 @@ methods.
 
 An integer specifying the maximum number of API calls to make. Default is 16.
 
+C<max_calls> can be overridden on a per-call basis by passing a C<max_calls>
+argument to the API method.
+
 =item force_cursor
 
 If true, when the caller does not provide a C<cursor> parameter, C<AutoCursor>
