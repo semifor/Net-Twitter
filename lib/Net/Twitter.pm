@@ -76,22 +76,28 @@ sub _create_anon_class {
     return $meta;
 }
 
-sub _name_for_anon_class {
-    my @t = @{$_[0]};
+{
+    my $serial_number = 0;
+    my %serial_for_params;
 
-    my @comps;
-    while ( @t ) {
-        my $t = shift @t;
-        if ( ref $t[0] eq 'HASH' ) {
-            my $r = shift @t;
-            my $sig = sha1_hex(JSON::Any->to_json($r));
-            $t .= "_$sig";
+    sub _name_for_anon_class {
+        my @t = @{$_[0]};
+
+        my @comps;
+        while ( @t ) {
+            my $t = shift @t;
+            if ( ref $t[0] eq 'HASH' ) {
+                my $params = shift @t;
+                my $sig = sha1_hex(JSON::Any->to_json($params));
+                my $sn  = $serial_for_params{$sig} ||= ++$serial_number;
+                $t .= "_$sn";
+            }
+            $t =~ s/(?:::|\W)/_/g;
+            push @comps, $t;
         }
-        $t =~ s/(?:::|\W)/_/g;
-        push @comps, $t;
-    }
 
-    return join '', __PACKAGE__, '::',  join '__', 'with', sort @comps;
+        return __PACKAGE__ . '::' .  join '__', 'with', sort @comps;
+    }
 }
 
 sub new {
