@@ -1,3 +1,6 @@
+3.17000 2011-03-29
+    - production release with new AutoCursor trait
+
 3.16000_1 2011-03-27
     - Added AutoCursor trait
 
