@@ -124,18 +124,12 @@ Provides support for the Twitter Search API methods.
 Provides support for the TwitterVision API.  See
 L<http://twittervision.com/api.html>.
 
-=item WrapError
+=item AutoCursor
 
-C<Net::Twitter> normally throws exceptions on error.  When this trait is
-included, C<Net::Twitter> returns undef when a method fails and makes the
-error available through method C<get_error>.  This is the way all errors were
-handled in Net::Twitter versions prior to version 3.00.
-
-=item OAuth
-
-The C<OAuth> trait provides OAuth authentication rather than the default Basic
-Authentication for Twitter API method calls.  See the L</Authentication>
-section and L<Net::Twitter::Role::OAuth> for full documentation.
+C<AutoCursor> is a parameterized trait that provides an automatic loop for
+cursored calls, returning an ARRAY reference to the combined results.  By
+default, it handles C<friends_ids> and C<followers_ids>.  See
+L<Net::Twitter::Role::AutoCursor> for details.
 
 =item InflateObjects
 
@@ -162,11 +156,6 @@ returns an array of status objects:
         # etc.
         print $r->relative_created_at;
 
-=item RateLimit
-
-The C<RateLimit> trait adds utility methods that return information about the
-current rate limit status.  See L<Net::Twitter::Role::RateLimit> for details.
-
 =item Legacy
 
 This trait provides backwards compatibility to C<Net::Twitter> versions prior
@@ -179,6 +168,29 @@ In the current version, this trait is automatically included if the C<traits>
 option is not specified. This ensures backwards compatibility for existing
 applications using C<Net::Twitter> versions prior to 3.00.  See section
 L</LEGACY COMPATIBILITY> for more details.
+
+=item OAuth
+
+The C<OAuth> trait provides OAuth authentication rather than the default Basic
+Authentication for Twitter API method calls.  See the L</Authentication>
+section and L<Net::Twitter::Role::OAuth> for full documentation.
+
+=item RateLimit
+
+The C<RateLimit> trait adds utility methods that return information about the
+current rate limit status.  See L<Net::Twitter::Role::RateLimit> for details.
+
+=item RetryOnError
+
+The C<RetryOnError> trait automatically retries Twitter API calls with
+temporary failures.  See L<Net::Twitter::Role::RetryOnError> for details.
+
+=item WrapError
+
+C<Net::Twitter> normally throws exceptions on error.  When this trait is
+included, C<Net::Twitter> returns undef when a method fails and makes the
+error available through method C<get_error>.  This is the way all errors were
+handled in Net::Twitter versions prior to version 3.00.
 
 =back
 

@@ -20,6 +20,7 @@ ACKNOWLEDGEMENTS
 API
 APIs
 Akira
+AutoCursor
 BasicUser
 CPAN
 DateTime
@@ -45,6 +46,7 @@ OMG
 Prather
 RateLimit
 RateLimitStatus
+RetryOnError
 Retweets
 SMS
 SSL

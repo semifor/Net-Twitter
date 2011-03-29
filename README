@@ -105,18 +105,12 @@ METHODS AND ARGUMENTS
                 Provides support for the TwitterVision API. See
                 <http://twittervision.com/api.html>.
 
-            WrapError
-                "Net::Twitter" normally throws exceptions on error. When
-                this trait is included, "Net::Twitter" returns undef when a
-                method fails and makes the error available through method
-                "get_error". This is the way all errors were handled in
-                Net::Twitter versions prior to version 3.00.
-
-            OAuth
-                The "OAuth" trait provides OAuth authentication rather than
-                the default Basic Authentication for Twitter API method
-                calls. See the "Authentication" section and
-                Net::Twitter::Role::OAuth for full documentation.
+            AutoCursor
+                "AutoCursor" is a parameterized trait that provides an
+                automatic loop for cursored calls, returning an ARRAY
+                reference to the combined results. By default, it handles
+                "friends_ids" and "followers_ids". See
+                Net::Twitter::Role::AutoCursor for details.
 
             InflateObjects
                 When this optional trait is included, Net::Twitter inflates
@@ -145,11 +139,6 @@ METHODS AND ARGUMENTS
                         # etc.
                         print $r->relative_created_at;
 
-            RateLimit
-                The "RateLimit" trait adds utility methods that return
-                information about the current rate limit status. See
-                Net::Twitter::Role::RateLimit for details.
-
             Legacy
                 This trait provides backwards compatibility to
                 "Net::Twitter" versions prior to 3.00. It implies the traits
@@ -163,6 +152,29 @@ METHODS AND ARGUMENTS
                 backwards compatibility for existing applications using
                 "Net::Twitter" versions prior to 3.00. See section "LEGACY
                 COMPATIBILITY" for more details.
+
+            OAuth
+                The "OAuth" trait provides OAuth authentication rather than
+                the default Basic Authentication for Twitter API method
+                calls. See the "Authentication" section and
+                Net::Twitter::Role::OAuth for full documentation.
+
+            RateLimit
+                The "RateLimit" trait adds utility methods that return
+                information about the current rate limit status. See
+                Net::Twitter::Role::RateLimit for details.
+
+            RetryOnError
+                The "RetryOnError" trait automatically retries Twitter API
+                calls with temporary failures. See
+                Net::Twitter::Role::RetryOnError for details.
+
+            WrapError
+                "Net::Twitter" normally throws exceptions on error. When
+                this trait is included, "Net::Twitter" returns undef when a
+                method fails and makes the error available through method
+                "get_error". This is the way all errors were handled in
+                Net::Twitter versions prior to version 3.00.
 
             Some examples of using the "traits" parameter in "new":
 
