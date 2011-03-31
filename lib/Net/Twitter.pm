@@ -68,7 +68,7 @@ sub _create_anon_class {
         superclasses => $superclasses,
         roles        => $traits,
         methods      => { meta => sub { $meta }, isa => \&_isa },
-        cache        => 1,
+        cache        => 0,
         package      => $package,
     );
     $meta->make_immutable(inline_constructor => $immutable);
