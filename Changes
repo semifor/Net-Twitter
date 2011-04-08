@@ -1,4 +1,5 @@
     - fixed bad whatis entry (patch from debian, closes RT #67203)
+    - use Digest::SHA instead of Digest::SHA1 (patch from debian, closes RT #67202)
 
 3.17001 2011-03-31
     - fixed intermittent bug in AutoCursor (result of Class::MOP anon class caching)
