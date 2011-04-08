@@ -55,7 +55,7 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Role::AutoCursor
+Net::Twitter::Role::AutoCursor - Help transition to cursor based access to friends_ids and followers_ids methods
 
 =head1 SYNOPSIS
 
