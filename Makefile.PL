@@ -36,7 +36,7 @@ requires    'LWP::UserAgent'            => 2.032;
 requires    'Moose'                     => 0.90;
 requires    'Moose::Exporter';
 requires    'Moose::Role';
-requires    'MooseX::MultiInitArg';
+requires    'MooseX::Aliases';
 requires    'MooseX::Role::Parameterized';
 requires    'namespace::autoclean'      => 0.09;
 requires    'Net::OAuth'                => 0.25;

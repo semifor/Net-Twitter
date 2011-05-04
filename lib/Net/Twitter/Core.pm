@@ -1,7 +1,7 @@
 package Net::Twitter::Core;
 use 5.008001;
 use Moose;
-use MooseX::MultiInitArg;
+use MooseX::Aliases;
 use Carp;
 use JSON::Any qw/XS JSON/;
 use URI::Escape;
@@ -24,12 +24,10 @@ $VERSION = eval $VERSION; # numify for warning-free dev releases
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
-has username        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
-                         isa => 'Str', is => 'rw', predicate => 'has_username',
-                         init_args => [qw/user/] );
-has password        => ( traits => [qw/MooseX::MultiInitArg::Trait/],
-                         isa => 'Str', is => 'rw', predicate => 'has_password',
-                         init_args => [qw/pass/] );
+has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username',
+                         alias => 'user' );
+has password        => ( isa => 'Str', is => 'rw', predicate => 'has_password',
+                         alias => 'pass' );
 has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
 has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' );
