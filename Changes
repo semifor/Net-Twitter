@@ -1,3 +1,4 @@
+    - replaced MX:MultiInitArg::Trait with MX:Aliases (Justin Hunter)
     - fixed bad whatis entry (patch from debian, closes RT #67203)
     - use Digest::SHA instead of Digest::SHA1 (patch from debian, closes RT #67202)
 
