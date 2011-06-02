@@ -735,7 +735,7 @@ Returns the un-blocked user when successful.
 
     path     => 'blocks/destroy/:id',
     method   => 'POST',
-    params   => [qw/id user_idscreen_name/],
+    params   => [qw/id user_id screen_name/],
     booleans => [qw/include_entities/],
     required => [qw/id/],
     returns  => 'BasicUser',
