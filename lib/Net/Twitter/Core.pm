@@ -295,6 +295,18 @@ sub _contains_statuses {
     return exists $e->{created_at} && exists $e->{text} && exists $e->{id};
 }
 
+sub _user_or_undef {
+    my ( $self, $orig, $type, @rest ) = @_;
+
+    return try {
+        $orig->($self, @rest);
+    }
+    catch {
+        die $_ unless /The specified user is not a $type of this list/;
+        undef;
+    };
+}
+
 1;
 
 __END__

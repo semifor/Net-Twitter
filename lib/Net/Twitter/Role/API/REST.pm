@@ -27,6 +27,7 @@ authenticate 1;
 our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
 datetime_parser $DATETIME_PARSER;
 
+
 twitter_api_method public_timeline => (
     description => <<'EOT',
 Returns the 20 most recent statuses from non-protected users who have
@@ -1278,6 +1279,252 @@ If available, returns an array of replies and mentions related to the specified
 status. There is no guarantee there will be any replies or mentions in the
 response. This method is only available to users who have access to
 #newtwitter.  Requires authentication.
+
+);
+
+### Lists ###
+
+twitter_api_method list_subscriptions => (
+    path        => 'lists/all',
+    method      => 'GET',
+    params      => [qw/user_id screen_name/],
+    required    => [],
+    returns     => 'ArrayRef[List]',
+    description => <<'',
+Returns all lists the authenticating or specified user subscribes to, including
+their own. The user is specified using the user_id or screen_name parameters.
+If no user is given, the authenticating user is used.
+
+);
+
+twitter_api_method list_statuses => (
+    path        => 'lists/statuses',
+    method      => 'GET',
+    params      => [qw/
+        list_id slug owner_screen_name owner_id since_id max_id per_page page
+        include_entities include_rts
+    /],
+    required    => [],
+    booleans    => [qw/include_entities include_rts/],
+    returns     => 'ArrayRef[Status]',
+    description => <<'',
+Returns tweet timeline for members of the specified list. Historically,
+retweets were not available in list timeline responses but you can now use the
+include_rts=true parameter to additionally receive retweet objects.
+
+);
+
+twitter_api_method delete_list_member => (
+    path        => 'lists/members/destroy',
+    method      => 'POST',
+    params      => [qw/list_id slug user_id screen_name owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'User',
+    aliases     => [qw/remove_list_member/],
+    description => <<'',
+Removes the specified member from the list. The authenticated user must be the
+list's owner to remove members from the list.
+
+);
+
+twitter_api_method list_memberships => (
+    path        => 'lists/memberships',
+    method      => 'GET',
+    params      => [qw/user_id screen_name cursor filter_to_owned_lists/],
+    required    => [],
+    booleans    => [qw/filter_to_owned_lists/],
+    returns     => 'Hashref',
+    description => <<'',
+Returns the lists the specified user has been added to. If user_id or
+screen_name are not provided the memberships for the authenticating user are
+returned.
+
+);
+
+twitter_api_method list_subscribers => (
+    path        => 'lists/subscribers',
+    method      => 'GET',
+    params      => [qw/list_id slug owner_screen_name owner_id cursor include_entities skip_status/],
+    required    => [],
+    booleans    => [qw/include_entities skip_status/],
+    returns     => 'Hashref',
+    description => <<'',
+Returns the subscribers of the specified list. Private list subscribers will
+only be shown if the authenticated user owns the specified list.
+
+);
+
+twitter_api_method subscribe_list => (
+    path        => 'lists/subscribers/create',
+    method      => 'POST',
+    params      => [qw/owner_screen_name owner_id list_id slug/],
+    required    => [],
+    returns     => 'List',
+    description => <<'',
+Subscribes the authenticated user to the specified list.
+
+);
+
+twitter_api_method is_list_subscriber => (
+    path        => 'lists/subscribers/show',
+    method      => 'GET',
+    params      => [qw/
+        owner_screen_name owner_id list_id slug user_id screen_name
+        include_entities skip_status
+    /],
+    required    => [],
+    booleans    => [qw/include_entities skip_status/],
+    returns     => 'Maybe[User]',
+    aliases     => [qw/is_subscribed_list/],
+    description => <<'',
+Check if the specified user is a subscriber of the specified list. Returns the
+user or undef.
+
+);
+
+around [qw/is_list_subscriber is_subscribed_list/] => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    $self->_user_or_undef($orig, 'subscriber', @_);
+};
+
+twitter_api_method unsubscribe_list => (
+    path        => 'lists/subscribers/destroy',
+    method      => 'POST',
+    params      => [qw/list_id slug owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    description => <<'',
+Unsubscribes the authenticated user from the specified list.
+
+);
+
+twitter_api_method members_create_all => (
+    path        => 'lists/members/create_all',
+    method      => 'POST',
+    params      => [qw/list_id slug owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    aliases     => [qw/add_list_members/],
+    description => <<'',
+Adds multiple members to a list, by specifying a reference to an array or a
+comma-separated list of member ids or screen names. The authenticated user must
+own the list to be able to add members to it. Note that lists can't have more
+than 500 members, and you are limited to adding up to 100 members to a list at
+a time with this method.
+
+);
+
+twitter_api_method is_list_member => (
+    path        => 'lists/members/show',
+    method      => 'GET',
+    params      => [qw/
+        owner_screen_name owner_id list_id slug user_id screen_name
+        include_entities skip_status
+    /],
+    required    => [],
+    booleans    => [qw/include_entities skip_status/],
+    returns     => 'Maybe[User]',
+    description => <<'',
+Check if the specified user is a member of the specified list. Returns the user or undef.
+
+);
+
+around is_list_member => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    $self->_user_or_undef($orig, 'member', @_);
+};
+
+twitter_api_method list_members => (
+    path        => 'lists/members',
+    method      => 'GET',
+    params      => [qw/
+        list_id slug owner_screen_name owner_id cursor
+        include_entities skip_status
+    /],
+    required    => [],
+    booleans    => [qw/include_entities skip_status/],
+    returns     => 'Hashref',
+    description => <<'',
+Returns the members of the specified list. Private list members will only be
+shown if the authenticated user owns the specified list.
+
+);
+
+twitter_api_method add_list_member => (
+    path        => 'lists/members/create',
+    method      => 'POST',
+    params      => [qw/list_id slug user_id screen_name owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'User',
+    description => <<'',
+Add a member to a list. The authenticated user must own the list to be able to
+add members to it. Note that lists can't have more than 500 members.
+
+);
+
+twitter_api_method delete_list => (
+    path        => 'lists/destroy',
+    method      => 'POST',
+    params      => [qw/owner_screen_name owner_id list_id slug/],
+    required    => [],
+    returns     => 'List',
+    description => <<'',
+Deletes the specified list. The authenticated user must own the list to be able
+to destroy it.
+
+);
+
+twitter_api_method update_list => (
+    path        => 'lists/update',
+    method      => 'POST',
+    params      => [qw/list_id slug name mode description owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    description => <<'',
+Updates the specified list. The authenticated user must own the list to be able
+to update it.
+
+);
+
+twitter_api_method create_list => (
+    path        => 'lists/create',
+    method      => 'POST',
+    params      => [qw/list_id slug name mode description owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    description => <<'',
+Creates a new list for the authenticated user. Note that you can't create more
+than 20 lists per account.
+
+);
+
+twitter_api_method get_lists => (
+    path        => 'lists',
+    method      => 'GET',
+    params      => [qw/user_id screen_name cursor/],
+    required    => [],
+    returns     => 'Hashref',
+    aliases     => [qw/list_lists/],
+    description => <<'',
+Returns the lists of the specified (or authenticated) user. Private lists will
+be included if the authenticated user is the same as the user whose lists are
+being returned.
+
+);
+
+twitter_api_method get_list => (
+    path        => 'lists/show',
+    method      => 'GET',
+    params      => [qw/list_id slug owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    description => <<'',
+Returns the specified list. Private lists will only be shown if the
+authenticated user owns the specified list.
 
 );
 

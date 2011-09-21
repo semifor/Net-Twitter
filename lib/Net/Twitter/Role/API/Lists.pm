@@ -4,6 +4,8 @@ use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use Try::Tiny;
 
+with 'Net::Twitter::Role::API::REST';
+
 =head1 NAME
 
 Net::Twitter::Role::API::Lists - Twitter Lists API support for Net::Twitter
@@ -67,6 +69,19 @@ Net::Twitter::Role::API::Lists - Twitter Lists API support for Net::Twitter
   $r = $nt->list_subscribers($owner, $list_id, { cursor => $cursor });
   $users = $r->{users};
 
+=head1 DEPRECATION NOTICE
+
+This module implements methods for the original Twitter Lists API.  Twitter has
+deprecated these API methods and reimplemented them with a saner semantics.
+The new methods are implemented in the API::REST trait,
+L<Net::Twitter::Role::API::REST>.  This module provides backwards
+compatibility for code written to use the original Lists API.  To use the
+new API methods, simply remove this trait from your code and change the
+arguments to its methods to match the new semantics.
+
+This module may be dropped from L<Net::Twitter> in a future release.  It will
+remain as long as Twitter still provides the underlying API end-points.
+
 =head1 DESCRIPTION
 
 This module adds support to L<Net::Twitter> for the Twitter Lists API.
@@ -97,7 +112,7 @@ after BUILD => sub {
     $self->{lists_api_url} =~ s/^http:/https:/ if $self->ssl;
 };
 
-twitter_api_method create_list => (
+twitter_api_method legacy_create_list => (
     path        => ':user/lists',
     method      => 'POST',
     params      => [qw/user name mode description/],
@@ -109,7 +124,7 @@ either C<public> or C<private>.  If not specified, it defaults to C<public>.
 
 );
 
-twitter_api_method update_list => (
+twitter_api_method legacy_update_list => (
     path        => ':user/lists/:list_id',
     method      => 'POST',
     params      => [qw/user list_id name mode description/],
@@ -120,13 +135,13 @@ Updates a list to change the name, mode, description, or any combination thereof
 
 );
 
-twitter_api_method get_lists => (
+twitter_api_method legacy_get_lists => (
     path        => ':user/lists',
     method      => 'GET',
     params      => [qw/user cursor/],
     required    => [qw/user/],
     returns     => 'ArrayRef[List]',
-    aliases     => [qw/list_lists/],
+    aliases     => [qw/legacy_list_lists/],
     description => <<'EOT',
 Returns a reference to an array of lists owned by the specified user.  If the
 user is the authenticated user, it returns both public and private lists.
@@ -137,7 +152,7 @@ are returned in the C<lists> element of the hash.
 EOT
 );
 
-twitter_api_method get_list => (
+twitter_api_method legacy_get_list => (
     path        => ':user/lists/:list_id',
     method      => 'GET',
     params      => [qw/user list_id/],
@@ -148,7 +163,7 @@ Returns the specified list as a hash reference.
 
 );
 
-twitter_api_method delete_list => (
+twitter_api_method legacy_delete_list => (
     path        => ':user/lists/:list_id',
     method      => 'DELETE',
     params      => [qw/user list_id/],
@@ -159,7 +174,7 @@ reference.
 
 );
 
-twitter_api_method list_statuses => (
+twitter_api_method legacy_list_statuses => (
     path        => ':user/lists/:list_id/statuses',
     method      => 'GET',
     params      => [qw/user list_id since_id max_id per_page page/],
@@ -170,7 +185,7 @@ Returns a timeline of list member statuses as an array reference.
 
 );
 
-twitter_api_method list_memberships => (
+twitter_api_method legacy_list_memberships => (
     path        => ':user/lists/memberships',
     method      => 'GET',
     params      => [qw/user cursor/],
@@ -183,7 +198,7 @@ are returned in the C<lists> element of the hash.
 EOT
 );
 
-twitter_api_method list_subscriptions => (
+twitter_api_method legacy_list_subscriptions => (
     path        => ':user/lists/subscriptions',
     method      => 'GET',
     params      => [qw/user cursor/],
@@ -196,7 +211,7 @@ are returned in the C<lists> element of the hash.
 EOT
 );
 
-twitter_api_method list_members => (
+twitter_api_method legacy_list_members => (
     path        => ':user/:list_id/members',
     method      => 'GET',
     params      => [qw/user list_id id cursor/],
@@ -214,14 +229,14 @@ are returned in the C<users> element of the hash.
 EOT
 );
 
-around list_members => sub {
+around legacy_list_members => sub {
     my $orig = shift;
     my $self = shift;
 
     $self->_user_or_undef($orig, 'member', @_);
 };
 
-twitter_api_method is_list_member => (
+twitter_api_method legacy_is_list_member => (
     path        => ':user/:list_id/members/:id',
     method      => 'GET',
     params      => [qw/user list_id id/],
@@ -233,14 +248,14 @@ Otherwise, returns undef.
 EOT
 );
 
-around is_list_member => sub {
+around legacy_is_list_member => sub {
     my $orig = shift;
     my $self = shift;
 
     $self->_user_or_undef($orig, 'member', @_);
 };
 
-twitter_api_method add_list_member => (
+twitter_api_method legacy_add_list_member => (
     path        => ':user/:list_id/members',
     method      => 'POST',
     returns     => 'User',
@@ -253,8 +268,8 @@ Returns a reference the added user as a hash reference.
 EOT
 );
 
-twitter_api_method members_create_all => (
-    aliases     => [qw/add_list_members/],
+twitter_api_method legacy_members_create_all => (
+    aliases     => [qw/legacy_add_list_members/],
     path        => ':user/:list_id/members/create_all',
     method      => 'POST',
     returns     => 'ArrayRef[User]',
@@ -268,12 +283,12 @@ Returns a reference the added user as a hash reference.
 EOT
 );
 
-twitter_api_method delete_list_member => (
+twitter_api_method legacy_delete_list_member => (
     path        => ':user/:list_id/members',
     method      => 'DELETE',
     params      => [qw/user list_id id/],
     required    => [qw/user list_id id/],
-    aliases     => [qw/remove_list_member/],
+    aliases     => [qw/legacy_remove_list_member/],
     description => <<'EOT',
 Deletes the user identified by C<id> from the specified list.
 
@@ -281,7 +296,7 @@ Returns the deleted user as a hash reference.
 EOT
 );
 
-twitter_api_method list_subscribers => (
+twitter_api_method legacy_list_subscribers => (
     path        => ':user/:list_id/subscribers',
     method      => 'GET',
     params      => [qw/user list_id id cursor/],
@@ -295,34 +310,34 @@ are returned in the C<users> element of the hash.
 EOT
 );
 
-around list_subscribers => sub {
+around legacy_list_subscribers => sub {
     my $orig = shift;
     my $self = shift;
 
     $self->_user_or_undef($orig, 'subscriber', @_);
 };
 
-twitter_api_method is_list_subscriber => (
+twitter_api_method legacy_is_list_subscriber => (
     path        => ':user/:list_id/subscribers/:id',
     method      => 'GET',
     params      => [qw/user list_id id/],
     required    => [qw/user list_id id/],
     returns     => 'ArrayRef[User]',
-    aliases     => [qw/is_subscribed_list/],
+    aliases     => [qw/legacy_is_subscribed_list/],
     description => <<'EOT',
 Returns the subscriber as a HASH reference if C<id> is a subscriber to the list.
 Otherwise, returns undef.
 EOT
 );
 
-around is_list_subscriber => sub {
+around legacy_is_list_subscriber => sub {
     my $orig = shift;
     my $self = shift;
 
     $self->_user_or_undef($orig, 'subscriber', @_);
 };
 
-twitter_api_method subscribe_list => (
+twitter_api_method legacy_subscribe_list => (
     path        => ':user/:list_id/subscribers',
     method      => 'POST',
     returns     => 'List',
@@ -333,7 +348,7 @@ Subscribes the authenticated user to the specified list.
 
 );
 
-twitter_api_method unsubscribe_list => (
+twitter_api_method legacy_unsubscribe_list => (
     path        => ':user/:list_id/subscribers',
     method      => 'DELETE',
     returns     => 'List',
@@ -344,16 +359,32 @@ Unsubscribes the authenticated user from the specified list.
 
 );
 
-sub _user_or_undef {
-    my ( $self, $orig, $type, @rest ) = @_;
-
-    return try {
-        $orig->($self, @rest);
-    }
-    catch {
-        die $_ unless /The specified user is not a $type of this list/;
-        undef;
-    };
+for my $method ( qw/
+        create_list
+        update_list
+        get_lists
+        get_list
+        delete_list
+        list_statuses
+        list_memberships
+        list_subscriptions
+        list_members
+        is_list_member
+        add_list_member
+        members_create_all
+        delete_list_member
+        list_subscribers
+        is_list_subscriber
+        subscribe_list
+        unsubscribe_list
+        list_lists
+        add_list_members
+        remove_list_member
+        is_subscribed_list
+    / )
+{
+    my $legacy_method = "legacy_$method";
+    around $method => sub { shift; shift->$legacy_method(@_) };
 }
 
 1;

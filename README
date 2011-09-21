@@ -530,6 +530,18 @@ REST API Methods
 
         Returns: HashRef
 
+    add_list_member
+
+        Parameters: list_id, slug, user_id, screen_name, owner_screen_name,
+        owner_id
+        Required: *none*
+
+        Add a member to a list. The authenticated user must own the list to
+        be able to add members to it. Note that lists can't have more than
+        500 members.
+
+        Returns: User
+
     all_lists
     all_lists(id)
 
@@ -612,6 +624,17 @@ REST API Methods
 
         Returns: BasicUser
 
+    create_list
+
+        Parameters: list_id, slug, name, mode, description,
+        owner_screen_name, owner_id
+        Required: *none*
+
+        Creates a new list for the authenticated user. Note that you can't
+        create more than 20 lists per account.
+
+        Returns: List
+
     create_saved_search
     create_saved_search(query)
 
@@ -622,10 +645,32 @@ REST API Methods
 
         Returns: SavedSearch
 
+    delete_list
+
+        Parameters: owner_screen_name, owner_id, list_id, slug
+        Required: *none*
+
+        Deletes the specified list. The authenticated user must own the list
+        to be able to destroy it.
+
+        Returns: List
+
+    delete_list_member
+    alias: remove_list_member
+
+        Parameters: list_id, slug, user_id, screen_name, owner_screen_name,
+        owner_id
+        Required: *none*
+
+        Removes the specified member from the list. The authenticated user
+        must be the list's owner to remove members from the list.
+
+        Returns: User
+
     destroy_block
     destroy_block(id)
 
-        Parameters: id, user_idscreen_name
+        Parameters: id, user_id, screen_name
         Required: id
 
         Un-blocks the user specified in the ID parameter as the
@@ -902,6 +947,28 @@ REST API Methods
 
         Returns: HashRef
 
+    get_list
+
+        Parameters: list_id, slug, owner_screen_name, owner_id
+        Required: *none*
+
+        Returns the specified list. Private lists will only be shown if the
+        authenticated user owns the specified list.
+
+        Returns: List
+
+    get_lists
+    alias: list_lists
+
+        Parameters: user_id, screen_name, cursor
+        Required: *none*
+
+        Returns the lists of the specified (or authenticated) user. Private
+        lists will be included if the authenticated user is the same as the
+        user whose lists are being returned.
+
+        Returns: Hashref
+
     home_timeline
 
         Parameters: since_id, max_id, count, page, skip_user,
@@ -914,6 +981,88 @@ REST API Methods
         equivalent of /timeline/home on the Web.
 
         Returns: ArrayRef[Status]
+
+    is_list_member
+
+        Parameters: owner_screen_name, owner_id, list_id, slug, user_id,
+        screen_name, include_entities, skip_status
+        Required: *none*
+
+        Check if the specified user is a member of the specified list.
+        Returns the user or undef.
+
+        Returns: Maybe[User]
+
+    is_list_subscriber
+    alias: is_subscribed_list
+
+        Parameters: owner_screen_name, owner_id, list_id, slug, user_id,
+        screen_name, include_entities, skip_status
+        Required: *none*
+
+        Check if the specified user is a subscriber of the specified list.
+        Returns the user or undef.
+
+        Returns: Maybe[User]
+
+    list_members
+
+        Parameters: list_id, slug, owner_screen_name, owner_id, cursor,
+        include_entities, skip_status
+        Required: *none*
+
+        Returns the members of the specified list. Private list members will
+        only be shown if the authenticated user owns the specified list.
+
+        Returns: Hashref
+
+    list_memberships
+
+        Parameters: user_id, screen_name, cursor, filter_to_owned_lists
+        Required: *none*
+
+        Returns the lists the specified user has been added to. If user_id
+        or screen_name are not provided the memberships for the
+        authenticating user are returned.
+
+        Returns: Hashref
+
+    list_statuses
+
+        Parameters: list_id, slug, owner_screen_name, owner_id, since_id,
+        max_id, per_page, page, include_entities, include_rts
+        Required: *none*
+
+        Returns tweet timeline for members of the specified list.
+        Historically, retweets were not available in list timeline responses
+        but you can now use the include_rts=true parameter to additionally
+        receive retweet objects.
+
+        Returns: ArrayRef[Status]
+
+    list_subscribers
+
+        Parameters: list_id, slug, owner_screen_name, owner_id, cursor,
+        include_entities, skip_status
+        Required: *none*
+
+        Returns the subscribers of the specified list. Private list
+        subscribers will only be shown if the authenticated user owns the
+        specified list.
+
+        Returns: Hashref
+
+    list_subscriptions
+
+        Parameters: user_id, screen_name
+        Required: *none*
+
+        Returns all lists the authenticating or specified user subscribes
+        to, including their own. The user is specified using the user_id or
+        screen_name parameters. If no user is given, the authenticating user
+        is used.
+
+        Returns: ArrayRef[List]
 
     lookup_friendships
 
@@ -954,6 +1103,21 @@ REST API Methods
             );
 
         Returns: ArrayRef[User]
+
+    members_create_all
+    alias: add_list_members
+
+        Parameters: list_id, slug, owner_screen_name, owner_id
+        Required: *none*
+
+        Adds multiple members to a list, by specifying a reference to an
+        array or a comma-separated list of member ids or screen names. The
+        authenticated user must own the list to be able to add members to
+        it. Note that lists can't have more than 500 members, and you are
+        limited to adding up to 100 members to a list at a time with this
+        method.
+
+        Returns: List
 
     mentions
     alias: replies
@@ -1281,6 +1445,15 @@ REST API Methods
 
         Returns: ExtendedUser
 
+    subscribe_list
+
+        Parameters: owner_screen_name, owner_id, list_id, slug
+        Required: *none*
+
+        Subscribes the authenticated user to the specified list.
+
+        Returns: List
+
     suggestion_categories
 
         Parameters: *none*
@@ -1381,6 +1554,15 @@ REST API Methods
 
         Returns: HashRef
 
+    unsubscribe_list
+
+        Parameters: list_id, slug, owner_screen_name, owner_id
+        Required: *none*
+
+        Unsubscribes the authenticated user from the specified list.
+
+        Returns: List
+
     update
     update(status)
 
@@ -1455,6 +1637,17 @@ REST API Methods
         Requires authentication.
 
         Returns: HashRef
+
+    update_list
+
+        Parameters: list_id, slug, name, mode, description,
+        owner_screen_name, owner_id
+        Required: *none*
+
+        Updates the specified list. The authenticated user must own the list
+        to be able to update it.
+
+        Returns: List
 
     update_profile
 
@@ -1602,220 +1795,14 @@ Search API Methods
         Returns: HashRef
 
 Lists API Methods
-    These methods are provided when trait "API::Lists" is included in the
-    "traits" option to "new". All Lists API methods require a "user"
-    parameter. It is the screen_name of the list owner.
-
-    add_list_member
-    add_list_member(user, list_id, id)
-
-        Parameters: user, list_id, id
-        Required: user, list_id, id
-
-        Adds the user identified by "id" to the list.
-
-        Returns a reference the added user as a hash reference.
-
-        Returns: User
-
-    create_list
-    create_list(user, name)
-
-        Parameters: user, name, mode, description
-        Required: user, name
-
-        Creates a new list for the authenticated user. The "mode" parameter
-        may be either "public" or "private". If not specified, it defaults
-        to "public".
-
-        Returns: HashRef
-
-    delete_list
-    delete_list(user, list_id)
-
-        Parameters: user, list_id
-        Required: user, list_id
-
-        Deletes a list owned by the authenticating user. Returns the list as
-        a hash reference.
-
-        Returns:
-
-    delete_list_member
-    delete_list_member(user, list_id, id)
-    alias: remove_list_member
-
-        Parameters: user, list_id, id
-        Required: user, list_id, id
-
-        Deletes the user identified by "id" from the specified list.
-
-        Returns the deleted user as a hash reference.
-
-        Returns:
-
-    get_list
-    get_list(user, list_id)
-
-        Parameters: user, list_id
-        Required: user, list_id
-
-        Returns the specified list as a hash reference.
-
-        Returns: HashRef
-
-    get_lists
-    get_lists(user)
-    alias: list_lists
-
-        Parameters: user, cursor
-        Required: user
-
-        Returns a reference to an array of lists owned by the specified
-        user. If the user is the authenticated user, it returns both public
-        and private lists. Otherwise, it only returns public lists.
-
-        When the "cursor" parameter is used, a hash reference is returned;
-        the lists are returned in the "lists" element of the hash.
-
-        Returns: ArrayRef[List]
-
-    is_list_member
-    is_list_member(user, list_id, id)
-
-        Parameters: user, list_id, id
-        Required: user, list_id, id
-
-        Returns the list member as a HASH reference if "id" is a member of
-        the list. Otherwise, returns undef.
-
-        Returns: ArrayRef[User]
-
-    is_list_subscriber
-    is_list_subscriber(user, list_id, id)
-    alias: is_subscribed_list
-
-        Parameters: user, list_id, id
-        Required: user, list_id, id
-
-        Returns the subscriber as a HASH reference if "id" is a subscriber
-        to the list. Otherwise, returns undef.
-
-        Returns: ArrayRef[User]
-
-    list_members
-    list_members(user, list_id)
-
-        Parameters: user, list_id, id, cursor
-        Required: user, list_id
-
-        Returns the list members as an array reference.
-
-        The optional "id" parameter can be used to determine if the user
-        specified by "id" is a member of the list. If so, the user is
-        returned as a hash reference; if not, "undef" is returned.
-
-        When the "cursor" parameter is used, a hash reference is returned;
-        the members are returned in the "users" element of the hash.
-
-        Returns: ArrayRef[User]
-
-    list_memberships
-    list_memberships(user)
-
-        Parameters: user, cursor
-        Required: user
-
-        Returns the lists the specified user is a member of as an array
-        reference.
-
-        When the "cursor" parameter is used, a hash reference is returned;
-        the lists are returned in the "lists" element of the hash.
-
-        Returns:
-
-    list_statuses
-    list_statuses(user, list_id)
-
-        Parameters: user, list_id, since_id, max_id, per_page, page
-        Required: user, list_id
-
-        Returns a timeline of list member statuses as an array reference.
-
-        Returns: ArrayRef[Status]
-
-    list_subscribers
-    list_subscribers(user, list_id)
-
-        Parameters: user, list_id, id, cursor
-        Required: user, list_id
-
-        Returns the subscribers to a list as an array reference.
-
-        When the "cursor" parameter is used, a hash reference is returned;
-        the subscribers are returned in the "users" element of the hash.
-
-        Returns: ArrayRef[User]
-
-    list_subscriptions
-    list_subscriptions(user)
-
-        Parameters: user, cursor
-        Required: user
-
-        Returns a lists to which the specified user is subscribed as an
-        array reference.
-
-        When the "cursor" parameter is used, a hash reference is returned;
-        the lists are returned in the "lists" element of the hash.
-
-        Returns:
-
-    members_create_all
-    members_create_all(user, list_id)
-    alias: add_list_members
-
-        Parameters: user, list_id, screen_name, user_id
-        Required: user, list_id
-
-        Adds multiple users "id" to the list. Users are specified with the
-        "screen_name" or "user_id" parameter with a reference to an ARRAY of
-        values.
-
-        Returns a reference the added user as a hash reference.
-
-        Returns: ArrayRef[User]
-
-    subscribe_list
-    subscribe_list(user, list_id)
-
-        Parameters: user, list_id
-        Required: user, list_id
-
-        Subscribes the authenticated user to the specified list.
-
-        Returns: List
-
-    unsubscribe_list
-    unsubscribe_list(user, list_id)
-
-        Parameters: user, list_id
-        Required: user, list_id
-
-        Unsubscribes the authenticated user from the specified list.
-
-        Returns: List
-
-    update_list
-    update_list(user, list_id)
-
-        Parameters: user, list_id, name, mode, description
-        Required: user, list_id
-
-        Updates a list to change the name, mode, description, or any
-        combination thereof.
-
-        Returns: HashRef
+    The original Lists API methods have been deprecated.
+    Net::Twitter::Role::API::Lists provides backwards compatibility for code
+    written using those deprecated methods. If you're not already using the
+    "API::Lists" trait, don't! Use the lists methods described above.
+
+    If you are using the "API::Lists" trait, you should remove it from your
+    code and change the arguments in your list API method calls to match
+    those described above.
 
 TwitterVision API Methods
     These methods are provided when trait "API::TwitterVision" is included
@@ -2006,6 +1993,8 @@ CONTRIBUTORS
     Francisco Pecorella
 
     Doug Bell <doug@plainblack.com>
+
+    Justin Hunter <justin.d.hunter@gmail.com>
 
 LICENSE
     Copyright (c) 2009 Marc Mims

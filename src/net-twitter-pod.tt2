@@ -564,11 +564,14 @@ option to C<new>.
 
 =head1 Lists API Methods
 
-These methods are provided when trait C<API::Lists> is included in the C<traits>
-option to C<new>. All Lists API methods require a C<user> parameter.  It is the
-screen_name of the list owner.
+The original Lists API methods have been deprecated.
+L<Net::Twitter::Role::API::Lists> provides backwards compatibility for code
+written using those deprecated methods.  If you're not already using the
+C<API::Lists> trait, don't! Use the lists methods described above.
 
-[% INCLUDE APIDOC class='API::Lists' %]
+If you are using the C<API::Lists> trait, you should remove it from your code
+and change the arguments in your list API method calls to match those described
+above.
 
 =head1 TwitterVision API Methods
 
