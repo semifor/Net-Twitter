@@ -1096,7 +1096,7 @@ twitter_api_method geo_search => (
     path        => 'geo/search',
     method      => 'GET',
     params      => [qw/
-        lat long query ip granularity accuraty max_results
+        lat long query ip granularity accuracy max_results
         contained_within attribute:street_address callback
     /],
     required    => [],
@@ -1634,6 +1634,31 @@ twitter_api_method get_list => (
     description => <<'',
 Returns the specified list. Private lists will only be shown if the
 authenticated user owns the specified list.
+
+);
+
+### Legal ###
+
+twitter_api_method get_privacy_policy => (
+    path        => 'legal/privacy',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'HashRef',
+    description => <<'',
+Returns Twitter's privacy policy.
+
+);
+
+twitter_api_method get_tos => (
+    path        => 'legal/tos',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'HashRef',
+    description => <<'',
+Returns the Twitter Terms of Service. These are not the same as the Developer
+Rules of the Road.
 
 );
 

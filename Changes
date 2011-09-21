@@ -1,3 +1,4 @@
+    - added get_privacy_policy and get_tos API methods
     - added get_languages and get_settings API methods
     - added contributors and contributees API methods
     - added geo_search, geo_search, similar_places, and add_place API methods

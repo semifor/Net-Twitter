@@ -542,6 +542,24 @@ REST API Methods
 
         Returns: User
 
+    add_place
+    add_place(name, contained_within, token, lat, long)
+
+        Parameters: name, contained_within, token, lat, long,
+        attribute:street_address, callback
+        Required: name, contained_within, token, lat, long
+
+        Creates a new place object at the given latitude and longitude.
+
+        Before creating a place you need to query "similar_places" with the
+        latitude, longitude and name of the place you wish to create. The
+        query will return an array of places which are similar to the one
+        you wish to create, and a token. If the place you wish to create
+        isn't in the returned array you can use the token with this method
+        to create a new one.
+
+        Returns: Place
+
     all_lists
     all_lists(id)
 
@@ -587,6 +605,25 @@ REST API Methods
         blocking.
 
         Returns: ArrayRef[Int]
+
+    contributees
+
+        Parameters: user_id, screen_name, include_entities, skip_satus
+        Required: *none*
+
+        Returns an array of users that the specified user can contribute to.
+
+        Returns: ArrayRef[User]
+
+    contributors
+
+        Parameters: user_id, screen_name, include_entities, skip_satus
+        Required: *none*
+
+        Returns an array of users who can contribute to the specified
+        account.
+
+        Returns: ArrayRef[User]
 
     create_block
     create_block(id)
@@ -792,30 +829,6 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
-    followers
-
-        Parameters: id, user_id, screen_name, cursor, include_entities
-        Required: *none*
-
-        Returns a reference to an array of the user's followers. If "id",
-        "user_id", or "screen_name" is not specified, the followers of the
-        authenticating user are returned. The returned users are ordered
-        from most recently followed to least recently followed.
-
-        Use the optional "cursor" parameter to retrieve users in pages of
-        100. When the "cursor" parameter is used, the return value is a
-        reference to a hash with keys "previous_cursor", "next_cursor", and
-        "users". The value of "users" is a reference to an array of the
-        user's friends. The result set isn't guaranteed to be 100 every time
-        as suspended users will be filtered out. Set the optional "cursor"
-        parameter to -1 to get the first page of users. Set it to the prior
-        return's value of "previous_cursor" or "next_cursor" to page forward
-        or backwards. When there are no prior pages, the value of
-        "previous_cursor" will be 0. When there are no subsequent pages, the
-        value of "next_cursor" will be 0.
-
-        Returns: HashRef|ArrayRef[User]
-
     followers_ids
     followers_ids(id)
 
@@ -886,19 +899,6 @@ REST API Methods
 
         Returns: HashRef|ArrayRef[Int]
 
-    friends_timeline
-    alias: following_timeline
-
-        Parameters: since_id, max_id, count, page, skip_user, trim_user,
-        include_entities, include_rts
-        Required: *none*
-
-        Returns the 20 most recent statuses posted by the authenticating
-        user and that user's friends. This is the equivalent of /home on the
-        Web.
-
-        Returns: ArrayRef[Status]
-
     friendship_exists
     friendship_exists(user_a, user_b)
     alias: relationship_exists
@@ -947,6 +947,55 @@ REST API Methods
 
         Returns: HashRef
 
+    geo_search
+
+        Parameters: lat, long, query, ip, granularity, accuracy,
+        max_results, contained_within, attribute:street_address, callback
+        Required: *none*
+
+        Search for places that can be attached to a statuses/update. Given a
+        latitude and a longitude pair, an IP address, or a name, this
+        request will return a list of all the valid places that can be used
+        as the place_id when updating a status.
+
+        Conceptually, a query can be made from the user's location, retrieve
+        a list of places, have the user validate the location he or she is
+        at, and then send the ID of this location with a call to
+        statuses/update.
+
+        This is the recommended method to use find places that can be
+        attached to statuses/update. Unlike geo/reverse_geocode which
+        provides raw data access, this endpoint can potentially re-order
+        places with regards to the user who is authenticated. This approach
+        is also preferred for interactive place matching with the user.
+
+        Returns: HashRef
+
+    get_configuration
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the current configuration used by Twitter including
+        twitter.com slugs which are not usernames, maximum photo
+        resolutions, and t.co URL lengths.
+
+        It is recommended applications request this endpoint when they are
+        loaded, but no more than once a day.
+
+        Returns: HashRef
+
+    get_languages
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the list of languages supported by Twitter along with their
+        ISO 639-1 code. The ISO 639-1 code is the two letter value to use if
+        you include lang with any of your requests.
+
+        Returns: ArrayRef[Lanugage]
+
     get_list
 
         Parameters: list_id, slug, owner_screen_name, owner_id
@@ -968,6 +1017,25 @@ REST API Methods
         user whose lists are being returned.
 
         Returns: Hashref
+
+    get_privacy_policy
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns Twitter's privacy policy.
+
+        Returns: HashRef
+
+    get_tos
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the Twitter Terms of Service. These are not the same as the
+        Developer Rules of the Road.
+
+        Returns: HashRef
 
     home_timeline
 
@@ -1415,7 +1483,7 @@ REST API Methods
         Parameters: id
         Required: id
 
-        Retrieve the data for a saved search, by ID, owned by the
+        Retrieve the data for a saved search, by "id", owned by the
         authenticating user.
 
         Returns: SavedSearch
@@ -1444,6 +1512,24 @@ REST API Methods
         properly authenticated to request the page of a protected user.
 
         Returns: ExtendedUser
+
+    similar_places
+    similar_places(lat, long, name)
+
+        Parameters: lat, long, name, contained_within,
+        attribute:street_address, callback
+        Required: lat, long, name
+
+        Locates places near the given coordinates which are similar in name.
+
+        Conceptually you would use this method to get a list of known places
+        to choose from first. Then, if the desired place doesn't exist, make
+        a request to "add_place" to create a new one.
+
+        The token contained in the response is the token needed to be able
+        to create a new place.
+
+        Returns: HashRef
 
     subscribe_list
 
