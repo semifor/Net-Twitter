@@ -128,6 +128,7 @@ retweeted by others.
 );
 
 twitter_api_method friends_timeline => (
+    deprecated  => 1,
     description => <<'',
 Returns the 20 most recent statuses posted by the authenticating user
 and that user's friends. This is the equivalent of /home on the Web.
@@ -291,6 +292,7 @@ EOT
 );
 
 twitter_api_method followers => (
+    deprecated  => 1,
     description => <<'EOT',
 Returns a reference to an array of the user's followers.  If C<id>, C<user_id>,
 or C<screen_name> is not specified, the followers of the authenticating user are

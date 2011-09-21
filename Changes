@@ -1,3 +1,4 @@
+    - friends/followers API methods deprecated
     - implemented the *new* Lists API in the API::REST trait
     - replaced MX:MultiInitArg::Trait with MX:Aliases (Justin Hunter)
     - fixed bad whatis entry (patch from debian, closes RT #67203)
