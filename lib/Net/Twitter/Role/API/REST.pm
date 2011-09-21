@@ -6,6 +6,8 @@ use URI;
 
 requires qw/ua username password credentials/;
 
+with 'Net::Twitter::Role::API::Upload';
+
 has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1'  );
 has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, builder => '_build_apihost' );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );

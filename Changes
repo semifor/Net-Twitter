@@ -1,3 +1,4 @@
+    - added update_with_media (Allen Haim)
     - added get_privacy_policy and get_tos API methods
     - added get_languages and get_settings API methods
     - added contributors and contributees API methods

@@ -554,6 +554,7 @@ to indicate the numerical ID of the Twitter user that sent the status.
 =head2 Methods
 
 [% INCLUDE APIDOC class='API::REST' %]
+[% INCLUDE APIDOC class='API::Upload' %]
 
 =head1 Search API Methods
 
@@ -754,6 +755,7 @@ Marc Mims <marc@questright.com> (@semifor on Twitter)
 =head1 CONTRIBUTORS
 
 Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
+Allen Haim
 
 KATOU Akira
 

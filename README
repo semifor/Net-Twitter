@@ -1801,6 +1801,40 @@ REST API Methods
 
         Returns: ExtendedUser
 
+    update_with_media
+    update_with_media(status, media)
+
+        Parameters: status, media[], possibly_sensitive,
+        in_reply_to_status_id, lat, long, place_id, display_coordinates
+        Required: status, media
+
+        Updates the authenticating user's status and attaches media for
+        upload.
+
+        The "media[]" parameter is an arrayref with the following
+        interpretation:
+
+          [ $file ]
+          [ $file, $filename ]
+          [ $file, $filename, Content_Type => $mime_type ]
+          [ undef, $filename, Content_Type => $mime_type, Content => $raw_image_data ]
+
+        The first value of the array ($file) is the name of a file to open.
+        The second value ($filename) is the name given to Twitter for the
+        file. If $filename is not provided, the basename portion of $file is
+        used. If $mime_type is not provided, it will be provided
+        automatically using LWP::MediaTypes::guess_media_type().
+
+        $raw_image_data can be provided, rather than opening a file, by
+        passing "undef" as the first array value.
+
+        The Tweet text will be rewritten to include the media URL(s), which
+        will reduce the number of characters allowed in the Tweet text. If
+        the URL(s) cannot be appended without text truncation, the tweet
+        will be rejected and this method will return an HTTP 403 error.
+
+        Returns: Status
+
     user_suggestions
     user_suggestions(category)
     alias: follow_suggestions
@@ -1856,6 +1890,40 @@ REST API Methods
         supplied user credentials are valid.
 
         Returns: ExtendedUser
+
+    update_with_media
+    update_with_media(status, media)
+
+        Parameters: status, media[], possibly_sensitive,
+        in_reply_to_status_id, lat, long, place_id, display_coordinates
+        Required: status, media
+
+        Updates the authenticating user's status and attaches media for
+        upload.
+
+        The "media[]" parameter is an arrayref with the following
+        interpretation:
+
+          [ $file ]
+          [ $file, $filename ]
+          [ $file, $filename, Content_Type => $mime_type ]
+          [ undef, $filename, Content_Type => $mime_type, Content => $raw_image_data ]
+
+        The first value of the array ($file) is the name of a file to open.
+        The second value ($filename) is the name given to Twitter for the
+        file. If $filename is not provided, the basename portion of $file is
+        used. If $mime_type is not provided, it will be provided
+        automatically using LWP::MediaTypes::guess_media_type().
+
+        $raw_image_data can be provided, rather than opening a file, by
+        passing "undef" as the first array value.
+
+        The Tweet text will be rewritten to include the media URL(s), which
+        will reduce the number of characters allowed in the Tweet text. If
+        the URL(s) cannot be appended without text truncation, the tweet
+        will be rejected and this method will return an HTTP 403 error.
+
+        Returns: Status
 
 Search API Methods
     These methods are provided when trait "API::Search" is included in the
@@ -2073,6 +2141,7 @@ AUTHOR
 
 CONTRIBUTORS
     Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
+    Allen Haim
 
     KATOU Akira
 
