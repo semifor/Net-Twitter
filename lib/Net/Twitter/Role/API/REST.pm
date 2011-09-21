@@ -831,6 +831,35 @@ maintenance window is scheduled.
     returns  => 'Str',
 );
 
+twitter_api_method get_configuration => (
+    path        => 'help/configuration',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'HashRef',
+    description => <<'EOT',
+Returns the current configuration used by Twitter including twitter.com slugs
+which are not usernames, maximum photo resolutions, and t.co URL lengths.
+
+It is recommended applications request this endpoint when they are loaded, but
+no more than once a day.
+EOT
+
+);
+
+twitter_api_method get_languages => (
+    path        => 'help/languages',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'ArrayRef[Lanugage]',
+    description => <<'',
+Returns the list of languages supported by Twitter along with their ISO 639-1
+code. The ISO 639-1 code is the two letter value to use if you include lang
+with any of your requests.
+
+);
+
 twitter_api_method saved_searches => (
     description => <<'',
 Returns the authenticated user's saved search queries.
@@ -845,17 +874,6 @@ Returns the authenticated user's saved search queries.
 twitter_api_method show_saved_search => (
     description => <<'',
 Retrieve the data for a saved search, by C<id>, owned by the authenticating user.
-
-    path     => 'saved_searches/show/:id',
-    method   => 'GET',
-    params   => [qw/id/],
-    required => [qw/id/],
-    returns  => 'SavedSearch',
-);
-
-twitter_api_method show_saved_search => (
-    description => <<'',
-Retrieve the data for a saved search, by ID, owned by the authenticating user.
 
     path     => 'saved_searches/show/:id',
     method   => 'GET',
