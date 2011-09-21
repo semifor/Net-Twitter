@@ -1,3 +1,4 @@
+    - added contributors and contributees API methods
     - added geo_search, geo_search, similar_places, and add_place API methods
     - friends/followers API methods deprecated
     - implemented the *new* Lists API in the API::REST trait

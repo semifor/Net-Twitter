@@ -335,6 +335,30 @@ authenticated to request the page of a protected user.
     returns  => 'ExtendedUser',
 );
 
+twitter_api_method contributees => (
+    path        => 'users/contributees',
+    method      => 'GET',
+    params      => [qw/user_id screen_name include_entities skip_satus/],
+    required    => [],
+    booleans    => [qw/include_entities skip_satus/],
+    returns     => 'ArrayRef[User]',
+    description => <<'',
+Returns an array of users that the specified user can contribute to.
+
+);
+
+twitter_api_method contributors => (
+    path        => 'users/contributors',
+    method      => 'GET',
+    params      => [qw/user_id screen_name include_entities skip_satus/],
+    required    => [],
+    booleans    => [qw/include_entities skip_satus/],
+    returns     => 'ArrayRef[User]',
+    description => <<'',
+Returns an array of users who can contribute to the specified account.
+
+);
+
 twitter_api_method direct_messages => (
     description => <<'',
 Returns a list of the 20 most recent direct messages sent to the authenticating
