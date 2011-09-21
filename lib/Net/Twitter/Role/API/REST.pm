@@ -465,8 +465,8 @@ user_a follows user_b, otherwise will return false.
 
     path     => 'friendships/exists',
     method   => 'GET',
-    params   => [qw/user_a user_b/],
-    required => [qw/user_a user_b/],
+    params   => [qw/user_id_a user_id_b screen_name_a screen_name_b/],
+    required => [],
     returns  => 'Bool',
 );
 
