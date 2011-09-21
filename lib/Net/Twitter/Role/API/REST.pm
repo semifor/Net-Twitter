@@ -1050,6 +1050,71 @@ Returns details of a place returned from the C<reverse_geocode> method.
 EOT
 );
 
+twitter_api_method geo_search => (
+    path        => 'geo/search',
+    method      => 'GET',
+    params      => [qw/
+        lat long query ip granularity accuraty max_results
+        contained_within attribute:street_address callback
+    /],
+    required    => [],
+    returns     => 'HashRef',
+    description => <<'EOT',
+Search for places that can be attached to a statuses/update. Given a latitude
+and a longitude pair, an IP address, or a name, this request will return a list
+of all the valid places that can be used as the place_id when updating a
+status.
+
+Conceptually, a query can be made from the user's location, retrieve a list of
+places, have the user validate the location he or she is at, and then send the
+ID of this location with a call to statuses/update.
+
+This is the recommended method to use find places that can be attached to
+statuses/update. Unlike geo/reverse_geocode which provides raw data access,
+this endpoint can potentially re-order places with regards to the user who
+is authenticated. This approach is also preferred for interactive place
+matching with the user.
+EOT
+
+);
+
+twitter_api_method similar_places => (
+    path        => 'geo/similar_places',
+    method      => 'GET',
+    params      => [qw/lat long name contained_within attribute:street_address callback/],
+    required    => [qw/lat long name/],
+    returns     => 'HashRef',
+    description => <<'EOT',
+Locates places near the given coordinates which are similar in name.
+
+Conceptually you would use this method to get a list of known places to choose
+from first. Then, if the desired place doesn't exist, make a request to
+C<add_place> to create a new one.
+
+The token contained in the response is the token needed to be able to create a
+new place.
+EOT
+
+);
+
+twitter_api_method add_place => (
+    path        => 'geo/place',
+    method      => 'POST',
+    params      => [qw/name contained_within token lat long attribute:street_address callback/],
+    required    => [qw/name contained_within token lat long/],
+    returns     => 'Place',
+    description => <<'EOT',
+Creates a new place object at the given latitude and longitude.
+
+Before creating a place you need to query C<similar_places> with the latitude,
+longitude and name of the place you wish to create. The query will return an
+array of places which are similar to the one you wish to create, and a token.
+If the place you wish to create isn't in the returned array you can use the
+token with this method to create a new one.
+EOT
+
+);
+
 twitter_api_method lookup_users => (
     path => 'users/lookup',
     method => 'GET',

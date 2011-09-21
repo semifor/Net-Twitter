@@ -1,3 +1,4 @@
+    - added geo_search, geo_search, similar_places, and add_place API methods
     - friends/followers API methods deprecated
     - implemented the *new* Lists API in the API::REST trait
     - replaced MX:MultiInitArg::Trait with MX:Aliases (Justin Hunter)
