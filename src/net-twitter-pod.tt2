@@ -755,7 +755,6 @@ Marc Mims <marc@questright.com> (@semifor on Twitter)
 =head1 CONTRIBUTORS
 
 Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
-Allen Haim
 
 KATOU Akira
 
@@ -765,9 +764,11 @@ Doug Bell <doug@plainblack.com>
 
 Justin Hunter <justin.d.hunter@gmail.com>
 
+Allen Haim
+
 =head1 LICENSE
 
-Copyright (c) 2009 Marc Mims
+Copyright (c) 2009-2011 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 
