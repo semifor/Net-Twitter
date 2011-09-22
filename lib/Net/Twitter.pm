@@ -1,6 +1,7 @@
 package Net::Twitter;
 use Moose;
 use Carp;
+use JSON;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
 
@@ -88,7 +89,7 @@ sub _create_anon_class {
             my $t = shift @t;
             if ( ref $t[0] eq 'HASH' ) {
                 my $params = shift @t;
-                my $sig = sha1_hex(JSON::Any->to_json($params));
+                my $sig = sha1_hex(JSON->new->utf8->encode($params));
                 my $sn  = $serial_for_params{$sig} ||= ++$serial_number;
                 $t .= "_$sn";
             }

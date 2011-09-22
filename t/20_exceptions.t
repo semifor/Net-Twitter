@@ -3,6 +3,7 @@ use warnings;
 use strict;
 use Test::More;
 use Test::Fatal;
+use JSON qw/to_json/;
 use lib qw(t/lib);
 use Net::Twitter;
 
@@ -18,7 +19,7 @@ my $nt = Net::Twitter->new(
 my $t = TestUA->new($nt->ua);
 
 my $response = HTTP::Response->new(404, 'Not Found');
-$response->content(JSON::Any->to_json({
+$response->content(to_json({
     request => '/direct_messages/destroy/456.json',
     error   => 'No direct message with that ID found.',
 }));

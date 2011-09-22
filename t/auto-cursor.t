@@ -3,10 +3,10 @@ use warnings;
 use strict;
 use Test::More;
 use Net::Twitter;
-use JSON::Any;
+use JSON qw/to_json/;
 use HTTP::Response;
 
-my $json_result = JSON::Any->to_json({ ids => ['test'], next_cursor => 1 });
+my $json_result = to_json({ ids => ['test'], next_cursor => 1 });
 sub mock_ua {
     my $nt = shift;
 
@@ -25,7 +25,7 @@ sub mock_ua {
     my $nt_with_max_calls_4 = Net::Twitter->new(traits => ['API::REST',  AutoCursor => { max_calls => 4 }]);
     my $class_for_max_calls_4 = ref $nt_with_max_calls_4;
 
-    my $json_result = JSON::Any->to_json({ ids => ['test'], next_cursor => 1 });
+    my $json_result = to_json({ ids => ['test'], next_cursor => 1 });
 
     mock_ua($_) for $nt_with_max_calls_2, $nt_with_max_calls_4;
 

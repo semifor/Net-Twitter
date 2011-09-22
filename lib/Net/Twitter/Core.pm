@@ -3,7 +3,7 @@ use 5.008001;
 use Moose;
 use MooseX::Aliases;
 use Carp;
-use JSON::Any qw/XS JSON/;
+use JSON;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
@@ -41,8 +41,8 @@ has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpa
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 has _json_handler   => (
     is      => 'rw',
-    default => sub { JSON::Any->new(utf8 => 1) },
-    handles => { _from_json => 'from_json' },
+    default => sub { JSON->new->utf8 },
+    handles => { _from_json => 'decode' },
 );
 
 sub _synthetic_args { qw/authenticate since/ }

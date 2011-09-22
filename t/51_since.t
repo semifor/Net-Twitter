@@ -4,6 +4,7 @@ use strict;
 use Try::Tiny;
 use Scalar::Util qw/blessed/;
 use Test::More;
+use JSON qw/to_json/;
 use lib qw(t/lib);
 
 eval 'use TestUA';
@@ -24,7 +25,7 @@ my $dt = DateTime->now;
 $dt->subtract(minutes => 6);
 
 my $t = TestUA->new($nt->ua);
-$t->response->content(JSON::Any->to_json([
+$t->response->content(to_json([
     {
         text => 'Hello, twittersphere!',
         id => 1234,

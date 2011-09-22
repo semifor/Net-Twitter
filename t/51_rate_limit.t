@@ -2,6 +2,7 @@
 use warnings;
 use strict;
 use Test::More;
+use JSON qw/to_json/;
 use lib qw(t/lib);
 use Net::Twitter;
 
@@ -12,7 +13,7 @@ my $nt = Net::Twitter->new(traits => [qw/API::REST RateLimit/]);
 
 my $reset = time + 1800;
 my $t = TestUA->new($nt->ua);
-$t->response->content(JSON::Any->to_json({
+$t->response->content(to_json({
     remaining_hits        => 75,
     reset_time_in_seconds => $reset,
     hourly_limit          => 150,
@@ -32,7 +33,7 @@ ok   $until > 890 && $until < 910, 'until_rate(2.0) is about 900';
 
 
 # test clock mismatch
-$t->response->content(JSON::Any->to_json({
+$t->response->content(to_json({
     remaining_hits        => 10,
     reset_time_in_seconds => $nt->_rate_limit_status->{rate_reset} = time - 10,
     hourly_limit          => 150,
