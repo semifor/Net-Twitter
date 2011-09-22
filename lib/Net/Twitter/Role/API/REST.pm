@@ -459,14 +459,27 @@ Returns a string describing the failure condition when unsuccessful.
 
 twitter_api_method friendship_exists => (
     aliases     => [qw/relationship_exists follows/], # Net::Twitter
-    description => <<'',
+    description => <<'EOT',
 Tests for the existence of friendship between two users. Will return true if
 user_a follows user_b, otherwise will return false.
 
+Use of C<user_a> and C<user_b> is deprecated.  It has been preserved for backwards
+compatibility, and is used for the two-argument positional form:
+
+    $nt->friendship_exists($user_a, $user_b);
+
+Instead, you should use one of the named argument forms:
+
+    $nt->friendship_exists({ user_id_a => $id1, user_id_b => $id2 });
+    $nt->friendship_exists({ screen_name_a => $name1, screen_name_b => $name2 });
+
+Consider using C<show_friendship> instead.
+EOT
+
     path     => 'friendships/exists',
     method   => 'GET',
-    params   => [qw/user_id_a user_id_b screen_name_a screen_name_b/],
-    required => [],
+    params   => [qw/user_id_a user_id_b screen_name_a screen_name_b user_a user_b/],
+    required => [qw/user_a user_b/],
     returns  => 'Bool',
 );
 

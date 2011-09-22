@@ -1,3 +1,5 @@
+    - documented new arguments for friendship_exists
+
 3.18000_01 2011-09-21
     - added update_with_media (Allen Haim)
     - added get_privacy_policy and get_tos API methods

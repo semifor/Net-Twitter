@@ -904,11 +904,25 @@ REST API Methods
     alias: relationship_exists
     alias: follows
 
-        Parameters: user_a, user_b
+        Parameters: user_id_a, user_id_b, screen_name_a, screen_name_b,
+        user_a, user_b
         Required: user_a, user_b
 
         Tests for the existence of friendship between two users. Will return
         true if user_a follows user_b, otherwise will return false.
+
+        Use of "user_a" and "user_b" is deprecated. It has been preserved
+        for backwards compatibility, and is used for the two-argument
+        positional form:
+
+            $nt->friendship_exists($user_a, $user_b);
+
+        Instead, you should use one of the named argument forms:
+
+            $nt->friendship_exists({ user_id_a => $id1, user_id_b => $id2 });
+            $nt->friendship_exists({ screen_name_a => $name1, screen_name_b => $name2 });
+
+        Consider using "show_friendship" instead.
 
         Returns: Bool
 
@@ -2141,7 +2155,6 @@ AUTHOR
 
 CONTRIBUTORS
     Roberto Etcheverry <retcheverry@gmail.com> (@retcheverry on Twitter)
-    Allen Haim
 
     KATOU Akira
 
@@ -2151,8 +2164,10 @@ CONTRIBUTORS
 
     Justin Hunter <justin.d.hunter@gmail.com>
 
+    Allen Haim
+
 LICENSE
-    Copyright (c) 2009 Marc Mims
+    Copyright (c) 2009-2011 Marc Mims
 
     The Twitter API itself, and the description text used in this module is:
 
