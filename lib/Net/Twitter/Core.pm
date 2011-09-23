@@ -55,6 +55,11 @@ sub _extract_synthetic_args {
         $synthetic_args->{$k} = delete $args->{$k} if exists $args->{$k};
     }
 
+    # New strategy - rarther than having to track the names of all synthetic args
+    # centrally, we'll prefix them with a dash (-). 'authenticate' and 'since' are
+    # grandfathered. '-authenticate' and '-since' will work, too.
+    $synthetic_args->{$_} = delete $args->{"-$_"} for grep s/^-//, keys %$args;
+
     return $synthetic_args;
 }
 

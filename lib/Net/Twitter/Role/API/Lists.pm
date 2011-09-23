@@ -384,7 +384,16 @@ for my $method ( qw/
     / )
 {
     my $legacy_method = "legacy_$method";
-    around $method => sub { shift; shift->$legacy_method(@_) };
+    around $method => sub {
+        my $orig = shift;
+        my $self = shift;
+
+        my $args = ref $_[-1] eq 'HASH' ? pop : {};
+        my $legacy = exists $args->{-legacy_lists_api} ? delete $args->{-legacy_lists_api} : 1;
+        return $self->$legacy_method(@_, $args) if $legacy;
+
+        $self->$orig(@_, $args);
+    };
 }
 
 1;

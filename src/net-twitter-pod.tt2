@@ -370,9 +370,9 @@ To set up Basic Authentication in C<Net::Twitter>, provide the C<username> and
 C<password> options to L</new> or call the L</credentials> method.
 
 In addition to the arguments specified for each API method described below, an
-additional C<authenticate> parameter can be passed.  To request an
-C<Authorization> header, pass C<< authenticated => 1 >>; to suppress an
-authentication header, pass C<< authentication => 0 >>.  Even if requested, an
+additional C<-authenticate> parameter can be passed.  To request an
+C<Authorization> header, pass C<< -authenticate => 1 >>; to suppress an
+authentication header, pass C<< -authenticate => 0 >>.  Even if requested, an
 Authorization header will not be added if there are no user credentials
 (username and password for Basic Authentication; access tokens for OAuth).
 
@@ -491,7 +491,7 @@ each API method, Net::Twitter supports additional I<synthetic> arguments.
 
 =over 4
 
-=item authenticate
+=item -authenticate
 
 When set to 1, Net::Twitter will provide an Authorization header for the API
 call; when set to 0, it will suppress the Authentication header.  This argument
@@ -500,13 +500,21 @@ probably only useful for the C<rate_limit_satus> method which returns different
 values for authenticated and unauthenticated calls.  See L</AUTHENTICATION> for
 more details.
 
-=item since
+=item -since
 
 API methods that accept the C<since_id> argument will also accept the synthetic
-C<since> argument, instead.  C<since> may be a C<Date::Time> object, an epoch
+C<-since> argument, instead.  C<-since> may be a C<Date::Time> object, an epoch
 time (the number of seconds since the system epoch), or a string in the same
 format returned by Twitter for the C<created_at> attribute.  Only statuses with a
-C<created_at> time greater than C<since> will be returned by the API call.
+C<created_at> time greater than C<-since> will be returned by the API call.
+
+=item -legacy_lists_api
+
+This option is only effective when the legacy C<API::Lists> trait is applied.
+Passing C<-legacy_lists_api> set to 0 for lists methods will use the new lists
+endpoints and semantics.  This will facilitate upgrading an application to use
+the new lists api methods.  When the C<API::Lists> trait is not applied, this
+option is ignored.
 
 =back
 
@@ -573,6 +581,10 @@ C<API::Lists> trait, don't! Use the lists methods described above.
 If you are using the C<API::Lists> trait, you should remove it from your code
 and change the arguments in your list API method calls to match those described
 above.
+
+Also, if using the C<API::Lists> trait, you can pass synthectic argument
+C<-legacy_lists_api> set to 0 for individual calls to use the new endpoints
+semantics.
 
 =head1 TwitterVision API Methods
 
