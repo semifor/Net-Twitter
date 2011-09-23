@@ -74,7 +74,7 @@ This module provides definitions the Twitter Upload API methods.
 
 =head1 AUTHOR
 
-Allen Haim
+Allen Haim <allen@netherrealm.net>
 
 Marc Mims <marc@questright.com>
 

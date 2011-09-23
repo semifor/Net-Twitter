@@ -1378,20 +1378,6 @@ authentication.
 
 );
 
-twitter_api_method all_lists => (
-    path        => 'lists/all',
-    method      => 'GET',
-    params      => [qw/id user_id screen_name/],
-    required    => [qw/id/],
-    returns     => 'ArrayRef[List]',
-    description => <<''
-Returns all lists the authenticating or specified user subscribes to, including
-their own. The user is specified using the C<user_id> or C<screen_name
-parameters>. If no user is given, the authenticating user is used.  Requires
-authentication unless requesting for another user.
-
-);
-
 twitter_api_method related_results => (
     path        => 'related_results/show/:id',
     method      => 'GET',
@@ -1411,9 +1397,10 @@ response. This method is only available to users who have access to
 twitter_api_method list_subscriptions => (
     path        => 'lists/all',
     method      => 'GET',
-    params      => [qw/user_id screen_name/],
-    required    => [],
+    params      => [qw/id user_id screen_name/],
+    required    => [qw/id/],
     returns     => 'ArrayRef[List]',
+    aliases     => [qw/all_lists/],
     description => <<'',
 Returns all lists the authenticating or specified user subscribes to, including
 their own. The user is specified using the user_id or screen_name parameters.
