@@ -45,22 +45,18 @@ has _json_handler   => (
     handles => { _from_json => 'decode' },
 );
 
-sub _synthetic_args { qw/authenticate since/ }
+sub _legacy_synthetic_args { qw/authenticate since/ }
 
-sub _extract_synthetic_args {
+sub _remap_legacy_synthetic_args {
     my ( $self, $args ) = @_;
 
-    my $synthetic_args = {};
-    for my $k ( $self->_synthetic_args ) {
-        $synthetic_args->{$k} = delete $args->{$k} if exists $args->{$k};
-    }
+    $args->{"-$_"} = delete $args->{$_} for grep exists $args->{$_}, $self->_legacy_synthetic_args;
+}
 
-    # New strategy - rarther than having to track the names of all synthetic args
-    # centrally, we'll prefix them with a dash (-). 'authenticate' and 'since' are
-    # grandfathered. '-authenticate' and '-since' will work, too.
-    $synthetic_args->{$_} = delete $args->{"-$_"} for grep s/^-//, keys %$args;
+sub _natural_args {
+    my ( $self, $args ) = @_;
 
-    return $synthetic_args;
+    map { $_ => $args->{$_} } grep !/^-/, keys %$args;
 }
 
 around BUILDARGS => sub {
@@ -143,12 +139,12 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $synthetic_args, $dt_parser) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
     
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
     my $res = $self->_send_request($msg);
 
-    return $self->_parse_result($res, $synthetic_args, $dt_parser);
+    return $self->_parse_result($res, $args, $dt_parser);
 }
 
 sub _prepare_request {
@@ -156,27 +152,29 @@ sub _prepare_request {
 
     my $msg;
 
-    $self->_encode_args($args);
+    my %natural_args = $self->_natural_args($args);
+
+    $self->_encode_args(\%natural_args);
 
     if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-        $uri->query_form($args);
+        $uri->query_form(%natural_args);
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
         # if any of the arguments are (array) refs, use form-data
-        $msg = (first { ref } values %$args)
+        $msg = (first { ref } values %natural_args)
              ? POST($uri,
                     Content_Type => 'form-data',
-                    Content      => [ %$args ],
+                    Content      => \%natural_args,
                )
-             : POST($uri, $args)
+             : POST($uri, \%natural_args)
              ;
     }
     else {
         croak "unexpected HTTP method: $http_method";
     }
 
-    $self->_add_authorization_header($msg, $args) if $authenticate;
+    $self->_add_authorization_header($msg, \%natural_args) if $authenticate;
 
     return $msg;
 }
@@ -212,7 +210,7 @@ sub _decode_html_entities { shift->_decode_html_entities_visitor->visit(@_) }
 sub _inflate_objects { return $_[2] }
 
 sub _parse_result {
-    my ($self, $res, $synthetic_args, $datetime_parser) = @_;
+    my ($self, $res, $args, $datetime_parser) = @_;
 
     # workaround for Laconica API returning bools as strings
     # (Fixed in Laconi.ca 0.7.4)
@@ -223,7 +221,7 @@ sub _parse_result {
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects
-    if ( (my $since = delete $synthetic_args->{since}) && defined $obj ) {
+    if ( (my $since = delete $args->{-since}) && defined $obj ) {
         $self->_filter_since($datetime_parser, $obj, $since);
     }
 

@@ -48,6 +48,8 @@ sub twitter_api_method {
             $args->{$_} = join ',' => @{ $args->{$_} } if ref $args->{$_} eq 'ARRAY';
         }
 
+        $self->_remap_legacy_synthetic_args($args);
+
         croak sprintf "$name expected %d args", scalar @$arg_names if @_ > @$arg_names;
 
         # promote positional args to named args
@@ -61,13 +63,7 @@ sub twitter_api_method {
 
         $args->{source} ||= $self->source if $options{add_source};
 
-        # save synthetic arguments; don't pass them to Twitter
-        my $synthetic_args = $self->_extract_synthetic_args($args);
-
-        my $authenticate = exists $synthetic_args->{authenticate}
-                         ? $synthetic_args->{authenticate}
-                         : $options{authenticate}
-                         ;
+        my $authenticate = exists $args->{-authenticate} ? $args->{-authenticate} : $options{authenticate};
 
         # promote boolean parameters
         for my $boolean_arg ( @{ $options{booleans} } ) {
@@ -93,7 +89,6 @@ sub twitter_api_method {
             $uri,
             $args,
             $authenticate,
-            $synthetic_args,
             $options{datetime_parser},
         );
     };
