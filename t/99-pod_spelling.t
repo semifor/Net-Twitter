@@ -19,6 +19,7 @@ __DATA__
 ACKNOWLEDGEMENTS
 Akira
 API
+api
 apihost
 apirealm
 APIs
@@ -31,6 +32,9 @@ clienturl
 clientver
 contributees
 CPAN
+cursored
+Cursoring
+cursoring
 DateTime
 DirectMessage
 EOT
@@ -58,6 +62,7 @@ KATOU
 Laconica
 lang
 Marc
+MERCHANTABILITY
 Mims
 Miyagawa
 multipart
@@ -75,6 +80,7 @@ Prather
 RateLimit
 RateLimitStatus
 refactored
+reimplemented
 requester's
 RetryOnError
 return's
@@ -106,6 +112,7 @@ Un
 un
 unfollow
 Unsubscribes
+URI
 url
 useragent
 username

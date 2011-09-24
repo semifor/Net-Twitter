@@ -582,7 +582,7 @@ If you are using the C<API::Lists> trait, you should remove it from your code
 and change the arguments in your list API method calls to match those described
 above.
 
-Also, if using the C<API::Lists> trait, you can pass synthectic argument
+Also, if using the C<API::Lists> trait, you can pass synthetic argument
 C<-legacy_lists_api> set to 0 for individual calls to use the new endpoints
 semantics.
 
