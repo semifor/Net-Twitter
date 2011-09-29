@@ -17,14 +17,20 @@ role {
 
         my $args = ref $_[-1] eq ref {} ? pop : {};
 
+        # backwards compat: all synthetic args use dash (-) prefix, now
+        for ( qw/force_cursor max_calls/ ) {
+            $args->{"-$_"} = delete $args->{$_} if exists $args->{$_};
+        }
+
         # no change in behavior if the user passed a cursor
         return $self->$orig(@_, $args) if exists $args->{cursor};
 
         $args->{id} = shift if @_;
 
-        $args->{cursor} = -1 if !exists $args->{cursor} && $p->force_cursor;
+        my $force_cursor = exists $args->{-force_cursor} ? $args->{-force_cursor} : $p->force_cursor;
+        $args->{cursor} = -1 if !exists $args->{cursor} && $force_cursor;
 
-        my $max_calls = delete $args->{max_calls} || $p->max_calls;
+        my $max_calls = exists $args->{-max_calls} ? $args->{-max_calls} : $p->max_calls;
 
         my $calls = 0;
         my $results;
@@ -40,7 +46,7 @@ role {
         }
 
         while ( $args->{cursor} && $calls++ < $max_calls ) {
-            my $r = $orig->($self, $args);
+            my $r = $self->$orig($args);
             push @$results, @{$r->{$p->array_accessor}};
             $args->{cursor} = $r->{next_cursor};
         }
@@ -107,8 +113,8 @@ made (yielding 80,000 results).  It returns an ARRAY reference to the combined
 results.
 
 If the C<cursor> parameter is passed to C<friends_ids> or C<followers_ids>,
-C<Net::Twitter> uses cursored access from the start, i.e., it does not
-attempt an initial non-cursored call.
+C<Net::Twitter> assumes the user is handling cursoring and does not modify
+behavior or results.
 
 The C<AutoCursor> trait is parameterized, allowing it to work with any Twitter
 API method that expects cursors, returning combined results for up to the
@@ -131,7 +137,8 @@ argument to the API method.
 =item force_cursor
 
 If true, when the caller does not provide a C<cursor> parameter, C<AutoCursor>
-will add one with value -1. Default is 0.
+will use up to C<max_calls> cursored calls rather than attempting an initial
+non-cursored call.  Default is 0.
 
 =item array_accessor
 
@@ -144,6 +151,16 @@ A reference to an ARRAY containing the names of Twitter API methods to which
 C<AutoCursor> will be applied.
 
 =back
+
+=head1 METHOD CALLS
+
+Synthetic parameter C<-max_calls> can be passed for individual method calls
+to override the default:
+
+  $r = $nt->followers_ids({ -max_calls => 200 }); # get up to 1 million ids
+
+Synthetic parameter C<-force_cursor> can be passed to override the
+C<force_cursor> default.
 
 =head1 AUTHOR
 

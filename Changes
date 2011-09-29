@@ -1,3 +1,7 @@
+    - fixed: AutoCursor:
+        - no behavior change when user passes "cursor" arg
+        - work with InflateObjects trait
+    - synthetic ags use (-) prefix: -authenticate, -since, -legacy_lists_api
     - Replaced JSON::Any with JSON
     - documented new arguments for friendship_exists
 
