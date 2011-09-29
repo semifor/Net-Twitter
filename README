@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.18000_00
+    This document describes Net::Twitter version 3.18001
 
 SYNOPSIS
       use Net::Twitter;
@@ -335,9 +335,9 @@ AUTHENTICATION
     and "password" options to "new" or call the "credentials" method.
 
     In addition to the arguments specified for each API method described
-    below, an additional "authenticate" parameter can be passed. To request
-    an "Authorization" header, pass "authenticated => 1"; to suppress an
-    authentication header, pass "authentication => 0". Even if requested, an
+    below, an additional "-authenticate" parameter can be passed. To request
+    an "Authorization" header, pass "-authenticate => 1"; to suppress an
+    authentication header, pass "-authenticate => 0". Even if requested, an
     Authorization header will not be added if there are no user credentials
     (username and password for Basic Authentication; access tokens for
     OAuth).
@@ -457,7 +457,7 @@ API METHODS AND ARGUMENTS
     for each API method, Net::Twitter supports additional *synthetic*
     arguments.
 
-    authenticate
+    -authenticate
         When set to 1, Net::Twitter will provide an Authorization header for
         the API call; when set to 0, it will suppress the Authentication
         header. This argument overrides the defined authentication behavior
@@ -466,13 +466,20 @@ API METHODS AND ARGUMENTS
         authenticated and unauthenticated calls. See "AUTHENTICATION" for
         more details.
 
-    since
+    -since
         API methods that accept the "since_id" argument will also accept the
-        synthetic "since" argument, instead. "since" may be a "Date::Time"
+        synthetic "-since" argument, instead. "-since" may be a "Date::Time"
         object, an epoch time (the number of seconds since the system
         epoch), or a string in the same format returned by Twitter for the
         "created_at" attribute. Only statuses with a "created_at" time
-        greater than "since" will be returned by the API call.
+        greater than "-since" will be returned by the API call.
+
+    -legacy_lists_api
+        This option is only effective when the legacy "API::Lists" trait is
+        applied. Passing "-legacy_lists_api" set to 0 for lists methods will
+        use the new lists endpoints and semantics. This will facilitate
+        upgrading an application to use the new lists api methods. When the
+        "API::Lists" trait is not applied, this option is ignored.
 
 REST API Methods
     These methods are provided when trait "API::REST" is included in the
@@ -559,20 +566,6 @@ REST API Methods
         to create a new one.
 
         Returns: Place
-
-    all_lists
-    all_lists(id)
-
-        Parameters: id, user_id, screen_name
-        Required: id
-
-        Returns all lists the authenticating or specified user subscribes
-        to, including their own. The user is specified using the "user_id"
-        or "screen_name parameters". If no user is given, the authenticating
-        user is used. Requires authentication unless requesting for another
-        user.
-
-        Returns: ArrayRef[List]
 
     block_exists
     block_exists(id)
@@ -1135,9 +1128,11 @@ REST API Methods
         Returns: Hashref
 
     list_subscriptions
+    list_subscriptions(id)
+    alias: all_lists
 
-        Parameters: user_id, screen_name
-        Required: *none*
+        Parameters: id, user_id, screen_name
+        Required: id
 
         Returns all lists the authenticating or specified user subscribes
         to, including their own. The user is specified using the user_id or
@@ -1972,6 +1967,10 @@ Lists API Methods
     code and change the arguments in your list API method calls to match
     those described above.
 
+    Also, if using the "API::Lists" trait, you can pass synthetic argument
+    "-legacy_lists_api" set to 0 for individual calls to use the new
+    endpoints semantics.
+
 TwitterVision API Methods
     These methods are provided when trait "API::TwitterVision" is included
     in the "traits" option to "new".
@@ -2164,7 +2163,7 @@ CONTRIBUTORS
 
     Justin Hunter <justin.d.hunter@gmail.com>
 
-    Allen Haim
+    Allen Haim <allen@netherrealm.net>
 
 LICENSE
     Copyright (c) 2009-2011 Marc Mims

@@ -13,7 +13,7 @@ has '_trait_namespace' => (
 );
 
 # use *all* digits for fBSD ports
-our $VERSION = '3.18000_00';
+our $VERSION = '3.18001';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -97,7 +97,10 @@ sub _create_anon_class {
             push @comps, $t;
         }
 
-        return __PACKAGE__ . '::' .  join '__', 'with', sort @comps;
+        my $ver = $VERSION;
+        $ver =~ s/\W/_/g;
+
+        return __PACKAGE__ . "_v${ver}_" .  join '__', 'with', sort @comps;
     }
 }
 
