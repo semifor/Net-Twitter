@@ -15,7 +15,11 @@ role {
         my $orig = shift;
         my $self = shift;
 
-        my $args = ref $_[-1] eq 'HASH' ? pop : {};
+        my $args = ref $_[-1] eq ref {} ? pop : {};
+
+        # no change in behavior if the user passed a cursor
+        return $self->$orig(@_, $args) if exists $args->{cursor};
+
         $args->{id} = shift if @_;
 
         $args->{cursor} = -1 if !exists $args->{cursor} && $p->force_cursor;
@@ -25,16 +29,14 @@ role {
         my $calls = 0;
         my $results;
         if ( !exists $args->{cursor} ) {
+            # try the old style, non-cursored call
             my $r = $orig->($self, $args);
+            return $r if ref $r eq ref [];
+
             ++$calls;
-            if ( ref $r eq 'HASH' ) {
-                # If Twitter forces a cursored call, we'll get a HASH instead of an ARRAY
-                $results = $r->{$p->array_accessor};
-                $args->{cursor} = $r->{next_cursor};
-            }
-            else {
-                $results = $r;
-            }
+            # If Twitter forces a cursored call, we'll get a HASH instead of an ARRAY
+            $results = $r->{$p->array_accessor};
+            $args->{cursor} = $r->{next_cursor};
         }
 
         while ( $args->{cursor} && $calls++ < $max_calls ) {
