@@ -1,3 +1,5 @@
+    - added deprecation warning for 'trends'; calls trends_location(1), instead
+
 3.18001 2011-09-29
     - fixed: AutoCursor:
         - no behavior change when user passes "cursor" arg

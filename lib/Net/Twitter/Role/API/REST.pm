@@ -1,5 +1,6 @@
 package Net::Twitter::Role::API::REST;
 use Moose::Role;
+use Carp;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use URI;
@@ -999,7 +1000,26 @@ the url to the Twitter Search results page for that topic.
     required => [qw//],
     authenticate => 0,
     returns  => 'ArrayRef[Query]',
+    deprecated => 1,
 );
+
+my $trends_deprecation_warned = 0;
+around trends => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $args = ref $_[-1] eq ref {} ? pop : {};
+
+    $trends_deprecation_warned ||= do {
+        local $Carp::CarpLevel = 3;
+        carp "The 'trends' API method has been deprecated; instead, use trends_location({ woeid => 1 })";
+        1;
+    };
+
+    $args->{woeid} = 1;
+
+    return $self->trends_location(@_, $args);
+};
 
 twitter_api_method trends_current => (
     description => <<'',
