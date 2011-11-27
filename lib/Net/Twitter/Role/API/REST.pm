@@ -448,8 +448,8 @@ user_a follows user_b, otherwise will return false.
 
 twitter_api_method friends_ids => (
     description => <<'EOT',
-Returns a reference to an array of numeric IDs for every user followed the
-specified user.
+Returns a reference to an array of numeric IDs for every user followed by the
+specified user. The order of the IDs is reverse chronological.
 
 Use the optional C<cursor> parameter to retrieve IDs in pages of 5000.  When
 the C<cursor> parameter is used, the return value is a reference to a hash with
@@ -472,7 +472,8 @@ EOT
 twitter_api_method followers_ids => (
     description => <<'EOT',
 Returns a reference to an array of numeric IDs for every user following the
-specified user.
+specified user. The order of the IDs may change from call to call. To obtain
+the screen names, pass the arrayref to L</lookup_users>.
 
 Use the optional C<cursor> parameter to retrieve IDs in pages of 5000.  When
 the C<cursor> parameter is used, the return value is a reference to a hash with
@@ -978,7 +979,7 @@ twitter_api_method lookup_users => (
     required => [],
     returns => 'ArrayRef[User]',
     description => <<'EOT'
-Return up to 20 users worth of extended information, specified by either ID,
+Return up to 100 users worth of extended information, specified by either ID,
 screen name, or combination of the two. The author's most recent status (if the
 authenticating user has permission) will be returned inline.  This method is
 rate limited to 1000 calls per hour.
