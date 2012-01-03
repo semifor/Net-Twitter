@@ -68,7 +68,7 @@ Net::Twitter::Role::AutoCursor - Help transition to cursor based access to frien
 =head1 SYNOPSIS
 
   use Net::Twitter;
-  # Get friends_ids or followers_ids without worrying about cursors
+  # Get friends or followers without worrying about cursors
   my $nt = Net::Twitter->new(
       traits => [
           qw/API::REST RetryOnError OAuth/
