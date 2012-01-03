@@ -68,20 +68,12 @@ Net::Twitter::Role::AutoCursor - Help transition to cursor based access to frien
 =head1 SYNOPSIS
 
   use Net::Twitter;
-  my $nt = Net::Twitter->new(
-      traits => [qw/AutoCursor API::REST RetryOnError OAuth/],
-      # additional ags...
-  );
-
   # Get friends_ids or followers_ids without worrying about cursors
-  my $ids = $nt->followers_ids;
-
   my $nt = Net::Twitter->new(
       traits => [
           qw/API::REST RetryOnError OAuth/
-          AutoCursor => { max_calls => 32 },
           AutoCursor => {
-              max_calls      => 4,
+              max_calls      => 200,
               force_cursor   => 1,
               array_accessor => 'users',
               methods        => [qw/friends followers/],
@@ -103,14 +95,16 @@ C<followers_ids> API methods:
   format
 
 This will break a lot of existing code.  The C<AutoCursor> trait was created to
-help users transition to cursor based access for these methods.
+help users transition to cursor based access for these methods. It also makes
+it straightforwad to get your friends (followed) or followers in one call.
 
 With default parameters, the C<AutoCursor> trait attempts a non-cursored call
 for C<friends_ids> and C<followers_ids>.  If it detects a cursored
 response from Twitter, it continues to call the underlying Twitter API method,
 with the next cursor, until it has received all results or 16 calls have been
 made (yielding 80,000 results).  It returns an ARRAY reference to the combined
-results.
+results. Note that other methods (e.g. L<Net::Twitter/friends|friends>) may have
+lower limits (e.g. 100 users per call).
 
 If the C<cursor> parameter is passed to C<friends_ids> or C<followers_ids>,
 C<Net::Twitter> assumes the user is handling cursoring and does not modify
@@ -138,12 +132,14 @@ argument to the API method.
 
 If true, when the caller does not provide a C<cursor> parameter, C<AutoCursor>
 will use up to C<max_calls> cursored calls rather than attempting an initial
-non-cursored call.  Default is 0.
+non-cursored call.  Default is 0, which won't help with L<Net::Twitter/friends|friends>
+or L<Net::Twitter/followers|followers>.
 
 =item array_accessor
 
 The name of the HASH key used to access the ARRAY ref of results in the data
-structure returned by Twitter.  Default is C<ids>.
+structure returned by Twitter.  Default is C<ids>. Set to C<users> for
+L<Net::Twitter/friends|friends> and L<Net::Twitter/followers|followers>.
 
 =item methods
 
@@ -168,7 +164,7 @@ Marc Mims <marc@questright.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2011 Marc Mims
+Copyright (c) 2011-2012 Marc Mims
 
 =head1 LICENSE
 
