@@ -50,6 +50,12 @@ Net::Twitter::Role::API::TwitterVision - A definition of the TwitterVision API a
   use Moose;
   with 'Net::Twitter::API::TwitterVision';
 
+=head1 DEPRECATION NOTICE
+
+The public link to the TwitterVision API is no longer accessible, and my
+inquires to TwitterVision have gone unanswered.  I don't know if the service
+still supports the API.  So, use this role at your own risk.
+
 =head1 DESCRIPTION
 
 B<Net::Twitter::Role::API::TwitterVision> provides definitions for all the TwitterVision API
