@@ -1548,6 +1548,27 @@ a time with this method.
 
 );
 
+twitter_api_method members_destroy_all => (
+    path        => 'lists/members/destroy_all',
+    method      => 'POST',
+    params      => [qw/list_id slug user_id screen_name owner_screen_name owner_id/],
+    required    => [],
+    returns     => 'List',
+    aliases     => [qw/remove_list_members/],
+    description => <<'EOT',
+Removes multiple members from a list, by specifying a reference to an array of
+member ids or screen names, or a string of comma separated user ids or screen
+names.  The authenticated user must own the list to be able to remove members
+from it. Note that lists can't have more than 500 members, and you are limited
+to removing up to 100 members to a list at a time with this method.
+
+Please note that there can be issues with lists that rapidly remove and add
+memberships. Take care when using these methods such that you are not too
+rapidly switching between removals and adds on the same list.
+
+EOT
+);
+
 twitter_api_method is_list_member => (
     path        => 'lists/members/show',
     method      => 'GET',
