@@ -1415,13 +1415,13 @@ response. This method is only available to users who have access to
 
 ### Lists ###
 
-twitter_api_method list_subscriptions => (
+twitter_api_method all_subscriptions => (
     path        => 'lists/all',
     method      => 'GET',
-    params      => [qw/id user_id screen_name/],
-    required    => [qw/id/],
+    params      => [qw/user_id screen_name count cursor/],
+    required    => [],
     returns     => 'ArrayRef[List]',
-    aliases     => [qw/all_lists/],
+    aliases     => [qw/all_lists list_subscriptions/],
     description => <<'',
 Returns all lists the authenticating or specified user subscribes to, including
 their own. The user is specified using the user_id or screen_name parameters.
@@ -1678,6 +1678,19 @@ twitter_api_method get_list => (
     description => <<'',
 Returns the specified list. Private lists will only be shown if the
 authenticated user owns the specified list.
+
+);
+
+twitter_api_method subscriptions => (
+    path        => 'lists/subscriptions',
+    method      => 'GET',
+    params      => [qw/user_id screen_name count cursor/],
+    required    => [],
+    returns     => 'ArrayRef[List]',
+    aliases     => [],
+    description => <<'',
+Obtain a collection of the lists the specified user is subscribed to, 20 lists
+per page by default. Does not include the user's own lists.
 
 );
 

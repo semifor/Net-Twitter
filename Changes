@@ -1,3 +1,5 @@
+    - added API method subscriptions; list_subscriptions is now
+      all_subscriptions with alias list_subscriptions
     - deprecated TwitterVision API support
     - added API method members_destroy_all with alias remove_list_members
     - added deprecation warning for 'trends'; calls trends_location(1), instead
