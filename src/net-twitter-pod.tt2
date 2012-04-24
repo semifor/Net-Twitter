@@ -45,15 +45,6 @@ This document describes Net::Twitter version [% VERSION %]
 This module provides a perl interface to the Twitter APIs.  See
 L<http://dev.twitter.com/doc> for a full description of the Twitter APIs.
 
-=head1 NOTICE! BASIC AUTHENTICATION IS DEAD
-
-As of 31-Aug-2010, Twitter no longer supports Basic Authentication.  OAuth is
-now required for authenticated requests.  For more information, please see
-L<http://github.com/semifor/Net-Twitter/wiki/Net::Twitter-and-the-death-of-Basic-Authentication>.
-
-Other Twitter compatible services may still accept Basic Authentication, so
-support for it remains in C<Net::Twitter>.
-
 =head1 OMG! THE MOOSE!
 
 Net::Twitter is L<Moose> based. Moose provides some advantages, including the
@@ -118,11 +109,6 @@ Provides support for the Twitter REST API methods.
 =item API::Search
 
 Provides support for the Twitter Search API methods.
-
-=item API::TwitterVision
-
-Provides support for the TwitterVision API.  See
-L<http://twittervision.com/api.html>.
 
 =item AutoCursor
 
