@@ -267,7 +267,11 @@ authenticating user must be the author of the specified status.
 );
 
 twitter_api_method friends => (
+    deprecated  => 1,
     description => <<'EOT',
+This method has been deprecated.  Twitter intends to stop support for it on May
+14, 2012.  Use C<friends_ids> and C<lookup_users> instead.
+
 Returns a reference to an array of the user's friends.  If C<id>, C<user_id>,
 or C<screen_name> is not specified, the friends of the authenticating user are
 returned.  The returned users are ordered from most recently followed to least
@@ -297,6 +301,9 @@ EOT
 twitter_api_method followers => (
     deprecated  => 1,
     description => <<'EOT',
+This method has been deprecated.  Twitter intends to stop support for it on May
+14, 2012.  Use C<friends_ids> and C<lookup_users> instead.
+
 Returns a reference to an array of the user's followers.  If C<id>, C<user_id>,
 or C<screen_name> is not specified, the followers of the authenticating user are
 returned.  The returned users are ordered from most recently followed to least

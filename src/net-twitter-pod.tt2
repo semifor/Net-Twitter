@@ -815,9 +815,8 @@ SUCH DAMAGES.
 
 =over 4
 
-[% FOREACH method IN get_methods_for(class);
-   NEXT IF method.deprecated -%]
-=item B<[% method.name %]>
+[% FOREACH method IN get_methods_for(class) -%]
+=item B<[% method.name %]>[% IF method.deprecated %] B<DEPRECATED>[% END %]
 
 [% IF method.required.size > 0;
        pos_params = method.required;
