@@ -1,3 +1,4 @@
+3.18002 2012-04-24
     - added API method subscriptions; list_subscriptions is now
       all_subscriptions with alias list_subscriptions
     - deprecated TwitterVision API support

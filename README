@@ -2,7 +2,7 @@ NAME
     Net::Twitter - A perl interface to the Twitter API
 
 VERSION
-    This document describes Net::Twitter version 3.18001
+    This document describes Net::Twitter version 3.18002
 
 SYNOPSIS
       use Net::Twitter;
@@ -39,16 +39,6 @@ SYNOPSIS
 DESCRIPTION
     This module provides a perl interface to the Twitter APIs. See
     <http://dev.twitter.com/doc> for a full description of the Twitter APIs.
-
-NOTICE! BASIC AUTHENTICATION IS DEAD
-    As of 31-Aug-2010, Twitter no longer supports Basic Authentication.
-    OAuth is now required for authenticated requests. For more information,
-    please see
-    <http://github.com/semifor/Net-Twitter/wiki/Net::Twitter-and-the-death-o
-    f-Basic-Authentication>.
-
-    Other Twitter compatible services may still accept Basic Authentication,
-    so support for it remains in "Net::Twitter".
 
 OMG! THE MOOSE!
     Net::Twitter is Moose based. Moose provides some advantages, including
@@ -100,10 +90,6 @@ METHODS AND ARGUMENTS
 
             API::Search
                 Provides support for the Twitter Search API methods.
-
-            API::TwitterVision
-                Provides support for the TwitterVision API. See
-                <http://twittervision.com/api.html>.
 
             AutoCursor
                 "AutoCursor" is a parameterized trait that provides an
@@ -567,6 +553,20 @@ REST API Methods
 
         Returns: Place
 
+    all_subscriptions
+    alias: all_lists
+    alias: list_subscriptions
+
+        Parameters: user_id, screen_name, count, cursor
+        Required: *none*
+
+        Returns all lists the authenticating or specified user subscribes
+        to, including their own. The user is specified using the user_id or
+        screen_name parameters. If no user is given, the authenticating user
+        is used.
+
+        Returns: ArrayRef[List]
+
     block_exists
     block_exists(id)
 
@@ -790,6 +790,16 @@ REST API Methods
 
         Returns: BasicUser
 
+    downtime_schedule DEPRECATED
+
+        Parameters: *none*
+        Required: *none*
+
+        Returns the same text displayed on <http://twitter.com/home> when a
+        maintenance window is scheduled.
+
+        Returns: Str
+
     enable_notifications
     enable_notifications(id)
 
@@ -822,6 +832,33 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
+    followers DEPRECATED
+
+        Parameters: id, user_id, screen_name, cursor, include_entities
+        Required: *none*
+
+        This method has been deprecated. Twitter intends to stop support for
+        it on May 14, 2012. Use "friends_ids" and "lookup_users" instead.
+
+        Returns a reference to an array of the user's followers. If "id",
+        "user_id", or "screen_name" is not specified, the followers of the
+        authenticating user are returned. The returned users are ordered
+        from most recently followed to least recently followed.
+
+        Use the optional "cursor" parameter to retrieve users in pages of
+        100. When the "cursor" parameter is used, the return value is a
+        reference to a hash with keys "previous_cursor", "next_cursor", and
+        "users". The value of "users" is a reference to an array of the
+        user's friends. The result set isn't guaranteed to be 100 every time
+        as suspended users will be filtered out. Set the optional "cursor"
+        parameter to -1 to get the first page of users. Set it to the prior
+        return's value of "previous_cursor" or "next_cursor" to page forward
+        or backwards. When there are no prior pages, the value of
+        "previous_cursor" will be 0. When there are no subsequent pages, the
+        value of "next_cursor" will be 0.
+
+        Returns: HashRef|ArrayRef[User]
+
     followers_ids
     followers_ids(id)
 
@@ -829,7 +866,9 @@ REST API Methods
         Required: id
 
         Returns a reference to an array of numeric IDs for every user
-        following the specified user.
+        following the specified user. The order of the IDs may change from
+        call to call. To obtain the screen names, pass the arrayref to
+        "lookup_users".
 
         Use the optional "cursor" parameter to retrieve IDs in pages of
         5000. When the "cursor" parameter is used, the return value is a
@@ -844,11 +883,14 @@ REST API Methods
 
         Returns: HashRef|ArrayRef[Int]
 
-    friends
+    friends DEPRECATED
     alias: following
 
         Parameters: id, user_id, screen_name, cursor, include_entities
         Required: *none*
+
+        This method has been deprecated. Twitter intends to stop support for
+        it on May 14, 2012. Use "friends_ids" and "lookup_users" instead.
 
         Returns a reference to an array of the user's friends. If "id",
         "user_id", or "screen_name" is not specified, the friends of the
@@ -877,7 +919,8 @@ REST API Methods
         Required: id
 
         Returns a reference to an array of numeric IDs for every user
-        followed the specified user.
+        followed by the specified user. The order of the IDs is reverse
+        chronological.
 
         Use the optional "cursor" parameter to retrieve IDs in pages of
         5000. When the "cursor" parameter is used, the return value is a
@@ -891,6 +934,19 @@ REST API Methods
         will be 0.
 
         Returns: HashRef|ArrayRef[Int]
+
+    friends_timeline DEPRECATED
+    alias: following_timeline
+
+        Parameters: since_id, max_id, count, page, skip_user, trim_user,
+        include_entities, include_rts
+        Required: *none*
+
+        Returns the 20 most recent statuses posted by the authenticating
+        user and that user's friends. This is the equivalent of /home on the
+        Web.
+
+        Returns: ArrayRef[Status]
 
     friendship_exists
     friendship_exists(user_a, user_b)
@@ -1127,20 +1183,6 @@ REST API Methods
 
         Returns: Hashref
 
-    list_subscriptions
-    list_subscriptions(id)
-    alias: all_lists
-
-        Parameters: id, user_id, screen_name
-        Required: id
-
-        Returns all lists the authenticating or specified user subscribes
-        to, including their own. The user is specified using the user_id or
-        screen_name parameters. If no user is given, the authenticating user
-        is used.
-
-        Returns: ArrayRef[List]
-
     lookup_friendships
 
         Parameters: user_id, screen_name
@@ -1158,7 +1200,7 @@ REST API Methods
         Parameters: user_id, screen_name, include_entities
         Required: *none*
 
-        Return up to 20 users worth of extended information, specified by
+        Return up to 100 users worth of extended information, specified by
         either ID, screen name, or combination of the two. The author's most
         recent status (if the authenticating user has permission) will be
         returned inline. This method is rate limited to 1000 calls per hour.
@@ -1193,6 +1235,27 @@ REST API Methods
         it. Note that lists can't have more than 500 members, and you are
         limited to adding up to 100 members to a list at a time with this
         method.
+
+        Returns: List
+
+    members_destroy_all
+    alias: remove_list_members
+
+        Parameters: list_id, slug, user_id, screen_name, owner_screen_name,
+        owner_id
+        Required: *none*
+
+        Removes multiple members from a list, by specifying a reference to
+        an array of member ids or screen names, or a string of comma
+        separated user ids or screen names. The authenticated user must own
+        the list to be able to remove members from it. Note that lists can't
+        have more than 500 members, and you are limited to removing up to
+        100 members to a list at a time with this method.
+
+        Please note that there can be issues with lists that rapidly remove
+        and add memberships. Take care when using these methods such that
+        you are not too rapidly switching between removals and adds on the
+        same list.
 
         Returns: List
 
@@ -1549,6 +1612,17 @@ REST API Methods
 
         Returns: List
 
+    subscriptions
+
+        Parameters: user_id, screen_name, count, cursor
+        Required: *none*
+
+        Obtain a collection of the lists the specified user is subscribed
+        to, 20 lists per page by default. Does not include the user's own
+        lists.
+
+        Returns: ArrayRef[List]
+
     suggestion_categories
 
         Parameters: *none*
@@ -1569,7 +1643,7 @@ REST API Methods
 
         Returns: Str
 
-    trends
+    trends DEPRECATED
 
         Parameters: *none*
         Required: *none*
@@ -1743,6 +1817,19 @@ REST API Methods
         to be able to update it.
 
         Returns: List
+
+    update_location DEPRECATED
+    update_location(location)
+
+        Parameters: location
+        Required: location
+
+        This method has been deprecated in favor of the update_profile
+        method. Its URL will continue to work, but please consider migrating
+        to the newer and more comprehensive method of updating profile
+        attributes.
+
+        Returns: BasicUser
 
     update_profile
 
