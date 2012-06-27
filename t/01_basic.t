@@ -44,8 +44,7 @@ my @tests = (
     [ public_timeline        => [],                        GET  => "/statuses/public_timeline.json", __LINE__      ],
     [ rate_limit_status      => [],                        GET  => "/account/rate_limit_status.json", __LINE__     ],
     [ friendship_exists      => [ 'a', 'b'              ], GET  => "/friendships/exists.json", __LINE__            ],
-    # TODO: mentions -> replies, for now, to accommodate identica
-    [ mentions               => [],                        GET  => "/statuses/replies.json", __LINE__              ],
+    [ mentions               => [],                        GET  => "/statuses/mentions.json", __LINE__              ],
     [ sent_direct_messages   => [],                        GET  => "/direct_messages/sent.json", __LINE__          ],
     [ show_status            => [ $screen_name          ], GET  => "/statuses/show/$screen_name.json", __LINE__    ],
     [ show_user              => [ $screen_name          ], GET  => "/users/show/$screen_name.json", __LINE__       ],

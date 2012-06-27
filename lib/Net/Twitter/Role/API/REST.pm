@@ -170,7 +170,7 @@ Returns the 20 most recent mentions (statuses containing @username) for the
 authenticating user.
 
     aliases => [qw/replies/],
-    path    => 'statuses/replies',
+    path    => 'statuses/mentions',
     method  => 'GET',
     params  => [qw/since_id max_id count page trim_user include_rts include_entities/],
     booleans => [qw/trim_user include_rts include_entities/],
