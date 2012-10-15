@@ -2,7 +2,7 @@ package Net::Twitter::Core;
 use 5.008001;
 use Moose;
 use MooseX::Aliases;
-use Carp;
+use Carp::Clan qw/^Net::Twitter/;
 use JSON;
 use URI::Escape;
 use HTTP::Request::Common;

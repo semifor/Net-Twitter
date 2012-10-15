@@ -1,6 +1,6 @@
 package Net::Twitter::API;
 use Moose ();
-use Carp;
+use Carp::Clan qw/^Net::Twitter/;
 use Moose::Exporter;
 use URI::Escape;
 use DateTime::Format::Strptime;
@@ -32,6 +32,10 @@ sub twitter_api_method {
         @_,
     );
 
+    my $deprecation_coderef = ref $options{deprecated} eq ref sub {}
+                            ? sub { $options{deprecated}->($name) }
+                            : sub {};
+
     my $class = Moose::Meta::Class->initialize($caller);
 
     my ($arg_names, $path) = @options{qw/required path/};
@@ -39,6 +43,9 @@ sub twitter_api_method {
 
     my $code = sub {
         my $self = shift;
+
+        # give the deprecation coderef early access in case it intends to die
+        $deprecation_coderef->();
 
         # copy callers args since we may add ->{source}
         my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
@@ -108,7 +115,7 @@ sub twitter_api_method {
 
 package Net::Twitter::Meta::Method;
 use Moose;
-use Carp;
+use Carp::Clan qw/^Net::Twitter/;
 extends 'Moose::Meta::Method';
 
 use namespace::autoclean;
@@ -121,7 +128,7 @@ has add_source  => ( isa => 'Bool', is => 'ro', default => 0 );
 has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
-has deprecated  => ( isa => 'Bool', is => 'ro', default => 0 );
+has deprecated  => ( isa => 'Bool|CodeRef', is => 'ro', default => 0 );
 has booleans    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
 has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );

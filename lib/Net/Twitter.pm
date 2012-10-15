@@ -1,6 +1,6 @@
 package Net::Twitter;
 use Moose;
-use Carp;
+use Carp::Clan qw/^Net::Twitter/;
 use JSON;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
