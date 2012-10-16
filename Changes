@@ -1,3 +1,7 @@
+    - Allow extra parameters to get_auth*_url methods (this accommodates
+      Twitter's optional force_login and screen_name parameters to those
+      endpoints.
+
 3.18003 2012-06-27
     - Use path statuses/mentions, not statuses/replies
 

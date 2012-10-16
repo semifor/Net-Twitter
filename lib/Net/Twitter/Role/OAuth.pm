@@ -61,10 +61,11 @@ sub authorized {
 sub _get_auth_url {
     my ($self, $which_url, %params ) = @_;
 
-    $self->_request_request_token(%params);
+    my $callback = delete $params{callback} || 'oob';
+    $self->_request_request_token(callback => $callback);
 
     my $uri = $self->$which_url;
-    $uri->query_form(oauth_token => $self->request_token);
+    $uri->query_form(oauth_token => $self->request_token, %params);
     return $uri;
 }
 
@@ -100,7 +101,6 @@ sub _request_request_token {
     my ($self, %params) = @_;
 
     my $uri = $self->request_token_url;
-    $params{callback} ||= 'oob';
     my $request = $self->_make_oauth_request(
         'request token',
         request_url => $uri,
