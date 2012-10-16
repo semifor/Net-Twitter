@@ -1,3 +1,4 @@
+3.18004 2012-10-15
     - Allow extra parameters to get_auth*_url methods (this accommodates
       Twitter's optional force_login and screen_name parameters to those
       endpoints.
