@@ -7,7 +7,6 @@ use URI;
 
 # API v1.1 incorporoates the Search and Upload APIs
 excludes map "Net::Twitter::Role::$_", qw/API::Search API::Upload Net::Twitter::Role::RateLimit/;
-with qw/Net::Twitter::Role::OAuth/;
 
 has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1.1'  );
 has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, builder => '_build_apihost' );
@@ -1889,18 +1888,18 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Role::API::REST - A definition of the Twitter REST API as a Moose role
+Net::Twitter::Role::API::RESTv1_1 - A definition of the Twitter REST API v1.1 as a Moose role
 
 =head1 SYNOPSIS
 
   package My::Twitter;
   use Moose;
-  with 'Net::Twitter::API::REST';
+  with 'Net::Twitter::API::RESTv1_1';
 
 =head1 DESCRIPTION
 
-B<Net::Twitter::Role::API::REST> provides definitions for all the Twitter REST API
-methods.  Applying this role to any class provides methods for all of the
+B<Net::Twitter::Role::API::RESTv1_1> provides definitions for all the Twitter REST API
+v1.1 methods.  Applying this role to any class provides methods for all of the
 Twitter REST API methods.
 
 

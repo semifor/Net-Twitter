@@ -69,7 +69,7 @@ Net::Twitter::Role::AutoCursor - Help transition to cursor based access to frien
 
   use Net::Twitter;
   my $nt = Net::Twitter->new(
-      traits => [qw/AutoCursor API::REST RetryOnError OAuth/],
+      traits => [qw/AutoCursor API::RESTv1_1 RetryOnError OAuth/],
       # additional ags...
   );
 
@@ -78,7 +78,7 @@ Net::Twitter::Role::AutoCursor - Help transition to cursor based access to frien
 
   my $nt = Net::Twitter->new(
       traits => [
-          qw/API::REST RetryOnError OAuth/
+          qw/API::RESTv1_1 RetryOnError OAuth/
           AutoCursor => { max_calls => 32 },
           AutoCursor => {
               max_calls      => 4,

@@ -50,7 +50,7 @@ features and functionality (OAuth, Search, exceptions on error, etc.).
 
   # A more complex object with OAuth and some optional traits
   my $identica = Net::Twitter->new(
-      traits => [qw/API::REST API::Search OAuth InflateObjects/],
+      traits => [qw/API::REST API::Search InflateObjects/],
       identica            => 1,
       consumer_key        => $consumer_key,
       consumer_secret     => $consumer_secret,

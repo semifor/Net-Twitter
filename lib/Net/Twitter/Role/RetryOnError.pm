@@ -13,7 +13,7 @@ Net::Twitter::Role::RetryOnError - Retry Twitter API calls on error
 
     use Net::Twitter;
     $nt = Net::Twitter->new(
-        traits      => ['API::REST', 'RetryOnError']
+        traits      => ['API::RESTv1_1', 'RetryOnError']
         max_retries => 3,
     );
 

@@ -43,7 +43,7 @@ Net::Twitter::Role::SimulateCursors - Make paging work like cursoring
   use Net::Twitter;
 
   my $nt = Net::Twitter->new(
-      traits          => ['API::REST', 'SimulateCursors'],
+      traits          => ['API::RESTv1_1', 'SimulateCursors'],
   );
 
 
