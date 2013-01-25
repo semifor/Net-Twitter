@@ -42,10 +42,10 @@ This module is deprecated.  Use L<Net::Twitter> instead.
     use Net::Twitter;
 
     # Just the REST API; exceptions thrown on error
-    $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/]);
+    $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 OAuth/]);
 
     # Just the REST API; errors wrapped - use $nt->get_error
-    $nt = Net::Twitter->new(traits => [qw/API::REST WrapError/]);
+    $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 WrapError/]);
 
     # Or, for code that uses legacy Net::Twitter idioms
     $nt = Net::Twitter->new(traits => [qw/Legacy OAuth/]);

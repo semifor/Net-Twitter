@@ -16,7 +16,7 @@ This document describes Net::Twitter version [% VERSION %]
 
   # As of 13-Aug-2010, Twitter requires OAuth for authenticated requests
   my $nt = Net::Twitter->new(
-      traits   => [qw/OAuth API::REST/],
+      traits   => [qw/API::RESTv1_1/],
       consumer_key        => $consumer_key,
       consumer_secret     => $consumer_secret,
       access_token        => $token,
@@ -44,6 +44,23 @@ This document describes Net::Twitter version [% VERSION %]
 
 This module provides a perl interface to the Twitter APIs.  See
 L<http://dev.twitter.com/doc> for a full description of the Twitter APIs.
+
+=head1 TWITTER API VERSION 1.1
+
+Twitter will (perhaps has by the time you read this) deprecated version 1 of
+the API. Documentation, here, assumes version 1.1 of the API. For version 1
+documentation, see L<Net::Twitter::Role::API::REST>.
+
+To use Twitter API version 1.1, simply replace C<API::REST> in the C<traits>
+argument to C<new> with C<API::RESTv1_1>. The C<Net::Twitter> API is backwards
+compatible to the extent possible. If Twitter does not provide a 1.1 endpoint
+for a version 1 call, C<Net::Twitter> cannot support it, of course.
+
+Twitter API version 1.1 requires OAuth authentication for all calls. There is
+no longer an IP address limit and a per-user limit. Each API call has it's own
+rate limit. Most are 15 calls reset every 15 minutes. Others are 180 calls,
+reset every 15 minutes. These limits may change. For current rate limits,
+see L<https://dev.twitter.com/docs/rate-limiting/1.1/limits>.
 
 =head1 OMG! THE MOOSE!
 
@@ -102,9 +119,9 @@ values are:
 
 =over 4
 
-=item API::REST
+=item API::RESTv1_1
 
-Provides support for the Twitter REST API methods.
+Provides support for the Twitter REST API version 1.1 methods.
 
 =item API::Search
 
@@ -183,16 +200,13 @@ handled in Net::Twitter versions prior to version 3.00.
 Some examples of using the C<traits> parameter in C<new>:
 
     # provide support for *only* the REST API; throw exceptions on error
-    $nt = Net::Twitter->new(traits => ['API::REST']);
+    $nt = Net::Twitter->new(traits => ['API::RESTv1_1']);
 
     # provide support for both the REST and Search APIs; wrap errors
-    $nt = Net::Twitter->new(traits => [qw/API::REST API::Search WrapError/]);
+    $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 API::Search WrapError/]);
 
-    # ensure full legacy support
-    $nt = Net::Twitter->new(traits => ['Legacy']);
-
-    # currently, these 2 calls to new are equivalent:
-    $nt = Net::Twitter->new();
+    # Provide legacy support for applications written with Net::Twitter
+    # prior to version 3.0.
     $nt = Net::Twitter->new(traits => ['Legacy']);
 
 =item legacy
@@ -204,7 +218,7 @@ implementing the REST API and throws exceptions on API method errors.
 
 is a shortcut for:
 
-    Net::Twitter->new(traits => ['API::REST']);
+    Net::Twitter->new(traits => ['API::RESTv1_1']);
 
 If set to 1, C<new> constructs a C<Net::Twitter> object with the C<Legacy> trait.
 
@@ -267,7 +281,7 @@ originally used by Twitter to provide an "via" application byline.
 =item apiurl
 
 The URL for the Twitter API. This defaults to "http://api.twitter.com/1". This
-option is available when the C<API::REST> trait is included.
+option is available when the C<API::RESTv1_1> trait is included.
 
 =item apihost
 
@@ -276,7 +290,7 @@ DEPRECATED - Setting the C<apiurl> is sufficient.
 =item apirealm
 
 A string containing the Twitter API realm used for Basic Authentication. It
-defaults to "Twitter API".  This option is available when the C<API::REST>
+defaults to "Twitter API".  This option is available when the C<API::RESTv1_1>
 trait is included.
 
 =item identica
@@ -284,7 +298,7 @@ trait is included.
 If set to 1, C<Net::Twitter> overrides the defaults for C<apiurl>, C<apihost>,
 and C<apirealm> to "http://identi.ca/api", "identi.ca:80", and "Laconica API"
 respectively.  It defaults to 0.  This option is available when the
-C<API::REST> trait is included.
+C<API::RESTv1_1> trait is included.
 
 =item consumer_key
 
@@ -344,13 +358,15 @@ C<Net::Twitter>.  Use it with caution.
 
 =head1 AUTHENTICATION
 
-As of 31-Aug-2010, Twitter requires OAuth for authenticated requests.  Other
+With REST API version 1.1, all API calls require OAuth. Since 
+31-Aug-2010, version 1 required OAuth requests requiring authentication.  Other
 Twitter compatible services, like Identi.ca, accept Basic Authentication.  So,
 C<Net::Twitter> provides support for both.
 
-To set up OAuth, include the C<OAuth> trait and include the C<consumer_key> and
-C<consumer_secret> options to L</new>.  See L<Net::Twitter::Role::OAuth> for
-more information on using OAuth, including examples.
+To set up OAuth, include the C<consumer_key> and C<consumer_secret> options to
+L</new>. When they are provided, the C<OAuth> trait will be automatically
+included.  See L<Net::Twitter::Role::OAuth> for more information on using
+OAuth, including examples.
 
 To set up Basic Authentication in C<Net::Twitter>, provide the C<username> and
 C<password> options to L</new> or call the L</credentials> method.
@@ -362,9 +378,8 @@ authentication header, pass C<< -authenticate => 0 >>.  Even if requested, an
 Authorization header will not be added if there are no user credentials
 (username and password for Basic Authentication; access tokens for OAuth).
 
-This is probably only useful for the L</rate_limit_status> method in the REST
-API, since it returns different values for an authenticated and a
-non-authenticated call.
+This is probably only useful for non-Twitter sites that use the Twitter API and
+support unauthenticated calls.
 
 =head1 API METHODS AND ARGUMENTS
 
@@ -506,7 +521,7 @@ option is ignored.
 
 =head1 REST API Methods
 
-These methods are provided when trait C<API::REST> is included in the C<traits>
+These methods are provided when trait C<API::RESTv1_1> is included in the C<traits>
 option to C<new>.
 
 =head2 Common Parameters
@@ -547,7 +562,7 @@ to indicate the numerical ID of the Twitter user that sent the status.
 
 =head2 Methods
 
-[% INCLUDE APIDOC class='API::REST' %]
+[% INCLUDE APIDOC class='API::RESTv1_1' %]
 [% INCLUDE APIDOC class='API::Upload' %]
 
 =head1 Search API Methods

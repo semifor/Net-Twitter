@@ -21,7 +21,7 @@ my %consumer_tokens = (
 my (undef, undef, $datafile) = File::Spec->splitpath($0);
 $datafile =~ s/\..*/.dat/;
 
-my $nt = Net::Twitter->new(traits => [qw/API::REST OAuth/], %consumer_tokens);
+my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1/], %consumer_tokens);
 my $access_tokens = eval { retrieve($datafile) } || [];
 
 if ( @$access_tokens ) {

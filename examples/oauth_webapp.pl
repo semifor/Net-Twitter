@@ -19,7 +19,7 @@ my %consumer_tokens = (
 
 my $server_port = 8080;
 
-sub twitter { shift->{twitter} ||= Net::Twitter->new(traits => [qw/API::REST OAuth/], %consumer_tokens) }
+sub twitter { shift->{twitter} ||= Net::Twitter->new(traits => [qw/API::RESTv1_1/], %consumer_tokens) }
 
 my %dispatch = (
     '/oauth_callback' => \&oauth_callback,

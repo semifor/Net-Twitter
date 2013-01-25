@@ -117,7 +117,7 @@ sub new {
         croak "Options 'legacy' and 'traits' are mutually exclusive. Use only one."
             if $traits;
 
-        $traits = [ $legacy ? 'Legacy' : 'API::REST' ];
+        $traits = [ $legacy ? 'Legacy' : 'API::RESTv1_1' ];
     }
 
     $traits ||= [ qw/Legacy/ ];

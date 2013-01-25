@@ -186,7 +186,7 @@ Net::Twitter::API - Moose sugar for defining Twitter API methods
 =head1 DESCRIPTION
 
 This module provides some Moose sugar for defining Twitter API methods.  It is part
-of the Net-Twitter distribution on CPAN and is used by C<Net::Twitter::API::REST>,
+of the Net-Twitter distribution on CPAN and is used by C<Net::Twitter::API::RESTv1_1>,
 C<Net::Twitter::API::Search>, and perhaps others.
 
 It's intent is to make maintaining C<Net::Twitter> as easy as possible.

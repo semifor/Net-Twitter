@@ -12,7 +12,7 @@ Net::Twitter::Role::RateLimit - Rate limit features for Net::Twitter
 
     use Net::Twitter;
     my $nt = Net::Twitter->new(
-        traits => [qw/API::REST RateLimit/],
+        traits => [qw/API::RESTv1_1 RateLimit/],
         %other_options,
     );
 
@@ -28,6 +28,9 @@ rate limit status.
 =cut
 
 requires qw/ua rate_limit_status/;
+
+# Rate limiting changed so dramatically with v1.1 this Role simply won't work with it
+excludes 'Net::Twitter::Role::API::RESTv1_1';
 
 has _rate_limit_status => (
     isa      => 'HashRef[Int]',
