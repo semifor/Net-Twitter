@@ -75,7 +75,7 @@ $nt = Net::Twitter->new(
     password => 'doh!',
 );
 
-my $t = TestUA->new($nt->ua);
+my $t = TestUA->new(1, $nt->ua);
 
 # run 2 passes to ensure the first pass isn't changing internal state
 for my $pass ( 1, 2 ) {
@@ -91,7 +91,7 @@ for my $test ( @tests ) {
             %args = %{$args->[0]};
         }
         else {
-           @{args}{@{$nt->meta->get_method($api_call)->required}} = @$args;
+            @{args}{@{$nt->meta->get_method($api_call)->original_method->required}} = @$args;
         }
     }
 

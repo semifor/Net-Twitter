@@ -15,7 +15,7 @@ use Net::Twitter;
 # payload!!!
 
 my $nt = Net::Twitter->new(legacy => 0, username => 'me', password => 'secret');
-my $t  = TestUA->new($nt->ua);
+my $t  = TestUA->new(1, $nt->ua);
 $t->response->content('{"error":"Logged out.","request":"/account/end_session.json"}');
 
 # This test will always succeed since we're spoofing the response

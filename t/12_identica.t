@@ -15,7 +15,7 @@ use_ok 'Net::Twitter';
 
 {
     my $nt = Net::Twitter->new(legacy => 0, identica => 1, username => 'me', password => 'secret');
-    my $t = TestUA->new($nt->ua);
+    my $t = TestUA->new(1, $nt->ua);
 
     $t->response->content('"true"');
     my $r = $nt->follows('night', 'day');

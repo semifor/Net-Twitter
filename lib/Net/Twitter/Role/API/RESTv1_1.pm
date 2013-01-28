@@ -35,7 +35,7 @@ Returns the 20 most recent mentions (statuses containing @username) for the
 authenticating user.
 
     aliases => [qw/replies mentions_timeline/],
-    path    => 'statuses/mentions_timeline',
+    path    => 'statuses/mentions',
     method  => 'GET',
     params  => [qw/since_id max_id count trim_user include_entities contributor_details/],
     booleans => [qw/trim_user include_entities contributor_details/],
@@ -358,6 +358,30 @@ EOT
     returns  => 'DirectMessage',
 );
 
+around new_direct_message => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $args = ref $_[-1] eq ref {} ? pop : {};
+    $args->{user} = shift unless exists $args->{user} || exists $args->{screen_name} || exists $args->{user_id};
+    $args->{text} = shift unless exists $args->{text};
+
+    croak "too many args" if @_;
+
+    if ( my $user = delete $args->{user} ) {
+        warn "user argument to new_direct_message deprecated; use screen_name or user_id";
+
+        if ( $user =~ /^\d+$/ ) {
+            $args->{user_id} = $user;
+        }
+        else {
+            $args->{screen_name} = $user;
+        }
+    }
+
+    return $self->$orig($args);
+};
+
 twitter_api_method friends_ids => (
     description => <<'EOT',
 Returns a reference to an array of numeric IDs for every user followed by the
@@ -380,6 +404,30 @@ EOT
     required => [qw//],
     booleans => [qw/stringify_ids/],
     returns  => 'HashRef|ArrayRef[Int]',
+);
+
+twitter_api_method followers => (
+    description => <<'',
+Returns a cursored collection of user objects for users following the specified user.
+
+    aliases => [qw/followers_list/],
+    path    => 'followers/list',
+    method  => 'GET',
+    params  => [qw/user_id screen_name cursor/],
+    required => [qw//],
+    returns => 'HashRef',
+);
+
+twitter_api_method friends => (
+    description => <<'',
+Returns a cursored collection of user objects for users followed by the specified user.
+
+    aliases => [qw/friends_list/],
+    path    => 'friends/list',
+    method  => 'GET',
+    params  => [qw/user_id screen_name cursor/],
+    required => [qw//],
+    returns => 'HashRef',
 );
 
 twitter_api_method followers_ids => (
@@ -926,7 +974,7 @@ twitter_api_method destroy_favorite => (
 Un-favorites the status specified in the ID parameter as the
 authenticating user.  Returns the un-favorited status.
 
-    path     => 'favorites/destroy/:id',
+    path     => 'favorites/destroy',
     method   => 'POST',
     params   => [qw/id include_entities/],
     booleans => [qw/include_entities/],
@@ -939,7 +987,7 @@ twitter_api_method create_favorite => (
 Favorites the status specified in the ID parameter as the
 authenticating user.  Returns the favorite status when successful.
 
-    path     => 'favorites/create/:id',
+    path     => 'favorites/create',
     method   => 'POST',
     params   => [qw/id include_entities/],
     booleans => [qw/include_entities/],
@@ -1565,6 +1613,21 @@ EOT
     required => [qw//],
     returns  => 'RateLimitStatus',
 );
+
+# translate resources arrayref to to a comma separated string 
+around rate_limit_status => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $args = ref $_[-1] eq ref {} ? pop : {};
+    croak "too many arguments" if @_;
+
+    if ( exists $args->{resources} && ref $args->{resources} eq ref [] ) {
+        $args->{resources} = join ',' => @{$args->{resources}};
+    }
+
+    return $self->$orig($args);
+};
 
 twitter_api_method test => (
     description => <<'',

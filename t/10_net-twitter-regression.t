@@ -28,7 +28,7 @@ my $nt = Net::Twitter->new(
     password => 'doh!',
 );
 
-my $t = TestUA->new($nt->ua);
+my $t = TestUA->new(1, $nt->ua);
 
 ok      $nt->friends_timeline,                        'friends_timeline no args';
 ok      $nt->create_friend('flanders'),               'create_friend scalar arg';
@@ -85,7 +85,7 @@ ok      $nt->public_timeline, 'public_timeline blankargs';
 
 ### v3.09000 ### Role BUILD methods not called need after BUILD => sub {...}
 $nt = Net::Twitter->new(ssl => 1, traits => [qw/API::REST API::Lists/]);
-$t  = TestUA->new($nt->ua);
+$t  = TestUA->new(1, $nt->ua);
 
 $r  = $nt->home_timeline;
 is    $t->request->uri->scheme, 'https', 'ssl used for REST';

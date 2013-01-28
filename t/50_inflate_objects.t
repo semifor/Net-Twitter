@@ -23,7 +23,7 @@ my $datetime_parser = do {
 my $dt = DateTime->now;
 $dt->subtract(minutes => 6);
 
-my $t = TestUA->new($nt->ua);
+my $t = TestUA->new(1, $nt->ua);
 $t->response->content(to_json([{
     text => 'Hello, twittersphere!',
     user => {

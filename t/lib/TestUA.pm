@@ -9,11 +9,11 @@ use HTTP::Response;
 use LWP::UserAgent 5.819;
 
 sub new {
-    my ($class, $ua, $content) = @_;
+    my ($class, $version, $ua, $content) = @_;
 
-    blessed $ua || croak 'Usage: TestUA->new($real_ua [, $content ])';
+    blessed $ua || croak 'Usage: TestUA->new($api_version, $real_ua [, $content ])';
 
-    my $self = bless { content => $content }, $class;
+    my $self = bless { version => $version, content => $content }, $class;
     $self->reset_response;
 
     $ua->add_handler(request_send => sub {
@@ -60,10 +60,12 @@ sub add_id_arg {
 sub method { shift->{request}->method }
 
 sub path {
-   # hack! remove the api version portion of the path (if any)
-   my $path = shift->{request}->uri->path;
-   $path =~ s{/\d+(?=/)}{};
-   return $path;
+    my $self = shift;
+
+    my $path = $self->{request}->uri->path;
+    my $re = qr/\/\Q${ \$self->{version} }\E(?=\/)/;
+    $path =~ s{$re}{};
+    return $path;
 }
 
 sub response {
