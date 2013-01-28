@@ -17,7 +17,7 @@ my $nt = Net::Twitter->new(
     password => 'secret',
 );
 
-my $t = TestUA->new($nt->ua);
+my $t = TestUA->new(1, $nt->ua);
 
 # things that should fail
 like exception { $nt->relationship_exists(qw/one two three/) }, qr/expected 2 args/, 'too many args';

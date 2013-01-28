@@ -14,7 +14,7 @@ my $nt = Net::Twitter->new(
     traits => [qw/API::REST API::Search API::TwitterVision/],
     username => 'me', password => 'secret',
 );
-my $t  = TestUA->new($nt->ua);
+my $t  = TestUA->new(1, $nt->ua);
 my @params = qw/one two three four five/;
 
 my @api_methods =

@@ -15,7 +15,7 @@ BEGIN {
 }
 
 my $nt  = Net::Twitter->new(username => 'me', password => 'secret');
-my $t   = TestUA->new($nt->ua);
+my $t   = TestUA->new(1, $nt->ua);
 my $msg = 'Test failure';
 
 my $r = $nt->update('Hello, world!');

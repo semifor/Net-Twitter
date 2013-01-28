@@ -16,7 +16,7 @@ my $nt = Net::Twitter->new(
     password => 'doh!',
 );
 
-my $t = TestUA->new($nt->ua);
+my $t = TestUA->new(1, $nt->ua);
 
 my $response = HTTP::Response->new(404, 'Not Found');
 $response->content(to_json({

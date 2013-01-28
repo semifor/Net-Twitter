@@ -15,7 +15,7 @@ my $nt = Net::Twitter->new(legacy => 1);
 isa_ok $nt, 'Net::Twitter';
 
 $nt = Net::Twitter->new(legacy => 0);
-my $t = TestUA->new($nt->ua);
+my $t = TestUA->new(1, $nt->ua);
 
 is exception { $nt->user_timeline }, undef, "lives without credentials";
 ok       !$t->request->header('Authorization'), "no auth header without credentials";
@@ -44,7 +44,7 @@ $nt = Net::Twitter->new(
     consumer_key        => 'com key',
     consumer_secret     => 'com secret',
 );
-$t = TestUA->new($nt->ua);
+$t = TestUA->new(1, $nt->ua);
 
 is exception { $nt->user_timeline }, undef, "lives without oauth tokens";
 ok      !$t->request->header('Authorization'), "no auth header without access tokens";
