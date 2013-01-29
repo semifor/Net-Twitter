@@ -1,6 +1,7 @@
 #!perl
 use warnings;
 use strict;
+use HTTP::Response;
 use Test::More;
 use lib qw(t/lib);
 

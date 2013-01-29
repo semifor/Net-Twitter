@@ -13,7 +13,7 @@ SYNOPSIS
 
       # As of 13-Aug-2010, Twitter requires OAuth for authenticated requests
       my $nt = Net::Twitter->new(
-          traits   => [qw/OAuth API::REST/],
+          traits   => [qw/API::RESTv1_1/],
           consumer_key        => $consumer_key,
           consumer_secret     => $consumer_secret,
           access_token        => $token,
@@ -39,6 +39,24 @@ SYNOPSIS
 DESCRIPTION
     This module provides a perl interface to the Twitter APIs. See
     <http://dev.twitter.com/doc> for a full description of the Twitter APIs.
+
+TWITTER API VERSION 1.1
+    Twitter will (perhaps has by the time you read this) deprecated version
+    1 of the API. Documentation, here, assumes version 1.1 of the API. For
+    version 1 documentation, see Net::Twitter::Role::API::REST.
+
+    To use Twitter API version 1.1, simply replace "API::REST" in the
+    "traits" argument to "new" with "API::RESTv1_1". The "Net::Twitter" API
+    is backwards compatible to the extent possible. If Twitter does not
+    provide a 1.1 endpoint for a version 1 call, "Net::Twitter" cannot
+    support it, of course.
+
+    Twitter API version 1.1 requires OAuth authentication for all calls.
+    There is no longer an IP address limit and a per-user limit. Each API
+    call has it's own rate limit. Most are 15 calls reset every 15 minutes.
+    Others are 180 calls, reset every 15 minutes. These limits may change.
+    For current rate limits, see
+    <https://dev.twitter.com/docs/rate-limiting/1.1/limits>.
 
 OMG! THE MOOSE!
     Net::Twitter is Moose based. Moose provides some advantages, including
@@ -85,8 +103,9 @@ METHODS AND ARGUMENTS
             constructed "Net::Twitter" object will support and how it
             handles errors. Possible values are:
 
-            API::REST
-                Provides support for the Twitter REST API methods.
+            API::RESTv1_1
+                Provides support for the Twitter REST API version 1.1
+                methods.
 
             API::Search
                 Provides support for the Twitter Search API methods.
@@ -165,16 +184,13 @@ METHODS AND ARGUMENTS
             Some examples of using the "traits" parameter in "new":
 
                 # provide support for *only* the REST API; throw exceptions on error
-                $nt = Net::Twitter->new(traits => ['API::REST']);
+                $nt = Net::Twitter->new(traits => ['API::RESTv1_1']);
 
                 # provide support for both the REST and Search APIs; wrap errors
-                $nt = Net::Twitter->new(traits => [qw/API::REST API::Search WrapError/]);
+                $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1 API::Search WrapError/]);
 
-                # ensure full legacy support
-                $nt = Net::Twitter->new(traits => ['Legacy']);
-
-                # currently, these 2 calls to new are equivalent:
-                $nt = Net::Twitter->new();
+                # Provide legacy support for applications written with Net::Twitter
+                # prior to version 3.0.
                 $nt = Net::Twitter->new(traits => ['Legacy']);
 
         legacy
@@ -186,7 +202,7 @@ METHODS AND ARGUMENTS
 
             is a shortcut for:
 
-                Net::Twitter->new(traits => ['API::REST']);
+                Net::Twitter->new(traits => ['API::RESTv1_1']);
 
             If set to 1, "new" constructs a "Net::Twitter" object with the
             "Legacy" trait.
@@ -245,7 +261,7 @@ METHODS AND ARGUMENTS
         apiurl
             The URL for the Twitter API. This defaults to
             "http://api.twitter.com/1". This option is available when the
-            "API::REST" trait is included.
+            "API::RESTv1_1" trait is included.
 
         apihost
             DEPRECATED - Setting the "apiurl" is sufficient.
@@ -253,13 +269,13 @@ METHODS AND ARGUMENTS
         apirealm
             A string containing the Twitter API realm used for Basic
             Authentication. It defaults to "Twitter API". This option is
-            available when the "API::REST" trait is included.
+            available when the "API::RESTv1_1" trait is included.
 
         identica
             If set to 1, "Net::Twitter" overrides the defaults for "apiurl",
             "apihost", and "apirealm" to "http://identi.ca/api",
             "identi.ca:80", and "Laconica API" respectively. It defaults to
-            0. This option is available when the "API::REST" trait is
+            0. This option is available when the "API::RESTv1_1" trait is
             included.
 
         consumer_key
@@ -308,14 +324,15 @@ METHODS AND ARGUMENTS
         by "Net::Twitter". Use it with caution.
 
 AUTHENTICATION
-    As of 31-Aug-2010, Twitter requires OAuth for authenticated requests.
+    With REST API version 1.1, all API calls require OAuth. Since
+    31-Aug-2010, version 1 required OAuth requests requiring authentication.
     Other Twitter compatible services, like Identi.ca, accept Basic
     Authentication. So, "Net::Twitter" provides support for both.
 
-    To set up OAuth, include the "OAuth" trait and include the
-    "consumer_key" and "consumer_secret" options to "new". See
-    Net::Twitter::Role::OAuth for more information on using OAuth, including
-    examples.
+    To set up OAuth, include the "consumer_key" and "consumer_secret"
+    options to "new". When they are provided, the "OAuth" trait will be
+    automatically included. See Net::Twitter::Role::OAuth for more
+    information on using OAuth, including examples.
 
     To set up Basic Authentication in "Net::Twitter", provide the "username"
     and "password" options to "new" or call the "credentials" method.
@@ -328,9 +345,8 @@ AUTHENTICATION
     (username and password for Basic Authentication; access tokens for
     OAuth).
 
-    This is probably only useful for the "rate_limit_status" method in the
-    REST API, since it returns different values for an authenticated and a
-    non-authenticated call.
+    This is probably only useful for non-Twitter sites that use the Twitter
+    API and support unauthenticated calls.
 
 API METHODS AND ARGUMENTS
     Most Twitter API methods take parameters. All Net::Twitter API methods
@@ -468,7 +484,7 @@ API METHODS AND ARGUMENTS
         "API::Lists" trait is not applied, this option is ignored.
 
 REST API Methods
-    These methods are provided when trait "API::REST" is included in the
+    These methods are provided when trait "API::RESTv1_1" is included in the
     "traits" option to "new".
 
   Common Parameters
@@ -513,7 +529,7 @@ REST API Methods
 
         Returns: HashRef
 
-    account_totals
+    account_totals DEPRECATED
 
         Parameters: *none*
         Required: *none*
@@ -553,21 +569,7 @@ REST API Methods
 
         Returns: Place
 
-    all_subscriptions
-    alias: all_lists
-    alias: list_subscriptions
-
-        Parameters: user_id, screen_name, count, cursor
-        Required: *none*
-
-        Returns all lists the authenticating or specified user subscribes
-        to, including their own. The user is specified using the user_id or
-        screen_name parameters. If no user is given, the authenticating user
-        is used.
-
-        Returns: ArrayRef[List]
-
-    block_exists
+    block_exists DEPRECATED
     block_exists(id)
 
         Parameters: id, user_id, screen_name, include_entities
@@ -580,8 +582,9 @@ REST API Methods
         Returns: BasicUser
 
     blocking
+    alias: blocks_list
 
-        Parameters: page, include_entities
+        Parameters: cursor, include_entities, skip_status
         Required: *none*
 
         Returns an array of user objects that the authenticating user is
@@ -590,8 +593,9 @@ REST API Methods
         Returns: ArrayRef[BasicUser]
 
     blocking_ids
+    alias: blocks_ids
 
-        Parameters: *none*
+        Parameters: cursor, stringify_ids
         Required: *none*
 
         Returns an array of numeric user ids the authenticating user is
@@ -621,12 +625,13 @@ REST API Methods
     create_block
     create_block(id)
 
-        Parameters: id, user_id, screen_name, include_entities
+        Parameters: user_id, screen_name, include_entities, skip_status
         Required: id
 
-        Blocks the user specified in the ID parameter as the authenticating
-        user. Returns the blocked user when successful. You can find out
-        more about blocking in the Twitter Support Knowledge Base.
+        Blocks the user specified in the "user_id" or "screen_name"
+        parameter as the authenticating user. Returns the blocked user when
+        successful. You can find out more about blocking in the Twitter
+        Support Knowledge Base.
 
         Returns: BasicUser
 
@@ -642,23 +647,26 @@ REST API Methods
         Returns: Status
 
     create_friend
-    create_friend(id)
+    alias: follow
     alias: follow_new
+    alias: create_friendship
 
-        Parameters: id, user_id, screen_name, follow, include_entities
-        Required: id
+        Parameters: user_id, screen_name, follow
+        Required: *none*
 
-        Befriends the user specified in the ID parameter as the
-        authenticating user. Returns the befriended user when successful.
-        Returns a string describing the failure condition when unsuccessful.
+        Follows the user specified in the "user_id" or "screen_name"
+        parameter as the authenticating user. Returns the befriended user
+        when successful. Returns a string describing the failure condition
+        when unsuccessful.
 
         Returns: BasicUser
 
     create_list
+    create_list(name)
 
         Parameters: list_id, slug, name, mode, description,
         owner_screen_name, owner_id
-        Required: *none*
+        Required: name
 
         Creates a new list for the authenticated user. Note that you can't
         create more than 20 lists per account.
@@ -700,11 +708,12 @@ REST API Methods
     destroy_block
     destroy_block(id)
 
-        Parameters: id, user_id, screen_name
+        Parameters: user_id, screen_name, include_entities, skip_status
         Required: id
 
-        Un-blocks the user specified in the ID parameter as the
-        authenticating user. Returns the un-blocked user when successful.
+        Un-blocks the user specified in the "user_id" or "screen_name"
+        parameter as the authenticating user. Returns the un-blocked user
+        when successful.
 
         Returns: BasicUser
 
@@ -717,6 +726,9 @@ REST API Methods
         Destroys the direct message specified in the required ID parameter.
         The authenticating user must be the recipient of the specified
         direct message.
+
+        Important: this method requires an access token with RWD (read,
+        write, and direct message) permisions.
 
         Returns: DirectMessage
 
@@ -734,19 +746,21 @@ REST API Methods
     destroy_friend
     destroy_friend(id)
     alias: unfollow
+    alias: destroy_friendship
 
-        Parameters: id, user_id, screen_name, include_entities
+        Parameters: user_id, screen_name
         Required: id
 
-        Discontinues friendship with the user specified in the ID parameter
-        as the authenticating user. Returns the un-friended user when
-        successful. Returns a string describing the failure condition when
-        unsuccessful.
+        Discontinues friendship with the user specified in the "user_id" or
+        "screen_name" parameter as the authenticating user. Returns the
+        un-friended user when successful. Returns a string describing the
+        failure condition when unsuccessful.
 
         Returns: BasicUser
 
     destroy_saved_search
     destroy_saved_search(id)
+    alias: delete_saved_search
 
         Parameters: id
         Required: id
@@ -759,7 +773,7 @@ REST API Methods
     destroy_status
     destroy_status(id)
 
-        Parameters: id, trim_user, include_entities
+        Parameters: id, trim_user
         Required: id
 
         Destroys the status specified by the required ID parameter. The
@@ -768,18 +782,21 @@ REST API Methods
         Returns: Status
 
     direct_messages
-    direct_messages(include_entities)
 
-        Parameters: since_id, max_id, count, page, include_entities
-        Required: include_entities
+        Parameters: since_id, max_id, count, page, include_entities,
+        skip_status
+        Required: *none*
 
         Returns a list of the 20 most recent direct messages sent to the
         authenticating user including detailed information about the sending
         and recipient users.
 
+        Important: this method requires an access token with RWD (read,
+        write, and direct message) permisions.
+
         Returns: ArrayRef[DirectMessage]
 
-    disable_notifications
+    disable_notifications DEPRECATED
     disable_notifications(id)
 
         Parameters: id, screen_name, include_entities
@@ -790,17 +807,7 @@ REST API Methods
 
         Returns: BasicUser
 
-    downtime_schedule DEPRECATED
-
-        Parameters: *none*
-        Required: *none*
-
-        Returns the same text displayed on <http://twitter.com/home> when a
-        maintenance window is scheduled.
-
-        Returns: Str
-
-    enable_notifications
+    enable_notifications DEPRECATED
     enable_notifications(id)
 
         Parameters: id, screen_name, include_entities
@@ -811,7 +818,7 @@ REST API Methods
 
         Returns: BasicUser
 
-    end_session
+    end_session DEPRECATED
 
         Parameters: *none*
         Required: *none*
@@ -824,7 +831,8 @@ REST API Methods
 
     favorites
 
-        Parameters: id, page, include_entities
+        Parameters: user_id, screen_name, count, since_id, max_id,
+        include_entities
         Required: *none*
 
         Returns the 20 most recent favorite statuses for the authenticating
@@ -832,38 +840,21 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
-    followers DEPRECATED
+    followers
+    alias: followers_list
 
-        Parameters: id, user_id, screen_name, cursor, include_entities
+        Parameters: user_id, screen_name, cursor
         Required: *none*
 
-        This method has been deprecated. Twitter intends to stop support for
-        it on May 14, 2012. Use "friends_ids" and "lookup_users" instead.
+        Returns a cursored collection of user objects for users following
+        the specified user.
 
-        Returns a reference to an array of the user's followers. If "id",
-        "user_id", or "screen_name" is not specified, the followers of the
-        authenticating user are returned. The returned users are ordered
-        from most recently followed to least recently followed.
-
-        Use the optional "cursor" parameter to retrieve users in pages of
-        100. When the "cursor" parameter is used, the return value is a
-        reference to a hash with keys "previous_cursor", "next_cursor", and
-        "users". The value of "users" is a reference to an array of the
-        user's friends. The result set isn't guaranteed to be 100 every time
-        as suspended users will be filtered out. Set the optional "cursor"
-        parameter to -1 to get the first page of users. Set it to the prior
-        return's value of "previous_cursor" or "next_cursor" to page forward
-        or backwards. When there are no prior pages, the value of
-        "previous_cursor" will be 0. When there are no subsequent pages, the
-        value of "next_cursor" will be 0.
-
-        Returns: HashRef|ArrayRef[User]
+        Returns: HashRef
 
     followers_ids
-    followers_ids(id)
 
-        Parameters: id, user_id, screen_name, cursor
-        Required: id
+        Parameters: user_id, screen_name, cursor, stringify_ids
+        Required: *none*
 
         Returns a reference to an array of numeric IDs for every user
         following the specified user. The order of the IDs may change from
@@ -883,40 +874,22 @@ REST API Methods
 
         Returns: HashRef|ArrayRef[Int]
 
-    friends DEPRECATED
-    alias: following
+    friends
+    alias: friends_list
 
-        Parameters: id, user_id, screen_name, cursor, include_entities
+        Parameters: user_id, screen_name, cursor
         Required: *none*
 
-        This method has been deprecated. Twitter intends to stop support for
-        it on May 14, 2012. Use "friends_ids" and "lookup_users" instead.
+        Returns a cursored collection of user objects for users followed by
+        the specified user.
 
-        Returns a reference to an array of the user's friends. If "id",
-        "user_id", or "screen_name" is not specified, the friends of the
-        authenticating user are returned. The returned users are ordered
-        from most recently followed to least recently followed.
-
-        Use the optional "cursor" parameter to retrieve users in pages of
-        100. When the "cursor" parameter is used, the return value is a
-        reference to a hash with keys "previous_cursor", "next_cursor", and
-        "users". The value of "users" is a reference to an array of the
-        user's friends. The result set isn't guaranteed to be 100 every time
-        as suspended users will be filtered out. Set the optional "cursor"
-        parameter to -1 to get the first page of users. Set it to the prior
-        return's value of "previous_cursor" or "next_cursor" to page forward
-        or backwards. When there are no prior pages, the value of
-        "previous_cursor" will be 0. When there are no subsequent pages, the
-        value of "next_cursor" will be 0.
-
-        Returns: Hashref|ArrayRef[User]
+        Returns: HashRef
 
     friends_ids
-    friends_ids(id)
     alias: following_ids
 
-        Parameters: id, user_id, screen_name, cursor
-        Required: id
+        Parameters: user_id, screen_name, cursor, stringify_ids
+        Required: *none*
 
         Returns a reference to an array of numeric IDs for every user
         followed by the specified user. The order of the IDs is reverse
@@ -938,17 +911,16 @@ REST API Methods
     friends_timeline DEPRECATED
     alias: following_timeline
 
-        Parameters: since_id, max_id, count, page, skip_user, trim_user,
-        include_entities, include_rts
+        Parameters: since_id, max_id, count, exclude_replies,
+        contributor_details, include_entities, trim_user
         Required: *none*
 
-        Returns the 20 most recent statuses posted by the authenticating
-        user and that user's friends. This is the equivalent of /home on the
-        Web.
+        Returns the 20 most recent statuses, including retweets, posted by
+        the authenticating user and that user's friends.
 
         Returns: ArrayRef[Status]
 
-    friendship_exists
+    friendship_exists DEPRECATED
     friendship_exists(user_a, user_b)
     alias: relationship_exists
     alias: follows
@@ -956,6 +928,12 @@ REST API Methods
         Parameters: user_id_a, user_id_b, screen_name_a, screen_name_b,
         user_a, user_b
         Required: user_a, user_b
+
+        This method is provided for backwards compitibility with Twitter API
+        V1.0. Twitter API V1.1 does not provide an endpoint for this call.
+        Instead, "show_friendship" is called, the result is inspected, and
+        an appropriate value is returned which can be evaluated in a boolean
+        context.
 
         Tests for the existence of friendship between two users. Will return
         true if user_a follows user_b, otherwise will return false.
@@ -976,10 +954,10 @@ REST API Methods
         Returns: Bool
 
     friendships_incoming
-    friendships_incoming(cursor)
+    alias: incoming_friendships
 
-        Parameters: cursor
-        Required: cursor
+        Parameters: cursor, stringify_ids
+        Required: *none*
 
         Returns an HASH ref with an array of numeric IDs in the "ids"
         element for every user who has a pending request to follow the
@@ -988,10 +966,10 @@ REST API Methods
         Returns: HashRef
 
     friendships_outgoing
-    friendships_outgoing(cursor)
+    alias: outgoing_friendships
 
-        Parameters: cursor
-        Required: cursor
+        Parameters: cursor, stringify_ids
+        Required: *none*
 
         Returns an HASH ref with an array of numeric IDs in the "ids"
         element for every protected user for whom the authenticating user
@@ -1060,6 +1038,7 @@ REST API Methods
         Returns: ArrayRef[Lanugage]
 
     get_list
+    alias: show_list
 
         Parameters: list_id, slug, owner_screen_name, owner_id
         Required: *none*
@@ -1071,13 +1050,15 @@ REST API Methods
 
     get_lists
     alias: list_lists
+    alias: all_subscriptions
 
-        Parameters: user_id, screen_name, cursor
+        Parameters: user_id, screen_name
         Required: *none*
 
-        Returns the lists of the specified (or authenticated) user. Private
-        lists will be included if the authenticated user is the same as the
-        user whose lists are being returned.
+        Returns all lists the authenticating or specified user subscribes
+        to, including their own. The user is specified using the "user_id"
+        or "screen_name" parameters. If no user is given, the authenticating
+        user is used.
 
         Returns: Hashref
 
@@ -1102,39 +1083,14 @@ REST API Methods
 
     home_timeline
 
-        Parameters: since_id, max_id, count, page, skip_user,
-        exclude_replies, contributor_details, include_rts, include_entities,
-        trim_user, include_my_retweet
+        Parameters: since_id, max_id, count, exclude_replies,
+        contributor_details, include_entities, trim_user
         Required: *none*
 
         Returns the 20 most recent statuses, including retweets, posted by
-        the authenticating user and that user's friends. This is the
-        equivalent of /timeline/home on the Web.
+        the authenticating user and that user's friends.
 
         Returns: ArrayRef[Status]
-
-    is_list_member
-
-        Parameters: owner_screen_name, owner_id, list_id, slug, user_id,
-        screen_name, include_entities, skip_status
-        Required: *none*
-
-        Check if the specified user is a member of the specified list.
-        Returns the user or undef.
-
-        Returns: Maybe[User]
-
-    is_list_subscriber
-    alias: is_subscribed_list
-
-        Parameters: owner_screen_name, owner_id, list_id, slug, user_id,
-        screen_name, include_entities, skip_status
-        Required: *none*
-
-        Check if the specified user is a subscriber of the specified list.
-        Returns the user or undef.
-
-        Returns: Maybe[User]
 
     list_members
 
@@ -1161,7 +1117,7 @@ REST API Methods
     list_statuses
 
         Parameters: list_id, slug, owner_screen_name, owner_id, since_id,
-        max_id, per_page, page, include_entities, include_rts
+        max_id, count, include_entities, include_rts
         Required: *none*
 
         Returns tweet timeline for members of the specified list.
@@ -1261,9 +1217,10 @@ REST API Methods
 
     mentions
     alias: replies
+    alias: mentions_timeline
 
-        Parameters: since_id, max_id, count, page, trim_user, include_rts,
-        include_entities
+        Parameters: since_id, max_id, count, trim_user, include_entities,
+        contributor_details
         Required: *none*
 
         Returns the 20 most recent mentions (statuses containing @username)
@@ -1272,16 +1229,19 @@ REST API Methods
         Returns: ArrayRef[Status]
 
     new_direct_message
-    new_direct_message(user, text)
+    new_direct_message(text)
 
-        Parameters: user, text, screen_name, user_id, include_entities
-        Required: user, text
+        Parameters: user_id, screen_name, text
+        Required: text
 
         Sends a new direct message to the specified user from the
         authenticating user. Requires both the user and text parameters.
         Returns the sent message when successful. In order to support
         numeric screen names, the "screen_name" or "user_id" parameters may
         be used instead of "user".
+
+        Important: this method requires an access token with RWD (read,
+        write, and direct message) permisions.
 
         Returns: DirectMessage
 
@@ -1295,27 +1255,32 @@ REST API Methods
 
         Returns: ArrayRef[UserIDs]
 
-    public_timeline
+    oembed
 
-        Parameters: skip_user, trim_user, include_entities
+        Parameters: id, url, maxwidth, hide_media, hide_thread, omit_script,
+        align, related, lang
         Required: *none*
 
-        Returns the 20 most recent statuses from non-protected users who
-        have set a custom user icon. Does not require authentication. Note
-        that the public timeline is cached for 60 seconds so requesting it
-        more often than that is a waste of resources.
+        Updates the authenticating user's current status and attaches meda
+        for upload. In other words, it creates a Tweet with a picture
+        attached.
 
-        If user credentials are provided, "public_timeline" calls are
-        authenticated, so they count against the authenticated user's rate
-        limit. Use "->public_timeline({ authenticate => 0 })" to make an
-        unauthenticated call which will count against the calling IP
-        address' rate limit, instead.
+        Returns: Status
 
-        Returns: ArrayRef[Status]
+    profile_banner
+
+        Parameters: user_id, screen_name
+        Required: *none*
+
+        Returns a hash reference mapping available size varations to URLs
+        that can be used to retrieve each variation of the banner.
+
+        Returns: HashRef
 
     rate_limit_status
+    rate_limit_status(resources)
 
-        Parameters: *none*
+        Parameters: resources
         Required: *none*
 
         Returns the remaining number of API requests available to the
@@ -1329,7 +1294,7 @@ REST API Methods
 
         Returns: RateLimitStatus
 
-    related_results
+    related_results DEPRECATED
     related_results(id)
 
         Parameters: id
@@ -1342,10 +1307,19 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
+    remove_profile_banner
+
+        Parameters: *none*
+        Required: *none*
+
+        Removes the uploaded profile banner for the authenticating user.
+
+        Returns: Nothing
+
     report_spam
     report_spam(id)
 
-        Parameters: id, user_id, screen_name, include_entities
+        Parameters: user_id, screen_name
         Required: id
 
         The user specified in the id is blocked by the authenticated user
@@ -1356,16 +1330,14 @@ REST API Methods
     retweet
     retweet(id)
 
-        Parameters: id, include_entities, trim_user
+        Parameters: idtrim_user
         Required: id
 
-        Retweets a tweet. Requires the id parameter of the tweet you are
-        retweeting. Returns the original tweet with retweet details
-        embedded.
+        Retweets a tweet.
 
         Returns: Status
 
-    retweeted_by
+    retweeted_by DEPRECATED
     retweeted_by(id)
 
         Parameters: id, count, page, trim_user, include_entities
@@ -1375,7 +1347,7 @@ REST API Methods
 
         Returns: ArrayRef[User]
 
-    retweeted_by_ids
+    retweeted_by_ids DEPRECATED
     retweeted_by_ids(id)
 
         Parameters: id, count, page, trim_user, include_entities
@@ -1386,7 +1358,7 @@ REST API Methods
 
         Returns: ArrayRef[User]
 
-    retweeted_by_me
+    retweeted_by_me DEPRECATED
 
         Parameters: since_id, max_id, count, page, trim_user,
         include_entities
@@ -1397,7 +1369,7 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
-    retweeted_by_user
+    retweeted_by_user DEPRECATED
     retweeted_by_user(id)
 
         Parameters: id, user_id, screen_name
@@ -1411,7 +1383,7 @@ REST API Methods
 
         Returns: ArrayRef
 
-    retweeted_to_me
+    retweeted_to_me DEPRECATED
 
         Parameters: since_id, max_id, count, page
         Required: *none*
@@ -1421,7 +1393,7 @@ REST API Methods
 
         Returns: ArrayRef[Status]
 
-    retweeted_to_user
+    retweeted_to_user DEPRECATED
     retweeted_to_user(id)
 
         Parameters: id, user_id, screen_name
@@ -1438,7 +1410,7 @@ REST API Methods
     retweets
     retweets(id)
 
-        Parameters: id, count, trim_user, include_entities
+        Parameters: id, count, trim_user
         Required: id
 
         Returns up to 100 of the first retweets of a given tweet.
@@ -1448,8 +1420,8 @@ REST API Methods
     retweets_of_me
     alias: retweeted_of_me
 
-        Parameters: since_id, max_id, count, page, trim_user,
-        include_entities
+        Parameters: since_id, max_id, count, trim_user, include_entities,
+        include_user_entities
         Required: *none*
 
         Returns the 20 most recent tweets of the authenticated user that
@@ -1460,7 +1432,7 @@ REST API Methods
     reverse_geocode
     reverse_geocode(lat, long)
 
-        Parameters: lat, long, accuracy, granularity, max_results
+        Parameters: lat, long, accuracy, granularity, max_results, callback
         Required: lat, long
 
         Search for places (cities and neighborhoods) that can be attached to
@@ -1514,7 +1486,27 @@ REST API Methods
 
         Returns: ArrayRef[SavedSearch]
 
+    search
+    search(q)
+
+        Parameters: q, count, callback, lang, locale, rpp, since_id, max_id,
+        until, geocode, result_type, include_entities
+        Required: q
+
+        Returns a HASH reference with some meta-data about the query
+        including the "next_page", "refresh_url", and "max_id". The statuses
+        are returned in "results". To iterate over the results, use
+        something similar to:
+
+            my $r = $nt->search($searh_term);
+            for my $status ( @{$r->{statuses}} ) {
+                print "$status->{text}\n";
+            }
+
+        Returns: HashRef
+
     sent_direct_messages
+    alias: direct_messages_sent
 
         Parameters: since_id, max_id, page, count, include_entities
         Required: *none*
@@ -1523,31 +1515,61 @@ REST API Methods
         authenticating user including detailed information about the sending
         and recipient users.
 
+        Important: this method requires an access token with RWD (read,
+        write, and direct message) permisions.
+
         Returns: ArrayRef[DirectMessage]
 
     show_direct_message
     show_direct_message(id)
 
-        Parameters: id, include_entities
+        Parameters: id
         Required: id
 
         Returns a single direct message, specified by an id parameter. Like
         the "direct_messages" request, this method will include the user
         objects of the sender and recipient. Requires authentication.
 
+        Important: this method requires an access token with RWD (read,
+        write, and direct message) permisions.
+
         Returns: HashRef
 
     show_friendship
-    show_friendship(id)
     alias: show_relationship
 
-        Parameters: source_id, source_screen_name, target_id, target_id_name
-        Required: id
+        Parameters: source_id, source_screen_name, target_id,
+        target_screen_name
+        Required: *none*
 
         Returns detailed information about the relationship between two
         users.
 
         Returns: Relationship
+
+    show_list_member
+    alias: is_list_member
+
+        Parameters: owner_screen_name, owner_id, list_id, slug, user_id,
+        screen_name, include_entities, skip_status
+        Required: *none*
+
+        Check if the specified user is a member of the specified list.
+        Returns the user or undef.
+
+        Returns: Maybe[User]
+
+    show_list_subscriber
+    alias: is_list_subscriber
+    alias: is_subscriber_lists
+
+        Parameters: owner_screen_name, owner_id, list_id, slug, user_id,
+        screen_name, include_entities, skip_status
+        Required: *none*
+
+        Returns the user if they are a subscriber.
+
+        Returns: User
 
     show_saved_search
     show_saved_search(id)
@@ -1563,7 +1585,7 @@ REST API Methods
     show_status
     show_status(id)
 
-        Parameters: id, trim_user, include_entities
+        Parameters: id, trim_user, include_entities, include_my_retweet
         Required: id
 
         Returns a single status, specified by the id parameter. The status's
@@ -1572,10 +1594,9 @@ REST API Methods
         Returns: Status
 
     show_user
-    show_user(id)
 
-        Parameters: id, screen_name, include_entities
-        Required: id
+        Parameters: user_id, screen_name, include_entities
+        Required: *none*
 
         Returns extended information of a given user, specified by ID or
         screen name as per the required id parameter. This information
@@ -1634,30 +1655,18 @@ REST API Methods
 
         Returns: ArrayRef
 
-    test
+    test DEPRECATED
 
         Parameters: *none*
         Required: *none*
 
         Returns the string "ok" status code.
 
-        Returns: Str
-
-    trends DEPRECATED
-
-        Parameters: *none*
-        Required: *none*
-
-        Returns the top ten queries that are currently trending on Twitter.
-        The response includes the time of the request, the name of each
-        trending topic, and the url to the Twitter Search results page for
-        that topic.
-
-        Returns: ArrayRef[Query]
+        Returns: Hash
 
     trends_available
 
-        Parameters: lat, long
+        Parameters: *none*
         Required: *none*
 
         Returns the locations with trending topic information. The response
@@ -1667,8 +1676,26 @@ REST API Methods
         human-readable information such as a the location's canonical name
         and country.
 
-        When the optional "lat" and "long" parameters are passed, the
-        available trend locations are sorted by distance from that location,
+        For backwards compatibility, this method accepts optional "lat" and
+        "long" parameters. You should call "trends_closest" directly,
+        instead.
+
+        Use the WOEID returned in the location object to query trends for a
+        specific location.
+
+        Returns: ArrayRef[Location]
+
+    trends_closest
+
+        Parameters: lat, long
+        Required: *none*
+
+        Returns the locations with trending topic information. The response
+        is an array of "locations" that encode the location's WOEID (a
+        Yahoo! Where On Earth ID
+        <http://developer.yahoo.com/geo/geoplanet/>) and some other
+        human-readable information such as a the location's canonical name
+        and country. The results are sorted by distance from that location,
         nearest to farthest.
 
         Use the WOEID returned in the location object to query trends for a
@@ -1676,7 +1703,7 @@ REST API Methods
 
         Returns: ArrayRef[Location]
 
-    trends_current
+    trends_current DEPRECATED
     trends_current(exclude)
 
         Parameters: exclude
@@ -1688,7 +1715,7 @@ REST API Methods
 
         Returns: HashRef
 
-    trends_daily
+    trends_daily DEPRECATED
 
         Parameters: date, exclude
         Required: *none*
@@ -1697,13 +1724,14 @@ REST API Methods
 
         Returns: HashRef
 
-    trends_location
-    trends_location(woeid)
+    trends_place
+    trends_place(id)
+    alias: trends_location
 
-        Parameters: woeid
-        Required: woeid
+        Parameters: id, exclude
+        Required: id
 
-        Returns the top 10 trending topics for a specific location. The
+        Returns the top 10 trending topics for a specific WOEID. The
         response is an array of "trend" objects that encode the name of the
         trending topic, the query parameter that can be used to search for
         the topic on Search, and the direct URL that can be issued against
@@ -1714,7 +1742,7 @@ REST API Methods
 
         Returns: ArrayRef[Trend]
 
-    trends_weekly
+    trends_weekly DEPRECATED
 
         Parameters: date, exclude
         Required: *none*
@@ -1736,7 +1764,7 @@ REST API Methods
     update(status)
 
         Parameters: status, lat, long, place_id, display_coordinates,
-        in_reply_to_status_id, trim_user, include_entities
+        in_reply_to_status_id, trim_user
         Required: status
 
         Updates the authenticating user's status. Requires the status
@@ -1783,23 +1811,31 @@ REST API Methods
 
         Returns: Status
 
+    update_account_settings
+
+        Parameters: trend_location_woid, sleep_time_enabled,
+        start_sleep_time, end_sleep_time, time_zone, lang
+        Required: *none*
+
+        Updates the authenticating user's settings.
+
+        Returns: HashRef
+
     update_delivery_device
     update_delivery_device(device)
 
-        Parameters: device
+        Parameters: device, include_entities
         Required: device
 
         Sets which device Twitter delivers updates to for the authenticating
-        user. Sending none as the device parameter will disable IM or SMS
-        updates.
+        user. Sending none as the device parameter will disable SMS updates.
 
         Returns: BasicUser
 
     update_friendship
-    update_friendship(id)
 
-        Parameters: id, user_id, screen_name, device, retweets
-        Required: id
+        Parameters: user_id, screen_name, device, retweets
+        Required: *none*
 
         Allows you enable or disable retweets and device notifications from
         the specified user. All other values are assumed to be false.
@@ -1833,8 +1869,8 @@ REST API Methods
 
     update_profile
 
-        Parameters: name, email, url, location, description,
-        include_entities
+        Parameters: name, url, location, description, include_entities,
+        skip_status
         Required: *none*
 
         Sets values that users are able to set under the "Account" tab of
@@ -1845,25 +1881,49 @@ REST API Methods
         Returns: ExtendedUser
 
     update_profile_background_image
-    update_profile_background_image(image)
 
-        Parameters: image, use
-        Required: image
+        Parameters: image, tile, include_entities, skip_status, use
+        Required: *none*
 
         Updates the authenticating user's profile background image. The
         "image" parameter must be an arrayref with the same interpretation
-        as the "image" parameter in the "update_profile_image" method. The
-        "use" parameter allows you to specify whether to use the uploaded
-        profile background or not. See that method's documentation for
-        details.
+        as the "image" parameter in the "update_profile_image" method. See
+        that method's documentation for details. The "use" parameter allows
+        you to specify whether to use the uploaded profile background or
+        not.
 
         Returns: ExtendedUser
+
+    update_profile_banner
+    update_profile_banner(banner)
+
+        Parameters: banner, width, height, offset_left, offset_top
+        Required: banner
+
+        Uploads a profile banner on behalf of the authenticating user. The
+        "image" parameter is an arrayref with the following interpretation:
+
+          [ $file ]
+          [ $file, $filename ]
+          [ $file, $filename, Content_Type => $mime_type ]
+          [ undef, $filename, Content_Type => $mime_type, Content => $raw_image_data ]
+
+        The first value of the array ($file) is the name of a file to open.
+        The second value ($filename) is the name given to Twitter for the
+        file. If $filename is not provided, the basename portion of $file is
+        used. If $mime_type is not provided, it will be provided
+        automatically using LWP::MediaTypes::guess_media_type().
+
+        $raw_image_data can be provided, rather than opening a file, by
+        passing "undef" as the first array value.
+
+        Returns: Nothing
 
     update_profile_colors
 
         Parameters: profile_background_color, profile_text_color,
         profile_link_color, profile_sidebar_fill_color,
-        profile_sidebar_border_color
+        profile_sidebar_border_color, include_entities, skip_status
         Required: *none*
 
         Sets one or more hex values that control the color scheme of the
@@ -1875,7 +1935,7 @@ REST API Methods
     update_profile_image
     update_profile_image(image)
 
-        Parameters: image
+        Parameters: image, include_entities, skip_status
         Required: image
 
         Updates the authenticating user's profile image. The "image"
@@ -1898,11 +1958,11 @@ REST API Methods
         Returns: ExtendedUser
 
     update_with_media
-    update_with_media(status, media)
+    update_with_media(status, media[])
 
         Parameters: status, media[], possibly_sensitive,
         in_reply_to_status_id, lat, long, place_id, display_coordinates
-        Required: status, media
+        Required: status, media[]
 
         Updates the authenticating user's status and attaches media for
         upload.
@@ -1945,16 +2005,26 @@ REST API Methods
 
         Returns: ArrayRef
 
+    user_suggestions_for
+    user_suggestions_for(category)
+    alias: follow_suggestions
+
+        Parameters: category, lang
+        Required: category
+
+        Access the users in a given category of the Twitter suggested user
+        list.
+
+        Returns: ArrayRef
+
     user_timeline
 
-        Parameters: id, user_id, screen_name, since_id, max_id, count, page,
-        skip_user, trim_user, include_entities, include_rts
+        Parameters: user_id, screen_name, since_id, max_id, count,
+        trim_user, exclude_replies, include_rts, contributor_details
         Required: *none*
 
-        Returns the 20 most recent statuses posted from the authenticating
-        user. It's also possible to request another user's timeline via the
-        id parameter. This is the equivalent of the Web /archive page for
-        your own user, or the profile page for a third party.
+        Returns the 20 most recent statuses posted by the authenticating
+        user, or the user specified by "screen_name" or "user_id".
 
         Returns: ArrayRef[Status]
 
@@ -1963,7 +2033,7 @@ REST API Methods
     alias: find_people
     alias: search_users
 
-        Parameters: q, per_page, page, include_entities
+        Parameters: q, per_page, page, count, include_entities
         Required: q
 
         Run a search for users similar to Find People button on Twitter.com;
@@ -1975,9 +2045,8 @@ REST API Methods
         Returns: ArrayRef[Users]
 
     verify_credentials
-    verify_credentials(include_entities)
 
-        Parameters: include_entities
+        Parameters: include_entities, skip_status
         Required: *none*
 
         Returns an HTTP 200 OK response code and a representation of the
