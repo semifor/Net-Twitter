@@ -1,3 +1,6 @@
+4.00000_01 2013-01-28
+    - Added Twitter API version 1.1 support
+
 3.18004 2012-10-15
     - Allow extra parameters to get_auth*_url methods (this accommodates
       Twitter's optional force_login and screen_name parameters to those
