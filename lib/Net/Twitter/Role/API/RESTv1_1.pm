@@ -35,7 +35,7 @@ Returns the 20 most recent mentions (statuses containing @username) for the
 authenticating user.
 
     aliases => [qw/replies mentions_timeline/],
-    path    => 'statuses/mentions',
+    path    => 'statuses/mentions_timeline',
     method  => 'GET',
     params  => [qw/since_id max_id count trim_user include_entities contributor_details/],
     booleans => [qw/trim_user include_entities contributor_details/],
@@ -206,7 +206,7 @@ twitter_api_method update_with_media => (
     params      => [qw/
         status media[] possibly_sensitive in_reply_to_status_id lat long place_id display_coordinates
     /],
-    required    => [qw/status media/],
+    required    => [qw/status media[]/],
     booleans    => [qw/possibly_sensitive display_coordinates/],
     returns     => 'Status',
     description => <<'EOT',
@@ -295,6 +295,7 @@ Important: this method requires an access token with RWD (read, write, and
 direct message) permisions.
 EOT
 
+    aliases  => [qw/direct_messages_sent/],
     path     => 'direct_messages/sent',
     method   => 'GET',
     params   => [qw/since_id max_id page count include_entities/],
@@ -475,6 +476,7 @@ Returns an HASH ref with an array of numeric IDs in the C<ids> element for
 every user who has a pending request to follow the authenticating user.
 EOT
 
+    aliases  => [qw/incoming_friendships/],
     path     => 'friendships/incoming',
     method   => 'GET',
     params   => [qw/cursor stringify_ids/],
@@ -490,6 +492,7 @@ every protected user for whom the authenticating user has a pending follow
 request.
 EOT
 
+    aliases  => [qw/outgoing_friendships/],
     path => 'friendships/outgoing',
     method => 'GET',
     params   => [qw/cursor stringify_ids/],
@@ -918,42 +921,44 @@ Returns an array of users who can contribute to the specified account.
 
 );
 
-twitter_api_method user_suggestions_for => (
-    description => <<'',
-Access the users in a given category of the Twitter suggested user list.
-Twitter recommends caching results for no more than one hour.
+twitter_api_method suggestion_categories => (
+    path        => 'users/suggestions',
+    method      => 'GET',
+    params      => [],
+    required    => [],
+    returns     => 'ArrayRef',
+    description => <<''
+Returns the list of suggested user categories. The category slug can be used in
+the C<user_suggestions> API method get the users in that category .  Does not
+require authentication.
 
+);
+
+twitter_api_method user_suggestions_for => (
+    aliases     => [qw/follow_suggestions/],
     path        => 'users/suggestions/:category',
     method      => 'GET',
     params      => [qw/category lang/],
     required    => [qw/category/],
     returns     => 'ArrayRef',
-);
+    description => <<''
+Access the users in a given category of the Twitter suggested user list.
 
-twitter_api_method suggestion_categories => (
-    description => <<'',
-Returns the list of suggested user categories. The category slug can be used in
-the C<user_suggestions> API method get the users in that category .  Does not
-require authentication.
-
-    path        => 'users/suggestions',
-    method      => 'GET',
-    params      => [qw/lang/],
-    required    => [],
-    returns     => 'ArrayRef',
 );
 
 twitter_api_method user_suggestions => (
-    description => <<'',
-Access the users in a given category of the Twitter suggested user list and
-return their most recent status if they are not a protected user.
-
     aliases     => [qw/follow_suggestions/],
     path        => 'users/suggestions/:category/members',
     method      => 'GET',
     params      => [qw/category lang/],
     required    => [qw/category/],
     returns     => 'ArrayRef',
+    description => <<''
+Access the users in a given category of the Twitter suggested user list and
+return their most recent status if they are not a protected user. Currently
+supported values for optional parameter C<lang> are C<en>, C<fr>, C<de>, C<es>,
+C<it>.  Does not require authentication.
+
 );
 
 twitter_api_method favorites => (
@@ -1221,6 +1226,7 @@ twitter_api_method get_list => (
 Returns the specified list. Private lists will only be shown if the
 authenticated user owns the specified list.
 
+    aliases     => [qw/show_list/],
     path        => 'lists/show',
     method      => 'GET',
     params      => [qw/list_id slug owner_screen_name owner_id/],
@@ -1303,6 +1309,7 @@ twitter_api_method destroy_saved_search => (
 Destroys a saved search. The search, specified by C<id>, must be owned
 by the authenticating user.
 
+    aliases  => [qw/delete_saved_search/],
     path     => 'saved_searches/destroy/:id',
     method   => 'POST',
     params   => [qw/id/],
@@ -1522,7 +1529,7 @@ Use the WOEID returned in the location object to query trends for a specific
 location.
 EOT
 
-    path        => 'trends/available',
+    path        => 'trends/closest',
     method      => 'GET',
     params      => [qw/lat long/],
     required    => [],
@@ -1535,7 +1542,7 @@ twitter_api_method report_spam => (
     description => <<'',
 The user specified in the id is blocked by the authenticated user and reported as a spammer.
 
-    path     => 'report_spam',
+    path     => 'users/report_spam',
     method   => 'POST',
     params   => [qw/user_id screen_name/],
     required => [qw/id/],
@@ -1676,11 +1683,10 @@ retweeted by others.
     aliases   => [qw/retweeted_of_me/],
     path      => 'statuses/retweets_of_me',
     method    => 'GET',
-    params    => [qw/since_id max_id count page trim_user include_entities/],
+    params    => [qw/since_id max_id count trim_user include_entities include_user_entities/],
     booleans  => [qw/trim_user include_entities/],
     required  => [],
     returns   => 'ArrayRef[Status]',
-    deprecated => sub { croak "$_[0] not available in Twitter API V1.1" },
 );
 
 twitter_api_method no_retweet_ids => (
@@ -1688,12 +1694,11 @@ twitter_api_method no_retweet_ids => (
 Returns an ARRAY ref of user IDs for which the authenticating user does not
 want to receive retweets.
 
-    path     => 'friendships/no_retweet_ids',
+    path     => 'friendships/no_retweets/ids',
     method   => 'GET',
     params   => [],
     required => [],
     returns  => 'ArrayRef[UserIDs]',
-    deprecated => sub { croak "$_[0] not available in Twitter API V1.1" },
 );
 
 twitter_api_method end_session => (
@@ -1912,6 +1917,56 @@ response. This method is only available to users who have access to
     required    => [qw/id/],
     returns     => 'ArrayRef[Status]',
     deprecated => sub { croak "$_[0] not available in Twitter API V1.1" },
+);
+
+twitter_api_method remove_profile_banner => (
+    description => <<'',
+Removes the uploaded profile banner for the authenticating user.
+
+    path     => 'account/remove_profile_banner',
+    method   => 'POST',
+    params   => [qw//],
+    required => [qw//],
+    returns  => 'Nothing',
+);
+
+twitter_api_method update_profile_banner => (
+    description => <<'EOT',
+Uploads a profile banner on behalf of the authenticating user.  The C<image>
+parameter is an arrayref with the following interpretation:
+
+  [ $file ]
+  [ $file, $filename ]
+  [ $file, $filename, Content_Type => $mime_type ]
+  [ undef, $filename, Content_Type => $mime_type, Content => $raw_image_data ]
+
+The first value of the array (C<$file>) is the name of a file to open.  The
+second value (C<$filename>) is the name given to Twitter for the file.  If
+C<$filename> is not provided, the basename portion of C<$file> is used.  If
+C<$mime_type> is not provided, it will be provided automatically using
+L<LWP::MediaTypes::guess_media_type()>.
+
+C<$raw_image_data> can be provided, rather than opening a file, by passing
+C<undef> as the first array value.
+EOT
+
+    path     => 'account/update_profile_banner',
+    method   => 'POST',
+    params   => [qw/banner width height offset_left offset_top/],
+    required => [qw/banner/],
+    returns  => 'Nothing',
+);
+
+twitter_api_method profile_banner => (
+    description => <<'',
+Returns a hash reference mapping available size varations to URLs that can be
+used to retrieve each variation of the banner.
+
+    path     => 'users/profile_banner',
+    method   => 'GET',
+    params   => [qw/user_id screen_name/],
+    required => [qw//],
+    returns  => 'HashRef',
 );
 
 # infer screen_name or user_id from positional args for backwards compat
