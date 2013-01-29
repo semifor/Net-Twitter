@@ -1,3 +1,6 @@
+4.00000_01 2013-01-28
+    - Added Twitter API version 1.1 support
+
 3.18003 2012-06-27
     - Use path statuses/mentions, not statuses/replies
 
