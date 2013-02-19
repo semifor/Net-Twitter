@@ -2,7 +2,6 @@
 use warnings;
 use strict;
 use Template;
-use lib qw(lib);
 use Net::Twitter;
 
 my ($version, $input, $output) = @ARGV;
