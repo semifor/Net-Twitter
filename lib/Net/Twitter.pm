@@ -12,11 +12,6 @@ has '_trait_namespace' => (
     default => 'Net::Twitter::Role',
 );
 
-# use *all* digits for fBSD ports
-our $VERSION = '4.00000_02';
-
-$VERSION = eval $VERSION; # numify for warning-free dev releases
-
 # See Net/Twitter.pod for documentation, Net/Twitter/Core.pm for implementation.
 #
 # For transparent back compat, Net::Twitter->new() creates a Net::Twitter::Core
@@ -97,7 +92,7 @@ sub _create_anon_class {
             push @comps, $t;
         }
 
-        my $ver = $VERSION;
+        my $ver = $Net::Twitter::VERSION;
         $ver =~ s/\W/_/g;
 
         return __PACKAGE__ . "_v${ver}_" .  join '__', 'with', sort @comps;
