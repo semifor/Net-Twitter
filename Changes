@@ -1,3 +1,7 @@
+4.00000_03 2013-02-19
+    - Fixed: needed skip directives for dzil's AutoPrereqs plugin
+    - Stripped version numbers---let dzil put them in
+
 4.00000_02 2013-02-19
     - use Dist::Zilla instead of Module::Install
 
