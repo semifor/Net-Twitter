@@ -55,6 +55,11 @@ sub twitter_api_method {
             $args->{$_} = join ',' => @{ $args->{$_} } if ref $args->{$_} eq 'ARRAY';
         }
 
+	# remove remaining duplicates:
+	for ( keys %$args ) {
+	    $args->{$_} = $args->{$_}[0] if ref $args->{$_} eq 'ARRAY';
+	}
+
         $self->_remap_legacy_synthetic_args($args);
 
         croak sprintf "$name expected %d args", scalar @$arg_names if @_ > @$arg_names;
