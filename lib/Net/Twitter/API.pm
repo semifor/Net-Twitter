@@ -56,8 +56,18 @@ sub twitter_api_method {
         }
 
 	# remove remaining duplicates:
-	for ( keys %$args ) {
-	    $args->{$_} = $args->{$_}[0] if ref $args->{$_} eq 'ARRAY';
+	foreach my $key  ( keys %$args ) {
+	    next if grep { $key eq $_ } (qw/media image/);
+
+	    if(ref $args->{$key} eq 'ARRAY') {
+		my %seen;
+		$seen{$_}++ for @{$args->{$key}};
+		if(scalar keys %seen == 1) {
+		    $args->{$key} = $args->{$key}[0];
+		} else {
+		    $args->{$key} = [ keys %seen ];
+		}
+	    }
 	}
 
         $self->_remap_legacy_synthetic_args($args);
