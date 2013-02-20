@@ -1,4 +1,8 @@
 package Net::Twitter::Core;
+{
+    $Net::Twitter::Core::VERSION = '4.00000_03';
+}
+
 use 5.008001;
 use Moose;
 use MooseX::Aliases;

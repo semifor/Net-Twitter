@@ -92,7 +92,7 @@ sub _create_anon_class {
             push @comps, $t;
         }
 
-        my $ver = $Net::Twitter::VERSION;
+        my $ver = $Net::Twitter::Core::VERSION;
         $ver =~ s/\W/_/g;
 
         return __PACKAGE__ . "_v${ver}_" .  join '__', 'with', sort @comps;
