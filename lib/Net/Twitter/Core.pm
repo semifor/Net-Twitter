@@ -313,6 +313,8 @@ sub _user_or_undef {
 
 __END__
 
+=for Pod::Coverage BUILD credentials
+
 =head1 NAME
 
 Net::Twitter::Core - Net::Twitter implementation
