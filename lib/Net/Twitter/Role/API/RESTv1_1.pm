@@ -238,7 +238,7 @@ EOT
 
 twitter_api_method oembed => (
     description => <<'',
-Updates the authenticating user's current status and attaches meda for upload.
+Updates the authenticating user's current status and attaches media for upload.
 In other words, it creates a Tweet with a picture attached.    
 
     method   => 'GET',
@@ -275,7 +275,7 @@ Returns a list of the 20 most recent direct messages sent to the authenticating
 user including detailed information about the sending and recipient users.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages',
@@ -292,7 +292,7 @@ Returns a list of the 20 most recent direct messages sent by the authenticating
 user including detailed information about the sending and recipient users.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     aliases  => [qw/direct_messages_sent/],
@@ -311,7 +311,7 @@ the C<direct_messages> request, this method will include the
 user objects of the sender and recipient.  Requires authentication.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages/show',
@@ -329,7 +329,7 @@ The authenticating user must be the recipient of the specified direct
 message.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages/destroy',
@@ -348,7 +348,7 @@ successful.  In order to support numeric screen names, the C<screen_name> or
 C<user_id> parameters may be used instead of C<user>.
 
 Important: this method requires an access token with RWD (read, write, and
-direct message) permisions.
+direct message) permissions.
 EOT
 
     path     => 'direct_messages/new',
@@ -577,7 +577,7 @@ around show_friendship => sub {
 # provided for backwards compatibility
 twitter_api_method friendship_exists => (
     description => <<'EOT',
-This method is provided for backwards compitibility with Twitter API V1.0.
+This method is provided for backwards compatibility with Twitter API V1.0.
 Twitter API V1.1 does not provide an endpoint for this call. Instead,
 C<show_friendship> is called, the result is inspected, and an appropriate value
 is returned which can be evaluated in a boolean context.
@@ -1269,7 +1269,7 @@ EOT
     returns     => 'List',
 );
 
-## saved searhces ##
+## saved searches ##
 
 twitter_api_method saved_searches => (
     description => <<'',
@@ -1959,7 +1959,7 @@ EOT
 
 twitter_api_method profile_banner => (
     description => <<'',
-Returns a hash reference mapping available size varations to URLs that can be
+Returns a hash reference mapping available size variations to URLs that can be
 used to retrieve each variation of the banner.
 
     path     => 'users/profile_banner',
@@ -1969,8 +1969,8 @@ used to retrieve each variation of the banner.
     returns  => 'HashRef',
 );
 
-# infer screen_name or user_id from positional args for backwards compat
-# and covenience
+# infer screen_name or user_id from positional args for backwards compatibility
+# and convenience
 around [qw/
     show_user
     create_friend

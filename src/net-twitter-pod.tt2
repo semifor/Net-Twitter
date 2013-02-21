@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+
 =head1 NAME
 
 Net::Twitter - A perl interface to the Twitter API

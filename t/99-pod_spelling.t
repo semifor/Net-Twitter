@@ -13,13 +13,14 @@ set_spell_cmd('aspell list');
 
 add_stopwords(<DATA>);
 
-all_pod_files_spelling_ok();
+all_pod_files_spelling_ok(qw/lib src/);
 
 __DATA__
 ACKNOWLEDGEMENTS
 Akira
 API
 api
+APIDOC
 apihost
 apirealm
 APIs
@@ -69,6 +70,7 @@ multipart
 netrc
 OAuth
 oauth
+oembed
 ok
 OMG
 online
@@ -90,6 +92,7 @@ retweeting
 Retweets
 retweets
 rpp
+RWD
 SavedSearch
 SMS
 spammer
