@@ -41,6 +41,16 @@ This document describes Net::Twitter version [% VERSION %]
            "Twitter error.....: ", $err->error, "\n";
   }
 
+=head1 TWITTER API V1.1 SUPPORT
+
+This version of Net::Twitter provides Twitter API v1.1 support. Enable it by
+including the C<API::RESTv1_1> trait instead of C<API::REST>. Using Twitter API
+v1.1 may require changes to you code! It is not completely backwards compatible
+with v1.
+
+For help migrating your application to Twitter API v1.1, see
+L<Net::Twitter:::Manual::MigratingToV1_1>.
+
 
 =head1 DESCRIPTION
 

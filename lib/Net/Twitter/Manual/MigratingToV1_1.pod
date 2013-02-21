@@ -1,0 +1,110 @@
+=head1 NAME
+
+Net::Twitter::Manual::MigratingToV1_1 - Migrating from Twitter API v1 to v1.1
+
+=head1 VERSION
+
+=head1 SYNOPSIS
+
+    use Net::Twitter
+
+    my $nt = Net::Twitter->new(
+        traits              => [qw/API::RESTv1_1/],
+        consumer_key        => $consumer_key,
+        consumer_secret     => $consumer_secret,
+        access_token        => $access_token,
+        access_token_secret => $access_token_secret,
+    );
+
+=head1 DESCRIPTION
+
+Net::Twitter prior to version 4.0 used Twitter API version 1. Twitter API v1.1
+introduced changes that are not entirely backwards compatible, requiring some
+changes to calling code.
+
+Net::Twitter attempts to provided backwards compatibility where possible. This
+document describes the changes required to your existing application code,
+using Net::Twitter, for use with Twitter's API v1.1.
+
+=head1 FIRST
+
+=head2 Include the API::RESTv1_1 trait
+
+Wherever you create a Net::Twitter object by calling C<new>, replace trait
+C<API::REST> with C<API::RESTv1_1>. For most applications, that's all that is
+required.
+
+=head1 EXCEPTIONS
+
+=over 4
+
+=item Trait RateLimit incompatible with API::RESTv1_1
+
+The C<RateLimit> trait is incompatible with Twitter API v1.1. Rate limiting is
+one of the most extensive changes in v1.1. In v1 there were two hourly rate
+limits, one per IP address for unauthenticated calls, and one
+per-user/application for authenticated calls. In v1.1, all calls must be
+authenticated, and each API endpoint (i.e., each method) has it's own rate
+limit. Rather than hourly, the new rate limits operate on a 15 minute window.
+
+If your code currently uses the C<RateLimit> role, you'll need to write some
+custom code provide equivalent functionality.
+
+=item search
+
+The C<search> method semantics and return value are substantially different
+between Twitter API v1 and v1.1. In v1, C<search> was provided by the
+C<API::Search> trait. In v1.1, C<search> is included in the C<API::RESTv1_1>
+trait.
+
+So, first, drop C<API::Search> from your calls to C<new>. The C<API::Search>
+trait is incompatible with C<API::RESTv1_1>.
+
+In v1, Twitter returned a hashref with several keys containing meta data. The
+actual array of results were contained in the C<results> slot:
+
+    # With Twitter API v1
+    my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search/]);
+
+    my $r = $nt->search('perl hacker');
+    for my $status ( @{$r->{results} ) {
+        # process each status...
+    }
+
+In v1.1, Twitter returns a hash with 2 slots: C<search_metadata> and C<statuses>.
+
+    # With Twitter API v1.1
+    my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1/], %oauth_credentials);
+
+    my $r = $nt->searh('perl hacker');
+    for my $status ( @{$r->{statuses} ) {
+        # process each status...
+    }
+
+Paging through search results works differently in v1.1. In v1, Twitter
+offered a C<page> parameter:
+
+    # With Twitter API v1
+    for ( my $page = 1; $page <= 10; ++$page ) {
+        my $r = $nt->search({ q => $query, page => $page, rpp => 100 });
+        last unless @{$r->{results}};
+
+        # process a page of results...
+    }
+
+In v1.1, use C<max_id> and C<count> to get paged results:
+
+    # With Twitter API v1.1
+    for ( my %args = ( q => $query, count => 100 ), my $n = 0; $n < 1000; ) {
+        my $r = $nt->search({ %$args });
+        last unless @{$r->{statuses}};
+
+        $args{max_id} = $r->{statuses}[-1]{id} - 1;
+        $n += @{$r->{statuses}};
+
+        # process a page of results...
+    }
+
+
+=back
+
