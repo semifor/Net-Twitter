@@ -50,6 +50,27 @@ limit. Rather than hourly, the new rate limits operate on a 15 minute window.
 If your code currently uses the C<RateLimit> role, you'll need to write some
 custom code provide equivalent functionality.
 
+=item blocking
+
+=item blocking_ids
+
+=item friends
+
+=item followers
+
+With API v1.1, these methods cursored. If you do not pass a C<cursor>
+parameter, Twitter assumes C<cursor =E<gt> -1>>. Existing code that expects an
+arrayref return value must be modified to expect a hashref and dereference the
+C<users> slot:
+
+    # With API v1
+    my $r = $nt->friends;
+    my @friends = @$r;
+
+    # With API v1.1
+    my $r = $nt->friends;
+    my @friends = @{$r->{users}};
+
 =item search
 
 The C<search> method semantics and return value are substantially different
@@ -105,6 +126,37 @@ In v1.1, use C<max_id> and C<count> to get paged results:
         # process a page of results...
     }
 
+=back
+
+=head2 DEPRECATED METHODS
+
+Some Twitter API v1 methods are not available in v1.1:
+
+=over 4
+
+=item friends_timeline
+
+Use C<home_timeline> instead.
+
+=item friendship_exists
+
+=item relationship_exists
+
+=item follows
+
+C<friendship_exists> and it's aliases are not supported in API v1.1. Use C<show_friendship> instead:
+
+    my $r = $nt->show_relationship({
+        source_screen_name => $user_a,
+        target_screen_name => $user_b,
+    });
+    if ( $r->{relationship}{source}{following} ) {
+        # $user_a follows $user_b
+    }
+
+
 
 =back
+
+
 

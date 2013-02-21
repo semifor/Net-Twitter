@@ -71,6 +71,7 @@ netrc
 OAuth
 oauth
 oembed
+oEmbed
 ok
 OMG
 online

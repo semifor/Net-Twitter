@@ -237,9 +237,18 @@ EOT
 );
 
 twitter_api_method oembed => (
-    description => <<'',
-Updates the authenticating user's current status and attaches media for upload.
-In other words, it creates a Tweet with a picture attached.    
+    description => <<'EOT',
+Returns information allowing the creation of an embedded representation of a
+Tweet on third party sites. See the L<oEmbed|http://oembed.com/> specification
+for information about the response format.
+
+While this endpoint allows a bit of customization for the final appearance of
+the embedded Tweet, be aware that the appearance of the rendered Tweet may
+change over time to be consistent with Twitter's L<Display
+Requirements|https://dev.twitter.com/terms/display-requirements>. Do not rely
+on any class or id parameters to stay constant in the returned markup.
+
+EOT
 
     method   => 'GET',
     path     => 'statuses/oembed',
@@ -621,6 +630,16 @@ around [qw/friendship_exists relationship_exists follows/] => sub {
             $$args{source_screen_name} = $user_a;
         }
     }
+    elsif ( $user_a = delete $$args{screen_name_a} ) {
+        $$args{source_screen_name} = $user_a;
+    }
+    elsif ( $user_a = delete $$args{user_id_a} ) {
+        $$args{source_user_id} = $user_a;
+    }
+    else {
+        croak "source user not specified";
+    }
+
     if ( $user_b ||= delete $$args{user_b} ) {
         if ( $user_b =~ /^\d+$/ ) {
             $$args{target_id} = $user_b;
@@ -628,6 +647,15 @@ around [qw/friendship_exists relationship_exists follows/] => sub {
         else {
             $$args{target_screen_name} = $user_b;
         }
+    }
+    elsif ( $user_b = delete $$args{screen_name_b} ) {
+        $$args{target_screen_name} = $user_b;
+    }
+    elsif ( $user_b = delete $$args{user_id_b} ) {
+        $$args{target_user_id} = $user_b;
+    }
+    else {
+        croak "target user not specified";
     }
 
     my $r = $self->$orig($args);
