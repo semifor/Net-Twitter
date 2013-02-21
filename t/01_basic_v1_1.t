@@ -2,6 +2,7 @@
 use warnings;
 use strict;
 use Test::More;
+use Test::NoWarnings;
 use lib qw(t/lib);
 
 eval 'use TestUA';
@@ -37,16 +38,11 @@ my @tests = (
     [ destroy_status         => sub { [ { id => $message_id } ] }, {}, POST => "/statuses/destroy/$message_id.json", __LINE__  ],
     [ direct_messages        => sub { [] }, {},                    GET  => "/direct_messages.json", __LINE__               ],
     [ direct_messages_sent   => sub { [] }, {}, GET => '/direct_messages/sent.json', __LINE__ ],
-    [ disable_notifications  => sub { [ $screen_name ] }, { screen_name => $screen_name, device => 'false' }, POST => "/friendships/update.json", __LINE__ ],
-    [ disable_notifications  => sub { [ { screen_name => $screen_name } ] }, { screen_name => $screen_name, device => 'false' }, POST => "/friendships/update.json", __LINE__ ],
-    [ enable_notifications   => sub { [ $screen_name ] }, { screen_name => $screen_name, device => 'true' }, POST => "/friendships/update.json", __LINE__ ],
-    [ enable_notifications   => sub { [ { screen_name => $screen_name } ] }, { screen_name => $screen_name, device => 'true' }, POST => "/friendships/update.json", __LINE__ ],
     [ favorites              => sub { [] }, {},                    GET  => "/favorites/list.json", __LINE__                ],
     [ followers              => sub { [] }, {},                    GET  => "/followers/list.json", __LINE__            ],
     [ followers_ids          => sub { [ { screen_name => $screen_name, cursor => -1 } ] }, { screen_name => $screen_name, cursor => -1 }, GET => '/followers/ids.json', __LINE__ ],
     [ friends                => sub { [] }, {},                    GET  => "/friends/list.json", __LINE__              ],
     [ friends_ids            => sub { [ { screen_name => $screen_name, cursor => -1 } ] }, { screen_name => $screen_name, cursor => -1 }, GET => '/friends/ids.json', __LINE__ ],
-    [ friendship_exists      => sub { [ 'a', 'b'              ] }, { source_screen_name => 'a', target_screen_name => 'b' }, GET  => "/friendships/show.json", __LINE__, '{"relationship":{"target":{"followed_by":true}}}' ],
     [ friendships_incoming   => sub { [] }, {}, GET => '/friendships/incoming.json', __LINE__ ],
     [ friendships_outgoing   => sub { [] }, {}, GET => '/friendships/outgoing.json', __LINE__ ],
     [ geo_id                 => sub { [ 'df51dec6f4ee2b2c' ] }, {}, GET => '/geo/id/df51dec6f4ee2b2c.json', __LINE__ ],
@@ -67,12 +63,8 @@ my @tests = (
     [ members_create_all     => sub { [ { list_id => 1234, screen_name => [qw/a b c/] } ] }, { list_id => 1234, screen_name => 'a,b,c' }, POST => '/lists/members/create_all.json', __LINE__ ],
     [ members_destroy_all    => sub { [ { list_id => 1234 } ] }, { list_id => 1234 }, POST => '/lists/members/destroy_all.json', __LINE__ ],
     [ mentions               => sub { [] },                        {}, GET  => "/statuses/mentions_timeline.json", __LINE__              ],
-    [ new_direct_message     => sub { [ $screen_name, $status ] }, { screen_name => $screen_name, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
-    [ new_direct_message     => sub { [ $screen_name, { text => $status } ] }, { screen_name => $screen_name, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
-    [ new_direct_message     => sub { [ 1234, $status ] }, { user_id => 1234, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
-    [ new_direct_message     => sub { [ { screen_name => $screen_name, text => $status } ] }, { screen_name => $screen_name, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
-    [ new_direct_message     => sub { [ { user => $screen_name, text => $status } ] }, { screen_name => $screen_name, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
     [ new_direct_message     => sub { [ { user_id => 1234, text => $status } ] }, { user_id => 1234, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
+    [ new_direct_message     => sub { [ { screen_name => $screen_name, text => $status } ] }, { screen_name => $screen_name, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
     [ no_retweet_ids         => sub { [] }, {}, GET => '/friendships/no_retweets/ids.json', __LINE__ ],
     [ oembed                 => sub { [ { id => 99530515043983360 } ] }, { id => 99530515043983360 }, GET => '/statuses/oembed.json', __LINE__ ],
     [ profile_banner         => sub { [ { screen_name => $screen_name } ] }, { screen_name => $screen_name }, GET => '/users/profile_banner.json', __LINE__ ],
@@ -113,14 +105,14 @@ my @tests = (
     [ update_profile_banner  => sub { [ { banner => 'binary data here' } ] }, { banner => 'binary data here' }, POST => "/account/update_profile_banner.json", __LINE__  ],
     [ update_profile_colors  => sub { [ { profile_background_color => '#0000' } ] }, { profile_background_color => '#0000' }, POST => "/account/update_profile_colors.json", __LINE__                ],
     [ update_profile_image   => sub { [ { image => 'binary data here' }         ] }, { image => 'binary data here' }, POST => "/account/update_profile_image.json", __LINE__                 ],
-    [ update_with_media      => sub { [ $status, [ undef ] ] }, {' name' => "\"media[]\"\cM\cJ\cM\cJ\cM\cJ--xYzZY--\cM\cJ", "--xYzZY\cM\cJContent-Disposition: form-data" => ''}, POST => '/statuses/update_with_media.json', __LINE__ ], # TODO: test body args for file upload
+    [ update_with_media      => sub { [ $status, 'binary data' ] }, { status => $status, 'media[]' => 'binary data' }, POST => '/statuses/update_with_media.json', __LINE__ ],
     [ user_suggestions       => sub { [ 'slug', { lang => 'en' } ] }, { lang => 'en' }, GET => '/users/suggestions/slug/members.json', __LINE__ ],
     [ user_suggestions_for   => sub { [ 'slug', { lang => 'en' } ] }, { lang => 'en' }, GET => '/users/suggestions/slug.json', __LINE__ ],
     [ user_timeline          => sub { [] },                        {}, GET  => "/statuses/user_timeline.json", __LINE__         ],
     [ verify_credentials     => sub { [] },                        {}, GET  => "/account/verify_credentials.json", __LINE__     ],
 );
 
-plan tests => @tests * 2 * 4 + 1;
+plan tests => @tests * 2 * 4 + 2;
 
 use_ok 'Net::Twitter';
 
@@ -147,11 +139,11 @@ for my $pass ( 1, 2 ) {
             $t->response($res);
         }
 
-        ok $nt->$api_call(@$input_args), "[$pass] $api_call call";
+        ok $nt->$api_call(@$input_args), "[$pass][line $line] $api_call call";
 
-        is_deeply $t->args,         $request_args, "[$pass][line $line] $api_call args";
-        is $t->path,                $path,         "[$pass][line $line] $api_call path";
-        is $t->method,              $method,       "[$pass][line $line] $api_call method";
+        is_deeply $t->args,         $request_args, "[$pass] $api_call args";
+        is $t->path,                $path,         "[$pass] $api_call path";
+        is $t->method,              $method,       "[$pass] $api_call method";
 
         $t->reset_response;
     }

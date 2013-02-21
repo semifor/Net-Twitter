@@ -3,11 +3,12 @@ use warnings;
 use strict;
 use HTTP::Response;
 use Test::More;
+use Test::Warn;
 use lib qw(t/lib);
 
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
-plan tests => 5;
+plan tests => 6;
 
 use Net::Twitter;
 
@@ -38,5 +39,5 @@ is $args{page}, 2, "page parameter set";
 
 like $request->uri, qr(/search.twitter.com/), 'search endpoint';
 
-$nt->trends;
+warnings_like { $nt->trends } qr/deprecated/i;
 like $request->uri, qr(/api.twitter.com/1/), 'trends endpoint';

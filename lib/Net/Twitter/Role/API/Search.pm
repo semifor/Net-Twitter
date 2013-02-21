@@ -5,6 +5,7 @@ use Net::Twitter::API;
 use DateTime::Format::Strptime;
 
 with 'Net::Twitter::Role::API::Search::Trends';
+excludes 'Net::Twitter::Role::API::RESTv1_1';
 
 has searchapiurl   => ( isa => 'Str', is => 'rw', default => 'http://search.twitter.com' );
 
