@@ -1,3 +1,7 @@
+4.00001 2013-02-21
+    - First general release with Twitter API v1.1 support
+    - Twitter::Manual::MigratingToV1_1
+
 4.00000_03 2013-02-19
     - Fixed: needed skip directives for dzil's AutoPrereqs plugin
     - Stripped version numbers---let dzil put them in
