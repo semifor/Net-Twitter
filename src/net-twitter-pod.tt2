@@ -49,7 +49,7 @@ v1.1 may require changes to you code! It is not completely backwards compatible
 with v1.
 
 For help migrating your application to Twitter API v1.1, see
-L<Net::Twitter:::Manual::MigratingToV1_1>.
+L<Net::Twitter::Manual::MigratingToV1_1>.
 
 
 =head1 DESCRIPTION
