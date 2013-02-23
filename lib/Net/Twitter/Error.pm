@@ -52,6 +52,17 @@ sub error {
     return $self->_stringified($error . ($location || ''));
 }
 
+sub twitter_error_code {
+    my $self = shift;
+
+    return $self->has_twitter_error
+        && exists $self->twitter_error->{errors}
+        && exists $self->twitter_error->{errors}[0]
+        && exists $self->twitter_error->{errors}[0]{code}
+        && $self->twitter_error->{errors}[0]{code}
+        || 0;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 no Moose;
@@ -128,6 +139,15 @@ Returns true if the object contains a Twitter error HASH.
 
 Returns the C<error> value from the C<twitter_error> HASH ref if there is one.
 Otherwise, it returns the string "[unknown]".
+
+=item twitter_error_code
+
+Returns the frist numeric twitter error code from the JSON response body, if
+there is one. Otherwise, it returns 0 so the result should always be safe use
+in a numeric test.
+
+See L<Twitter Error Codes|https://dev.twitter.com/docs/error-codes-responses>
+for a list of defined error codes.
 
 =back
 
