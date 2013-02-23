@@ -50,6 +50,13 @@ limit. Rather than hourly, the new rate limits operate on a 15 minute window.
 If your code currently uses the C<RateLimit> role, you'll need to write some
 custom code provide equivalent functionality.
 
+=item rate_limit_status
+
+The return value for C<rate_limit_status> is entirely different. See Twitter's
+API
+L<rate_limit_status|https://dev.twitter.com/docs/api/1.1/get/application/rate_limit_status>
+documentation for details.
+
 =item blocking
 
 =item blocking_ids
@@ -58,10 +65,10 @@ custom code provide equivalent functionality.
 
 =item followers
 
-With API v1.1, these methods cursored. If you do not pass a C<cursor>
-parameter, Twitter assumes C<cursor =E<gt> -1>>. Existing code that expects an
-arrayref return value must be modified to expect a hashref and dereference the
-C<users> slot:
+With API v1.1, these methods use cursor based paging. If you do not pass a
+C<cursor> parameter, Twitter assumes C<cursor =E<gt> -1>>. Existing code that
+expects an arrayref return value must be modified to expect a hashref and
+dereference the C<users> slot:
 
     # With API v1
     my $r = $nt->friends;
