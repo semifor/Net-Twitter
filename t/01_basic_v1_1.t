@@ -2,7 +2,6 @@
 use warnings;
 use strict;
 use Test::More;
-use Test::NoWarnings;
 use lib qw(t/lib);
 
 eval 'use TestUA';
@@ -112,7 +111,7 @@ my @tests = (
     [ verify_credentials     => sub { [] },                        {}, GET  => "/account/verify_credentials.json", __LINE__     ],
 );
 
-plan tests => @tests * 2 * 4 + 2;
+plan tests => @tests * 2 * 4 + 1;
 
 use_ok 'Net::Twitter';
 
