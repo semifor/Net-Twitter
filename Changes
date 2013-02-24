@@ -1,3 +1,5 @@
+    - Removed Test::NoWarnings to accommodate HTTP::Request::Common 6.03
+
 4.00001 2013-02-21
     - First general release with Twitter API v1.1 support
     - Twitter::Manual::MigratingToV1_1

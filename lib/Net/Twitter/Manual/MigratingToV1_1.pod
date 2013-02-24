@@ -2,8 +2,6 @@
 
 Net::Twitter::Manual::MigratingToV1_1 - Migrating from Twitter API v1 to v1.1
 
-=head1 VERSION
-
 =head1 SYNOPSIS
 
     use Net::Twitter
