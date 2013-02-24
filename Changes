@@ -1,4 +1,6 @@
+4.00002 2013-02-23
     - Removed Test::NoWarnings to accommodate HTTP::Request::Common 6.03
+    - Added method twitter_error_code to Net::Twitter::Error
 
 4.00001 2013-02-21
     - First general release with Twitter API v1.1 support

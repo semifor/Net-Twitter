@@ -1,6 +1,6 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.00001';
+our $VERSION = '4.00002';
 
 use 5.008001;
 use Moose;
