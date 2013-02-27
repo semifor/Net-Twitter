@@ -38,6 +38,7 @@ Cursoring
 cursoring
 DateTime
 DirectMessage
+dzil
 EOT
 Etcheverry
 ExtendedUser

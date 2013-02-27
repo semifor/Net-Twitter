@@ -142,7 +142,7 @@ Otherwise, it returns the string "[unknown]".
 
 =item twitter_error_code
 
-Returns the frist numeric twitter error code from the JSON response body, if
+Returns the first numeric twitter error code from the JSON response body, if
 there is one. Otherwise, it returns 0 so the result should always be safe use
 in a numeric test.
 
