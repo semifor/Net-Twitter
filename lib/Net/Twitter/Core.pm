@@ -162,13 +162,23 @@ sub _prepare_request {
     }
     elsif ( $http_method eq 'POST' ) {
         # if any of the arguments are (array) refs, use form-data
-        $msg = (first { ref } values %natural_args)
-             ? POST($uri,
+        if (first { ref } values %natural_args) {
+            $msg = POST($uri,
                     Content_Type => 'form-data',
                     Content      => \%natural_args,
-               )
-             : POST($uri, \%natural_args)
-             ;
+                    );
+        } else {
+            # Convert %natural_args to a string
+            my @args;
+            foreach my $k (sort (keys %natural_args)) {
+                my $v = $natural_args{$k};
+                my $s = sprintf("%s=%s", URI::Escape::uri_escape($k), URI::Escape::uri_escape($v));
+                push(@args, $s);
+            }
+            my $content = join('&', @args);
+
+            $msg = POST($uri, Content => $content);
+        }
     }
     else {
         croak "unexpected HTTP method: $http_method";
