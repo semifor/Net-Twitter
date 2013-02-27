@@ -1,6 +1,8 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.00002';
+our $VERSION = '4.00003';
+
+# ABSTRACT: A perl interface to the Twitter API
 
 use 5.008001;
 use Moose;
