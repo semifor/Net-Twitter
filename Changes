@@ -1,3 +1,5 @@
+    - Fixed URI argument encoding (v1.1 is more stringent)
+
 4.00002 2013-02-23
     - Removed Test::NoWarnings to accommodate HTTP::Request::Common 6.03
     - Added method twitter_error_code to Net::Twitter::Error
