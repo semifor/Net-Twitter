@@ -33,6 +33,7 @@ requires    'HTML::Entities';
 requires    'HTTP::Request::Common';
 requires    'JSON';
 requires    'LWP::UserAgent'            => 2.032;
+requires    'LWP::UserAgent::https';
 requires    'Moose'                     => 0.90;
 requires    'Moose::Exporter';
 requires    'Moose::Role';
