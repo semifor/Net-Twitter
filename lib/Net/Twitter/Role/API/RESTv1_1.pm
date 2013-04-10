@@ -1297,6 +1297,19 @@ EOT
     returns     => 'List',
 );
 
+twitter_api_method ownerships => (
+    description => <<'',
+Obtain a collection of the lists the specified user is subscribed to, 20 lists
+per page by default. Does not include the user's own lists.
+
+    path        => 'lists/ownerships',
+    method      => 'GET',
+    params      => [qw/user_id screen_name count cursor/],
+    required    => [],
+    returns     => 'ArrayRef[List]',
+    aliases     => [],
+);
+
 ## saved searches ##
 
 twitter_api_method saved_searches => (

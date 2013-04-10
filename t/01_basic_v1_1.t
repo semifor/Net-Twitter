@@ -66,6 +66,7 @@ my @tests = (
     [ new_direct_message     => sub { [ { screen_name => $screen_name, text => $status } ] }, { screen_name => $screen_name, text => $status }, POST => "/direct_messages/new.json", __LINE__ ],
     [ no_retweet_ids         => sub { [] }, {}, GET => '/friendships/no_retweets/ids.json', __LINE__ ],
     [ oembed                 => sub { [ { id => 99530515043983360 } ] }, { id => 99530515043983360 }, GET => '/statuses/oembed.json', __LINE__ ],
+    [ ownerships             => sub { [ { screen_name => $screen_name } ] }, { screen_name => $screen_name }, GET => '/lists/ownerships.json', __LINE__ ],
     [ profile_banner         => sub { [ { screen_name => $screen_name } ] }, { screen_name => $screen_name }, GET => '/users/profile_banner.json', __LINE__ ],
     [ rate_limit_status      => sub { [ { resources => [qw/help statuses/] } ] }, { resources => 'help,statuses' }, GET  => "/application/rate_limit_status.json", __LINE__     ],
     [ rate_limit_status      => sub { [] }, {},                    GET  => "/application/rate_limit_status.json", __LINE__     ],
