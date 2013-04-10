@@ -1299,8 +1299,8 @@ EOT
 
 twitter_api_method ownerships => (
     description => <<'',
-Obtain a collection of the lists the specified user is subscribed to, 20 lists
-per page by default. Does not include the user's own lists.
+Obtain a collection of the lists owned by the specified Twitter user. Private
+lists will only be shown if the authenticated user is also the owner of the lists.
 
     path        => 'lists/ownerships',
     method      => 'GET',
