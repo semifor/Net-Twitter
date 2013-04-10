@@ -55,6 +55,7 @@ my @tests = (
     [ home_timeline          => sub { [] }, {}, GET => '/statuses/home_timeline.json', __LINE__ ],
     [ list_members           => sub { [ { list_id => 12334 } ] }, { list_id => 12334 }, GET => '/lists/members.json', __LINE__ ],
     [ list_memberships       => sub { [ { user_id => 1234 } ] }, { user_id => 1234 }, GET => '/lists/memberships.json', __LINE__ ],
+    [ list_ownerships        => sub { [ { screen_name => $screen_name } ] }, { screen_name => $screen_name }, GET => '/lists/ownerships.json', __LINE__ ],
     [ list_statuses          => sub { [ { list_id => 1234 } ] }, { list_id => 1234 }, GET => '/lists/statuses.json', __LINE__ ],
     [ list_subscribers       => sub { [ { list_id => 1234 } ] }, { list_id => 1234 }, GET => '/lists/subscribers.json', __LINE__ ],
     [ lookup_friendships     => sub { [ { user_id => [ 1234, 5678 ] } ] }, { user_id => '1234,5678' }, GET => '/friendships/lookup.json', __LINE__ ],
