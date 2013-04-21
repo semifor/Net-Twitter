@@ -1297,6 +1297,19 @@ EOT
     returns     => 'List',
 );
 
+twitter_api_method list_ownerships => (
+    description => <<'',
+Obtain a collection of the lists owned by the specified Twitter user. Private
+lists will only be shown if the authenticated user is also the owner of the lists.
+
+    path        => 'lists/ownerships',
+    method      => 'GET',
+    params      => [qw/user_id screen_name count cursor/],
+    required    => [],
+    returns     => 'ArrayRef[List]',
+    aliases     => [],
+);
+
 ## saved searches ##
 
 twitter_api_method saved_searches => (
