@@ -1,3 +1,7 @@
+4.00005 2013-04-25
+    - Added list_ownerships (eleniS no Github)
+    - Removed Makefile.PL (cruft - using Module::Build, now)
+
 4.00004
     - Dependecy Net::HTTP fixed in 6.06 (30 second timeout in OAuth requests)
 
