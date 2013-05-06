@@ -155,11 +155,10 @@ sub _prepare_request {
     my $msg;
 
     my %natural_args = $self->_natural_args($args);
-
     $self->_encode_args(\%natural_args);
 
     if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-        $uri->query($self->_query_string_for(\%natural_args));
+        $uri->query($self->_query_string_for(\%natural_args,'double'));
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
@@ -184,11 +183,11 @@ sub _prepare_request {
 # Make sure we encode arguments *exactly* the same way Net::OAuth does
 # ...by letting Net::OAuth encode them.
 sub _query_string_for {
-    my ( $self, $args ) = @_;
+    my ( $self, $args, $d ) = @_;
 
     my @pairs;
     while ( my ($k, $v) = each %$args ) {
-        push @pairs, join '=', map Net::OAuth::Message::encode($_), $k, $v;
+        push @pairs, join '=', map Net::OAuth::Message::encode($d?Net::OAuth::Message::encode($_):$_), $k, $v;
     }
 
     return join '&', @pairs;
