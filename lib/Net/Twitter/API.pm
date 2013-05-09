@@ -203,6 +203,8 @@ Specifies, by name, the attribute which contains the base URL for the defined AP
 
 Defines a Twitter API method.  Valid arguments are:
 
+=over 4
+
 =item authenticate
 
 Specifies whether, by default, API methods calls should authenticate.
@@ -211,8 +213,6 @@ Specifies whether, by default, API methods calls should authenticate.
 
 Specifies the Date::Time::Format derived parser to use for parsing and
 formatting date strings for the API being defined.
-
-=over 4
 
 =item description
 
