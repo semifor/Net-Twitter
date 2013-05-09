@@ -29,6 +29,7 @@ sub twitter_api_method {
         authenticate    => $do_auth,
         datetime_parser => $datetime_parser,
         base_url_method => $_base_url,
+        path_suffix     => '.json',
         @_,
     );
 
@@ -89,7 +90,7 @@ sub twitter_api_method {
         $local_path =~ s,/:id$,, unless exists $args->{id}; # remove optional trailing id
         $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
 
-        my $uri = URI->new($self->${ \$options{base_url_method} } . "/$local_path.json");
+        my $uri = URI->new($self->${ \$options{base_url_method} } . "/$local_path$options{path_suffix}");
 
         return $self->_json_request(
             $options{method},
@@ -133,6 +134,7 @@ has booleans        => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { []
 has authenticate    => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );
 has base_url_method => ( isa => 'Str', is => 'ro', required => 1 );
+has path_suffix     => ( isa => 'Str', is => 'ro', required => 1 );
 
 # TODO: can MooseX::StrictConstructor be made to work here?
 my %valid_attribute_names = map { $_->init_arg => 1 }
@@ -225,6 +227,12 @@ An ARRAY ref of strings containing alternate names for the method.
 =item path
 
 A string containing the path part of the API URL
+
+=item path_suffix
+
+A string containing an additional suffix to append to the path (for
+legacy reasons).  If you want to suffix appended, pass the empty
+string.  Defaults to ".json".
 
 =item method
 
