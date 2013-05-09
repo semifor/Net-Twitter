@@ -120,17 +120,17 @@ extends 'Moose::Meta::Method';
 
 use namespace::autoclean;
 
-has description => ( isa => 'Str', is => 'ro', required => 1 );
-has aliases     => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has path        => ( isa => 'Str', is => 'ro', required => 1 );
-has method      => ( isa => 'Str', is => 'ro', default => 'GET' );
-has add_source  => ( isa => 'Bool', is => 'ro', default => 0 );
-has params      => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has required    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has returns     => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
-has deprecated  => ( isa => 'Bool|CodeRef', is => 'ro', default => 0 );
-has booleans    => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
-has authenticate => ( isa => 'Bool', is => 'ro', required => 1 );
+has description     => ( isa => 'Str', is => 'ro', required => 1 );
+has aliases         => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has path            => ( isa => 'Str', is => 'ro', required => 1 );
+has method          => ( isa => 'Str', is => 'ro', default => 'GET' );
+has add_source      => ( isa => 'Bool', is => 'ro', default => 0 );
+has params          => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has required        => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has returns         => ( isa => 'Str', is => 'ro', predicate => 'has_returns' );
+has deprecated      => ( isa => 'Bool|CodeRef', is => 'ro', default => 0 );
+has booleans        => ( isa => 'ArrayRef[Str]', is => 'ro', default => sub { [] } );
+has authenticate    => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );
 has base_url_method => ( isa => 'Str', is => 'ro', required => 1 );
 
