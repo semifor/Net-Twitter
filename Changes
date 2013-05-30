@@ -1,3 +1,8 @@
+4.00006 2013-05-30
+    - Spelling error fixed (spazm@github)
+    - Added path_suffix parameter to twitter_api_method (sartak)
+    - tidy + pod fix (sartak)
+
 4.00005 2013-04-25
     - Added list_ownerships (eleniS no Github)
     - Removed Makefile.PL (cruft - using Module::Build, now)
