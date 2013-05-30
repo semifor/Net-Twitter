@@ -141,24 +141,23 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $dblenc) = @_;
     
-    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
+    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $dblenc);
     my $res = $self->_send_request($msg);
 
     return $self->_parse_result($res, $args, $dt_parser);
 }
 
 sub _prepare_request {
-    my ($self, $http_method, $uri, $args, $authenticate) = @_;
-
+    my ($self, $http_method, $uri, $args, $authenticate, $dblenc) = @_;
     my $msg;
 
     my %natural_args = $self->_natural_args($args);
     $self->_encode_args(\%natural_args);
 
     if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-        $uri->query($self->_query_string_for(\%natural_args,'double'));
+        $uri->query($self->_query_string_for(\%natural_args,$dblenc));
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
@@ -176,7 +175,6 @@ sub _prepare_request {
     }
 
     $self->_add_authorization_header($msg, \%natural_args) if $authenticate;
-
     return $msg;
 }
 

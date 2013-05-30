@@ -31,6 +31,7 @@ sub twitter_api_method {
         base_url_method => $_base_url,
         @_,
     );
+    my $dblencode = delete $options{dblencode};
 
     my $deprecation_coderef = ref $options{deprecated} eq ref sub {}
                             ? sub { $options{deprecated}->($name) }
@@ -90,13 +91,13 @@ sub twitter_api_method {
         $local_path =~ s/:(\w+)/delete $args->{$1} or croak "required arg '$1' missing"/eg;
 
         my $uri = URI->new($self->${ \$options{base_url_method} } . "/$local_path.json");
-
         return $self->_json_request(
             $options{method},
             $uri,
             $args,
             $authenticate,
             $options{datetime_parser},
+            $dblencode,
         );
     };
 
