@@ -158,7 +158,7 @@ sub _prepare_request {
 
     $self->_encode_args(\%natural_args);
 
-    if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
+    if ( $http_method =~ /^(?:GET|DELETE|PUT)$/ ) {
         $uri->query($self->_query_string_for(\%natural_args));
         $msg = HTTP::Request->new($http_method, $uri);
     }
