@@ -12,13 +12,19 @@ Net::Twitter::Role::RateLimit - Rate limit features for Net::Twitter
 
     use Net::Twitter;
     my $nt = Net::Twitter->new(
-        traits => [qw/API::RESTv1_1 RateLimit/],
+        traits => [qw/API::REST RateLimit/],
         %other_options,
     );
 
     #...later
 
     sleep $nt->until_rate(1.0) || $minimum_wait;
+
+=head1 NOTE!
+
+RateLimit only works with Twitter API v1. The rate limiting strategy of Twitter
+API v1.1 is very different. A v1.1 compatible RateLimit role may be coming, but
+isn't available, yet. It's interface will necessarily be different.
 
 =head1 DESCRIPTION
 
