@@ -30,10 +30,11 @@ if ( @$access_tokens ) {
 }
 else {
     my $auth_url = $nt->get_authorization_url;
-    print " Authorize this application at: $auth_url\nThen, enter the PIN# provided to contunie: ";
+    print "\n1. Authorize the Twitter App at: $auth_url\n2. Enter the returned PIN to complete the Twitter App authorization process: ";
 
     my $pin = <STDIN>; # wait for input
     chomp $pin;
+    print "\n";
 
     # request_access_token stores the tokens in $nt AND returns them
     my @access_tokens = $nt->request_access_token(verifier => $pin);
@@ -44,3 +45,4 @@ else {
 
 my $status = $nt->user_timeline({ count => 1 });
 print Dumper $status;
+print "\n";
