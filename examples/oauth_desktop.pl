@@ -30,7 +30,7 @@ if ( @$access_tokens ) {
 }
 else {
     my $auth_url = $nt->get_authorization_url;
-    print " Authorize this application at: $auth_url\nThen, enter the PIN# provided to contunie: ";
+    print "Authorize this application at: $auth_url\nThen, enter the PIN# provided to continue: ";
 
     my $pin = <STDIN>; # wait for input
     chomp $pin;
