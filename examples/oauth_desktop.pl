@@ -10,6 +10,10 @@ use File::Spec;
 use Storable;
 use Data::Dumper;
 
+# #CONFIGURATION Remove "#" for Smart::Comments
+# use Smart::Comments;
+
+
 # You can replace the consumer tokens with your own;
 # these tokens are for the Net::Twitter example app.
 my %consumer_tokens = (
@@ -43,6 +47,22 @@ else {
     store \@access_tokens, $datafile;
 }
 
-my $status = $nt->user_timeline({ count => 1 });
-print Dumper $status;
+my $statuses_ref = $nt->user_timeline({ count => 1 });
+print Dumper $statuses_ref;
 print "\n";
+
+my @statuses = @{$statuses_ref};
+my $statuses_count = $statuses[0]->{user}{statuses_count};
+
+# "###" is for Smart::Comments CPAN Module
+### \$statuses_count is: $statuses_count
+
+my $max_id = $statuses[0]->{id_str};
+
+# "###" is for Smart::Comments CPAN Module
+### \$max_id is: $max_id
+
+print "\n";
+
+
+
