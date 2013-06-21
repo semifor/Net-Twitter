@@ -13,6 +13,10 @@ use Data::Dumper;
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments;
 
+# TODO Refactor with Getopt::Long CPAN Module
+# https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
+# #CONFIGURATION $screen_name is https://twitter.com/[INSERT screen_name]
+my $screen_name = "cmlh";
 
 # You can replace the consumer tokens with your own;
 # these tokens are for the Net::Twitter example app.
@@ -47,8 +51,8 @@ else {
     store \@access_tokens, $datafile;
 }
 
-my $statuses_ref = $nt->user_timeline({ count => 1 });
-print Dumper $statuses_ref;
+my $statuses_ref = $nt->user_timeline({ count => 1, screen_name => $screen_name });
+# print Dumper $statuses_ref;
 print "\n";
 
 my @statuses = @{$statuses_ref};
@@ -57,12 +61,64 @@ my $statuses_count = $statuses[0]->{user}{statuses_count};
 # "###" is for Smart::Comments CPAN Module
 ### \$statuses_count is: $statuses_count
 
-my $max_id = $statuses[0]->{id_str};
+# "...return up to 3,200 of a user's most recent Tweets." quoted from https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
+my $twitter_api_v1_1_tweet_total = 3200;
+
+if ($statuses_count > $twitter_api_v1_1_tweet_total) {
+	# "###" is for Smart::Comments CPAN Module
+	### Reduced \$statuses_count to 3200
+	$statuses_count = $twitter_api_v1_1_tweet_total;
+}
 
 # "###" is for Smart::Comments CPAN Module
-### \$max_id is: $max_id
+### \$statuses_count is: $statuses_count
+
+my $max_id = $statuses[0]->{id_str};
+
+# "####" is for Smart::Comments CPAN Module
+#### \$max_id is: $max_id
 
 print "\n";
 
+my $count = 200;
 
+open (TIMELINE_DUMPER, ">>", "$screen_name" . "_dumper.txt");
 
+# Timeline is less than 200 tweets
+if ($statuses_count >= $count) {
+	while ($statuses_count > $count) {
+		# TODO Refactor as sub()
+		$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name });
+		# print Dumper $statuses_ref;
+		print TIMELINE_DUMPER (Data::Dumper::Dumper($statuses_ref));
+		foreach my $status (@$statuses_ref) {
+			$max_id = $status->{id_str};
+			# "####" is for Smart::Comments CPAN Module
+			#### \$max_id is: $max_id
+		}
+		# "####" is for Smart::Comments CPAN Module
+		#### \$max_id is: $max_id
+		$statuses_count = $statuses_count - $count; 
+		# "###" is for Smart::Comments CPAN Module
+		### \$statuses_count is: $statuses_count
+	}
+}
+
+if ($statuses_count != 0) {
+	# TODO Refactor as sub()
+	# "###" is for Smart::Comments CPAN Module
+	### \$count is: $count
+	$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name });
+	# print Dumper $statuses_ref;
+	print TIMELINE_DUMPER (Data::Dumper::Dumper($statuses_ref));
+	foreach my $status (@$statuses_ref) {
+		$max_id = $status->{id_str};
+		# "####" is for Smart::Comments CPAN Module
+		#### \$max_id is: $max_id
+	}
+	# "####" is for Smart::Comments CPAN Module
+	#### \$max_id is: $max_id
+	$statuses_count = $statuses_count - $count; 
+	# "###" is for Smart::Comments CPAN Module
+	### \$statuses_count is: $statuses_count
+}
