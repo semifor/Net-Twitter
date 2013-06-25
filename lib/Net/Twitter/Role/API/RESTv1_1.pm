@@ -264,7 +264,7 @@ Returns a HASH reference with some meta-data about the query including the
 C<next_page>, C<refresh_url>, and C<max_id>. The statuses are returned in
 C<results>.  To iterate over the results, use something similar to:
 
-    my $r = $nt->search($searh_term);
+    my $r = $nt->search($search_term);
     for my $status ( @{$r->{statuses}} ) {
         print "$status->{text}\n";
     }
@@ -1031,15 +1031,24 @@ authenticating user.  Returns the favorite status when successful.
 ### Lists ###
 
 twitter_api_method get_lists => (
-    description => <<'',
+    description => <<'EOT',
 Returns all lists the authenticating or specified user subscribes to, including
-their own. The user is specified using the C<user_id> or C<screen_name> parameters.
+their own. The user is specified using the user_id or screen_name parameters.
 If no user is given, the authenticating user is used.
+
+A maximum of 100 results will be returned by this call. Subscribed lists are
+returned first, followed by owned lists. This means that if a user subscribes
+to 90 lists and owns 20 lists, this method returns 90 subscriptions and 10
+owned lists. The reverse method returns owned lists first, so with C<reverse =>
+1>, 20 owned lists and 80 subscriptions would be returned. If your goal is to
+obtain every list a user owns or subscribes to, use <list_ownerships> and/or
+C<list_subscriptions> instead.
+EOT
 
     path        => 'lists/list',
     aliases     => [qw/list_lists all_subscriptions/],
     method      => 'GET',
-    params      => [qw/user_id screen_name/],
+    params      => [qw/user_id screen_name reverse/],
     required    => [],
     returns     => 'Hashref',
 );
@@ -1262,7 +1271,7 @@ authenticated user owns the specified list.
     returns     => 'List',
 );
 
-twitter_api_method subscriptions => (
+twitter_api_method list_subscriptions => (
     description => <<'',
 Obtain a collection of the lists the specified user is subscribed to, 20 lists
 per page by default. Does not include the user's own lists.
@@ -1272,7 +1281,7 @@ per page by default. Does not include the user's own lists.
     params      => [qw/user_id screen_name count cursor/],
     required    => [],
     returns     => 'ArrayRef[List]',
-    aliases     => [],
+    aliases     => [qw/subscriptions/],
 );
 
 twitter_api_method members_destroy_all => (
