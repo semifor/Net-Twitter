@@ -98,6 +98,7 @@ sub twitter_api_method {
             $args,
             $authenticate,
             $options{datetime_parser},
+            $path,
         );
     };
 

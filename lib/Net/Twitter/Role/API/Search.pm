@@ -37,6 +37,7 @@ EOT
     method   => 'GET',
     params   => [qw/q callback lang locale rpp page since_id until geocode show_user result_type/],
     required => [qw/q/],
+    dblencode=> 1,
     returns  => 'HashRef',
 );
 

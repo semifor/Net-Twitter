@@ -141,21 +141,19 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $path) = @_;
     
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
     my $res = $self->_send_request($msg);
 
-    return $self->_parse_result($res, $args, $dt_parser);
+    return $self->_parse_result($res, $args, $dt_parser, $path);
 }
 
 sub _prepare_request {
     my ($self, $http_method, $uri, $args, $authenticate) = @_;
-
     my $msg;
 
     my %natural_args = $self->_natural_args($args);
-
     $self->_encode_args(\%natural_args);
 
     if ( $http_method =~ /^(?:GET|DELETE|PUT)$/ ) {
@@ -177,18 +175,17 @@ sub _prepare_request {
     }
 
     $self->_add_authorization_header($msg, \%natural_args) if $authenticate;
-
     return $msg;
 }
 
 # Make sure we encode arguments *exactly* the same way Net::OAuth does
 # ...by letting Net::OAuth encode them.
 sub _query_string_for {
-    my ( $self, $args ) = @_;
+    my ( $self, $args, $d ) = @_;
 
     my @pairs;
     while ( my ($k, $v) = each %$args ) {
-        push @pairs, join '=', map Net::OAuth::Message::encode($_), $k, $v;
+        push @pairs, join '=', map Net::OAuth::Message::encode($d?Net::OAuth::Message::encode($_):$_), $k, $v;
     }
 
     return join '&', @pairs;
