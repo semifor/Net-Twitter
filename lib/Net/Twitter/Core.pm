@@ -141,12 +141,12 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $dblenc) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $dblenc, $path) = @_;
     
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $dblenc);
     my $res = $self->_send_request($msg);
 
-    return $self->_parse_result($res, $args, $dt_parser);
+    return $self->_parse_result($res, $args, $dt_parser, $path);
 }
 
 sub _prepare_request {

@@ -98,6 +98,7 @@ sub twitter_api_method {
             $authenticate,
             $options{datetime_parser},
             $dblencode,
+            $path,
         );
     };
 
