@@ -141,23 +141,23 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $dblenc, $path) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $path) = @_;
     
-    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $dblenc);
+    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
     my $res = $self->_send_request($msg);
 
     return $self->_parse_result($res, $args, $dt_parser, $path);
 }
 
 sub _prepare_request {
-    my ($self, $http_method, $uri, $args, $authenticate, $dblenc) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate) = @_;
     my $msg;
 
     my %natural_args = $self->_natural_args($args);
     $self->_encode_args(\%natural_args);
 
     if ( $http_method =~ /^(?:GET|DELETE)$/ ) {
-        $uri->query($self->_query_string_for(\%natural_args,$dblenc));
+        $uri->query($self->_query_string_for(\%natural_args));
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {

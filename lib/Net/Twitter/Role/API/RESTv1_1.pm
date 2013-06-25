@@ -274,7 +274,6 @@ EOT
     method   => 'GET',
     params   => [qw/q count callback lang locale rpp since_id max_id until geocode result_type include_entities/],
     required => [qw/q/],
-    dblencode=> 1,
     booleans => [qw/include_entities/],
     returns  => 'HashRef',
 );

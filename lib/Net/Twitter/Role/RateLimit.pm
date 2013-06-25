@@ -31,12 +31,12 @@ sub _check_rate {
 
 around _json_request => sub {
     my $orig = shift;
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $dblenc, $resource) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $resource) = @_;
     $resource ||= $self->_uri_to_resource($uri);
     die "cannot call $resource, rate limited" 
         if $resource ne 'application/rate_limit_status' && !$self->_check_rate($resource);
 
-    my $r = $self->$orig($http_method, $uri, $args, $authenticate, $dt_parser, $dblenc, $resource)
+    my $r = $self->$orig($http_method, $uri, $args, $authenticate, $dt_parser, $resource)
 };
 
 before _parse_result => sub {

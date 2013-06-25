@@ -31,7 +31,6 @@ sub twitter_api_method {
         base_url_method => $_base_url,
         @_,
     );
-    my $dblencode = delete $options{dblencode};
 
     my $deprecation_coderef = ref $options{deprecated} eq ref sub {}
                             ? sub { $options{deprecated}->($name) }
@@ -97,7 +96,6 @@ sub twitter_api_method {
             $args,
             $authenticate,
             $options{datetime_parser},
-            $dblencode,
             $path,
         );
     };
