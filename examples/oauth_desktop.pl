@@ -30,6 +30,11 @@ my (undef, undef, $datafile) = File::Spec->splitpath($0);
 $datafile =~ s/\..*/.dat/;
 
 my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1/], %consumer_tokens);
+
+# my $ua = $nt->ua;
+# 127.0.0.1:8080 for http://portswigger.net/burp/help/proxy_using.html
+# $ua->proxy(['http', 'https'] => 'http://127.0.0.1:8080');
+
 my $access_tokens = eval { retrieve($datafile) } || [];
 
 if ( @$access_tokens ) {
