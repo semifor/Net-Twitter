@@ -1,4 +1,8 @@
 package Net::Twitter::Role::RateLimit;
+{
+  $Net::Twitter::Role::RateLimit::VERSION = '4.00003';
+}
+
 use Moose::Role;
 use namespace::autoclean;
 use Try::Tiny;
@@ -8,23 +12,21 @@ use Scalar::Util qw/weaken/;
 
 Net::Twitter::Role::RateLimit - Rate limit features for Net::Twitter
 
+=head1 VERSION
+
+version 4.00003
+
 =head1 SYNOPSIS
 
     use Net::Twitter;
     my $nt = Net::Twitter->new(
-        traits => [qw/API::REST RateLimit/],
+        traits => [qw/API::RESTv1_1 RateLimit/],
         %other_options,
     );
 
     #...later
 
     sleep $nt->until_rate(1.0) || $minimum_wait;
-
-=head1 NOTE!
-
-RateLimit only works with Twitter API v1. The rate limiting strategy of Twitter
-API v1.1 is very different. A v1.1 compatible RateLimit role may be coming, but
-isn't available, yet. It's interface will necessarily be different.
 
 =head1 DESCRIPTION
 
@@ -34,9 +36,6 @@ rate limit status.
 =cut
 
 requires qw/ua rate_limit_status/;
-
-# Rate limiting changed so dramatically with v1.1 this Role simply won't work with it
-excludes 'Net::Twitter::Role::API::RESTv1_1';
 
 has _rate_limit_status => (
     isa      => 'HashRef[Int]',
@@ -51,9 +50,9 @@ around rate_limit_status => sub {
     my $self = shift;
 
     my $r = $self->$orig(@_) || return;
-
-    @{$self->_rate_limit_status}{qw/rate_remaining rate_reset rate_limit/} =
-        @{$r}{qw/remaining_hits reset_time_in_seconds hourly_limit/};
+    	
+    @{$self->_rate_limit_status}{qw/resources/} =
+        @{$r}{qw/resources/};
 
     return $r;
 };
@@ -78,7 +77,7 @@ after BUILD => sub {
         my $res = shift;
 
         my @values = map { $res->header($_) }
-                     qw/x-ratelimit-remaining x-ratelimit-reset x-ratelimit-limit/;
+                     qw/X-Rate-Limit-Remaining X-Rate-Limit-Reset X-Rate-Limit-Limit/;
 
         return unless @values == 3;
 
@@ -115,6 +114,7 @@ sub rate_reset {
 
     # HACK! Prevent a loop on clock mismatch
     my $time = time;
+    
     if ( $self->_rate_limit_status->{rate_reset} < $time ) {
         $self->_rate_limit_status->{rate_reset} = $time + 1;
     }
@@ -201,6 +201,8 @@ Marc Mims <marc@questright.com>
 =head1 LICENSE
 
 Copyright (c) 2009 Marc Mims
+
+Modified for use by Andrew Desmarais - CustomScoop LLC - 2013-06-25
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
