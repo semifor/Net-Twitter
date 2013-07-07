@@ -6,17 +6,48 @@ use warnings;
 use strict;
 
 use Net::Twitter;
+use Pod::Usage;
 use File::Spec;
 use Storable;
+use Getopt::Long;
 use Data::Dumper;
 
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments;
 
-# TODO Refactor with Getopt::Long CPAN Module
-# https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
-# #CONFIGURATION $screen_name is https://twitter.com/[INSERT screen_name]
+# Command line arguements
 my $screen_name = "cmlh";
+
+# Command line meta-options
+my $usage = 0;
+my $man = 0;
+my $update = 0;
+
+# TODO Display -usage if command line argument(s) are incorrect
+GetOptions(
+	# https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
+    "screen_name=s" => \$screen_name,
+
+# Command line meta-options
+# -version is excluded as it is printed prior to processing the command line arguments
+# TODO -verbose
+    "usage" => \$usage,
+    "man"   => \$man,
+	"update"  => \$update
+);
+
+if ( ( $usage eq 1 ) or ( $man eq 1 ) ) {
+    pod2usage( -verbose => 2 );
+    die();
+}
+
+if ($update eq 1) {
+	print "Please execute \"git fetch git://github.com/cmlh/Net-Twitter.git\" from the command line\n";
+	die();
+}
+
+# "###" is for Smart::Comments CPAN Module
+### \$screen_name is: $screen_name;
 
 # You can replace the consumer tokens with your own;
 # these tokens are for the Net::Twitter example app.
