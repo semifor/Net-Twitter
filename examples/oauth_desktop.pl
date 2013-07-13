@@ -15,7 +15,7 @@ use Data::Dumper;
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments;
 
-my $VERSION = '1.0.0';
+my $VERSION = '1.0.1';
 
 # Command line arguements
 my $screen_name = "cmlh";
@@ -119,6 +119,9 @@ my $max_id = $statuses[0]->{id_str};
 print "\n";
 
 my $count = 200;
+my $contributor_details = 1; # true
+my $include_rts = 1; # true
+
 
 open (TIMELINE_DUMPER, ">>", "$screen_name" . "_dumper.txt");
 
@@ -126,7 +129,7 @@ open (TIMELINE_DUMPER, ">>", "$screen_name" . "_dumper.txt");
 if ($statuses_count >= $count) {
 	while ($statuses_count > $count) {
 		# TODO Refactor as sub()
-		$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name });
+		$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name, contributor_details => $contributor_details, include_rts => $include_rts });
 		# print Dumper $statuses_ref;
 		print TIMELINE_DUMPER (Data::Dumper::Dumper($statuses_ref));
 		foreach my $status (@$statuses_ref) {
@@ -146,7 +149,7 @@ if ($statuses_count != 0) {
 	# TODO Refactor as sub()
 	# "###" is for Smart::Comments CPAN Module
 	### \$count is: $count
-	$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name });
+	$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name, contributor_details => $contributor_details, include_rts => $include_rts });
 	# print Dumper $statuses_ref;
 	print TIMELINE_DUMPER (Data::Dumper::Dumper($statuses_ref));
 	foreach my $status (@$statuses_ref) {
