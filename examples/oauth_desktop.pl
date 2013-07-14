@@ -15,7 +15,8 @@ use Data::Dumper;
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments;
 
-my $VERSION = '1.0.1';
+my $VERSION = "0.001";
+$VERSION = eval $VERSION;
 
 # Command line arguements
 my $screen_name = "cmlh";
