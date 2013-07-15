@@ -18,6 +18,11 @@ use Data::Dumper;
 my $VERSION = "0.001";
 $VERSION = eval $VERSION;
 
+print "\n\"oauth_desktop\" Alpha v$VERSION\n";
+print "\n";
+print "Copyright 2013 Christian Heinrich and Marc Mims\n";
+print "Licensed under the Apache License, Version 2.0\n\n";
+
 # Command line arguements
 my $screen_name = "cmlh";
 
