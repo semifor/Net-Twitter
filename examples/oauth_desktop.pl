@@ -28,21 +28,22 @@ print "Licensed under the Apache License, Version 2.0\n\n";
 my $screen_name = "cmlh";
 
 # Command line meta-options
-my $usage = 0;
-my $man = 0;
+my $usage  = 0;
+my $man    = 0;
 my $update = 0;
 
 # TODO Display -usage if command line argument(s) are incorrect
 GetOptions(
-	# https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
+
+    # https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
     "screen_name=s" => \$screen_name,
 
 # Command line meta-options
 # -version is excluded as it is printed prior to processing the command line arguments
 # TODO -verbose
-    "usage" => \$usage,
-    "man"   => \$man,
-	"update"  => \$update
+    "usage"  => \$usage,
+    "man"    => \$man,
+    "update" => \$update
 );
 
 if ( ( $usage eq 1 ) or ( $man eq 1 ) ) {
@@ -50,9 +51,10 @@ if ( ( $usage eq 1 ) or ( $man eq 1 ) ) {
     die();
 }
 
-if ($update eq 1) {
-	print "Please execute \"git fetch git://github.com/cmlh/Net-Twitter.git\" from the command line\n";
-	die();
+if ( $update eq 1 ) {
+    print
+"Please execute \"git fetch git://github.com/cmlh/Net-Twitter.git\" from the command line\n";
+    die();
 }
 
 print color("green"), "Retrieving $screen_name tweets.\n\n";
@@ -69,10 +71,10 @@ my %consumer_tokens = (
 );
 
 # $datafile = oauth_desktop.dat
-my (undef, undef, $datafile) = File::Spec->splitpath($0);
+my ( undef, undef, $datafile ) = File::Spec->splitpath($0);
 $datafile =~ s/\..*/.dat/;
 
-my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1/], %consumer_tokens);
+my $nt = Net::Twitter->new( traits => [qw/API::RESTv1_1/], %consumer_tokens );
 
 # my $ua = $nt->ua;
 # 127.0.0.1:8080 for http://portswigger.net/burp/help/proxy_using.html
@@ -80,30 +82,33 @@ my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1/], %consumer_tokens);
 
 my $access_tokens = eval { retrieve($datafile) } || [];
 
-if ( @$access_tokens ) {
-    $nt->access_token($access_tokens->[0]);
-    $nt->access_token_secret($access_tokens->[1]);
+if (@$access_tokens) {
+    $nt->access_token( $access_tokens->[0] );
+    $nt->access_token_secret( $access_tokens->[1] );
 }
 else {
     my $auth_url = $nt->get_authorization_url;
-    print "\n1. Authorize the Twitter App at: $auth_url\n2. Enter the returned PIN to complete the Twitter App authorization process: ";
+    print
+"\n1. Authorize the Twitter App at: $auth_url\n2. Enter the returned PIN to complete the Twitter App authorization process: ";
 
-    my $pin = <STDIN>; # wait for input
+    my $pin = <STDIN>;    # wait for input
     chomp $pin;
     print "\n";
 
     # request_access_token stores the tokens in $nt AND returns them
-    my @access_tokens = $nt->request_access_token(verifier => $pin);
+    my @access_tokens = $nt->request_access_token( verifier => $pin );
 
     # save the access tokens
     store \@access_tokens, $datafile;
 }
 
-my $statuses_ref = $nt->user_timeline({ count => 1, screen_name => $screen_name });
+my $statuses_ref =
+  $nt->user_timeline( { count => 1, screen_name => $screen_name } );
+
 # print Dumper $statuses_ref;
 print "\n";
 
-my @statuses = @{$statuses_ref};
+my @statuses       = @{$statuses_ref};
 my $statuses_count = $statuses[0]->{user}{statuses_count};
 
 # "###" is for Smart::Comments CPAN Module
@@ -112,10 +117,11 @@ my $statuses_count = $statuses[0]->{user}{statuses_count};
 # "...return up to 3,200 of a user's most recent Tweets." quoted from https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 my $twitter_api_v1_1_tweet_total = 3200;
 
-if ($statuses_count > $twitter_api_v1_1_tweet_total) {
-	# "###" is for Smart::Comments CPAN Module
-	### Reduced \$statuses_count to 3200
-	$statuses_count = $twitter_api_v1_1_tweet_total;
+if ( $statuses_count > $twitter_api_v1_1_tweet_total ) {
+
+    # "###" is for Smart::Comments CPAN Module
+    ### Reduced \$statuses_count to 3200
+    $statuses_count = $twitter_api_v1_1_tweet_total;
 }
 
 # "###" is for Smart::Comments CPAN Module
@@ -128,50 +134,75 @@ my $max_id = $statuses[0]->{id_str};
 
 print "\n";
 
-my $count = 200;
-my $contributor_details = 1; # true
-my $include_rts = 1; # true
+my $count               = 200;
+my $contributor_details = 1;     # true
+my $include_rts         = 1;     # true
 
-
-open (TIMELINE_DUMPER, ">>", "$screen_name" . "_dumper.txt");
+open( TIMELINE_DUMPER, ">>", "$screen_name" . "_dumper.txt" );
 
 # Timeline is less than 200 tweets
-if ($statuses_count >= $count) {
-	while ($statuses_count > $count) {
-		# TODO Refactor as sub()
-		$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name, contributor_details => $contributor_details, include_rts => $include_rts });
-		# print Dumper $statuses_ref;
-		print TIMELINE_DUMPER (Data::Dumper::Dumper($statuses_ref));
-		foreach my $status (@$statuses_ref) {
-			$max_id = $status->{id_str};
-			# "####" is for Smart::Comments CPAN Module
-			#### \$max_id is: $max_id
-		}
-		# "####" is for Smart::Comments CPAN Module
-		#### \$max_id is: $max_id
-		$statuses_count = $statuses_count - $count; 
-		# "###" is for Smart::Comments CPAN Module
-		### \$statuses_count is: $statuses_count
-	}
+if ( $statuses_count >= $count ) {
+    while ( $statuses_count > $count ) {
+
+        # TODO Refactor as sub()
+        $statuses_ref = $nt->user_timeline(
+            {
+                count               => $count,
+                max_id              => $max_id,
+                screen_name         => $screen_name,
+                contributor_details => $contributor_details,
+                include_rts         => $include_rts
+            }
+        );
+
+        # print Dumper $statuses_ref;
+        print TIMELINE_DUMPER ( Data::Dumper::Dumper($statuses_ref) );
+        foreach my $status (@$statuses_ref) {
+            $max_id = $status->{id_str};
+
+            # "####" is for Smart::Comments CPAN Module
+            #### \$max_id is: $max_id
+        }
+
+        # "####" is for Smart::Comments CPAN Module
+        #### \$max_id is: $max_id
+        $statuses_count = $statuses_count - $count;
+
+        # "###" is for Smart::Comments CPAN Module
+        ### \$statuses_count is: $statuses_count
+    }
 }
 
-if ($statuses_count != 0) {
-	# TODO Refactor as sub()
-	# "###" is for Smart::Comments CPAN Module
-	### \$count is: $count
-	$statuses_ref = $nt->user_timeline({ count => $count, max_id => $max_id, screen_name => $screen_name, contributor_details => $contributor_details, include_rts => $include_rts });
-	# print Dumper $statuses_ref;
-	print TIMELINE_DUMPER (Data::Dumper::Dumper($statuses_ref));
-	foreach my $status (@$statuses_ref) {
-		$max_id = $status->{id_str};
-		# "####" is for Smart::Comments CPAN Module
-		#### \$max_id is: $max_id
-	}
-	# "####" is for Smart::Comments CPAN Module
-	#### \$max_id is: $max_id
-	$statuses_count = $statuses_count - $count; 
-	# "###" is for Smart::Comments CPAN Module
-	### \$statuses_count is: $statuses_count
+if ( $statuses_count != 0 ) {
+
+    # TODO Refactor as sub()
+    # "###" is for Smart::Comments CPAN Module
+    ### \$count is: $count
+    $statuses_ref = $nt->user_timeline(
+        {
+            count               => $count,
+            max_id              => $max_id,
+            screen_name         => $screen_name,
+            contributor_details => $contributor_details,
+            include_rts         => $include_rts
+        }
+    );
+
+    # print Dumper $statuses_ref;
+    print TIMELINE_DUMPER ( Data::Dumper::Dumper($statuses_ref) );
+    foreach my $status (@$statuses_ref) {
+        $max_id = $status->{id_str};
+
+        # "####" is for Smart::Comments CPAN Module
+        #### \$max_id is: $max_id
+    }
+
+    # "####" is for Smart::Comments CPAN Module
+    #### \$max_id is: $max_id
+    $statuses_count = $statuses_count - $count;
+
+    # "###" is for Smart::Comments CPAN Module
+    ### \$statuses_count is: $statuses_count
 }
 
 =head1 NAME
