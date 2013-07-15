@@ -11,6 +11,7 @@ use File::Spec;
 use Storable;
 use Getopt::Long;
 use Data::Dumper;
+use Term::ANSIColor;
 
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments;
@@ -53,6 +54,9 @@ if ($update eq 1) {
 	print "Please execute \"git fetch git://github.com/cmlh/Net-Twitter.git\" from the command line\n";
 	die();
 }
+
+print color("green"), "Retrieving $screen_name tweets.\n\n";
+print color("reset");
 
 # "###" is for Smart::Comments CPAN Module
 ### \$screen_name is: $screen_name;
