@@ -96,6 +96,7 @@ else {
     print "\n";
 
     # request_access_token stores the tokens in $nt AND returns them
+    # TODO Raise an exception if $pin is incorrect
     my @access_tokens = $nt->request_access_token( verifier => $pin );
 
     # save the access tokens
