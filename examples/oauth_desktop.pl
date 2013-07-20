@@ -106,7 +106,6 @@ else {
 my $statuses_ref =
   $nt->user_timeline( { count => 1, screen_name => $screen_name } );
 
-# print Dumper $statuses_ref;
 print "\n";
 
 my @statuses       = @{$statuses_ref};
@@ -155,9 +154,11 @@ if ( $statuses_count >= $count ) {
                 include_rts         => $include_rts
             }
         );
+        
+        @statuses       = @{$statuses_ref};
 
-        # print Dumper $statuses_ref;
-        print TIMELINE_DUMPER ( Data::Dumper::Dumper($statuses_ref) );
+        my $data_dumper = Data::Dumper->new([\@statuses], [qw (statuses)]);
+        print TIMELINE_DUMPER ( $data_dumper->Dump);
         foreach my $status (@$statuses_ref) {
             $max_id = $status->{id_str};
 
@@ -188,9 +189,11 @@ if ( $statuses_count != 0 ) {
             include_rts         => $include_rts
         }
     );
+    
+    @statuses       = @{$statuses_ref};
 
-    # print Dumper $statuses_ref;
-    print TIMELINE_DUMPER ( Data::Dumper::Dumper($statuses_ref) );
+    my $data_dumper = Data::Dumper->new([\@statuses], [qw (statuses)]);
+    print TIMELINE_DUMPER ( $data_dumper->Dump);
     foreach my $status (@$statuses_ref) {
         $max_id = $status->{id_str};
 
