@@ -238,7 +238,7 @@ oauth_desktop.pl [-screen_name] [screen name]
 
 -man       Displays POD and exits.
 -usage     Displays POD and exits.
--update    Displays the Team Explorer command to retrieve the latest update from codeplex.com
+-update    Displays the git fetch from github.com command.
 
 =head1 DESCRIPTION
 
