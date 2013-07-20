@@ -106,8 +106,6 @@ else {
 my $statuses_ref =
   $nt->user_timeline( { count => 1, screen_name => $screen_name } );
 
-print "\n";
-
 my @statuses       = @{$statuses_ref};
 my $statuses_count = $statuses[0]->{user}{statuses_count};
 
@@ -131,8 +129,6 @@ my $max_id = $statuses[0]->{id_str};
 
 # "####" is for Smart::Comments CPAN Module
 #### \$max_id is: $max_id
-
-print "\n";
 
 my $count               = 200;
 my $contributor_details = 1;     # true
