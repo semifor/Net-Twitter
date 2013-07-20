@@ -14,7 +14,11 @@ use Data::Dumper;
 use Term::ANSIColor;
 
 # #CONFIGURATION Remove "#" for Smart::Comments
-# use Smart::Comments;
+# use Smart::Comments '####','###';
+
+# "####" is for Smart::Comments CPAN Module
+#### [<time>] oauth_desktop.pl start
+
 
 my $VERSION = "0.001";
 $VERSION = eval $VERSION;
@@ -60,8 +64,8 @@ if ( $update eq 1 ) {
 print color("green"), "Retrieving $screen_name tweets.\n\n";
 print color("reset");
 
-# "###" is for Smart::Comments CPAN Module
-### \$screen_name is: $screen_name;
+# "####" is for Smart::Comments CPAN Module
+#### \$screen_name is: $screen_name;
 
 # You can replace the consumer tokens with your own;
 # these tokens are for the Net::Twitter example app.
@@ -109,8 +113,8 @@ my $statuses_ref =
 my @statuses       = @{$statuses_ref};
 my $statuses_count = $statuses[0]->{user}{statuses_count};
 
-# "###" is for Smart::Comments CPAN Module
-### \$statuses_count is: $statuses_count
+# "####" is for Smart::Comments CPAN Module
+#### \$statuses_count is: $statuses_count
 
 # "...return up to 3,200 of a user's most recent Tweets." quoted from https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 my $twitter_api_v1_1_tweet_total = 3200;
@@ -122,8 +126,8 @@ if ( $statuses_count > $twitter_api_v1_1_tweet_total ) {
     $statuses_count = $twitter_api_v1_1_tweet_total;
 }
 
-# "###" is for Smart::Comments CPAN Module
-### \$statuses_count is: $statuses_count
+# "####" is for Smart::Comments CPAN Module
+#### \$statuses_count is: $statuses_count
 
 my $max_id = $statuses[0]->{id_str};
 
@@ -164,18 +168,19 @@ if ( $statuses_count >= $count ) {
 
         # "####" is for Smart::Comments CPAN Module
         #### \$max_id is: $max_id
+        
         $statuses_count = $statuses_count - $count;
 
-        # "###" is for Smart::Comments CPAN Module
-        ### \$statuses_count is: $statuses_count
+        # "####" is for Smart::Comments CPAN Module
+        #### \$statuses_count is: $statuses_count
     }
 }
 
 if ( $statuses_count != 0 ) {
 
     # TODO Refactor as sub()
-    # "###" is for Smart::Comments CPAN Module
-    ### \$count is: $count
+    # "####" is for Smart::Comments CPAN Module
+    #### \$count is: $count
     $statuses_ref = $nt->user_timeline(
         {
             count               => $count,
@@ -201,9 +206,11 @@ if ( $statuses_count != 0 ) {
     #### \$max_id is: $max_id
     $statuses_count = $statuses_count - $count;
 
-    # "###" is for Smart::Comments CPAN Module
-    ### \$statuses_count is: $statuses_count
+    # "####" is for Smart::Comments CPAN Module
+    #### \$statuses_count is: $statuses_count
 }
+
+#### [<time>] oauth_desktop.pl finsh
 
 =head1 NAME
 
