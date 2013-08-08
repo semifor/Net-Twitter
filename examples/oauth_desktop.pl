@@ -11,7 +11,6 @@ use File::Spec;
 use Storable;
 use Getopt::Long;
 use Data::Dumper;
-use Term::ANSIColor;
 
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments '####','###';
@@ -20,7 +19,7 @@ use Term::ANSIColor;
 #### [<time>] oauth_desktop.pl start
 
 
-my $VERSION = "0.001";
+my $VERSION = "0.001_1";
 $VERSION = eval $VERSION;
 
 print "\n\"oauth_desktop\" Alpha v$VERSION\n";
@@ -61,8 +60,7 @@ if ( $update eq 1 ) {
     die();
 }
 
-print color("green"), "Retrieving $screen_name tweets.\n\n";
-print color("reset");
+print "Retrieving $screen_name tweets.\n\n";
 
 # "####" is for Smart::Comments CPAN Module
 #### \$screen_name is: $screen_name;
