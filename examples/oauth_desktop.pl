@@ -14,6 +14,7 @@ use Data::Dumper;
 use YAML::XS;    # TODO Refactor with YAML::Tiny
 
 # use utf8; applied within YAML::XS
+# TODO use JSON;
 
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments '####','###';
