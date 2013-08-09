@@ -16,6 +16,7 @@ use YAML::XS; # TODO Refactor with YAML::Tiny
 
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments '####','###';
+# TODO Refactor Smart::Comments -ENV i.e. http://search.cpan.org/~dconway/Smart-Comments-1.000005/lib/Smart/Comments.pm#CONFIGURATION_AND_ENVIRONMENT
 
 # "####" is for Smart::Comments CPAN Module
 #### [<time>] oauth_desktop.pl start
@@ -62,6 +63,7 @@ if ( $update eq 1 ) {
     die();
 }
 
+# TODO insert $statuses_count i.e. $statuses[0]->{user}{statuses_count}
 print "Retrieving $screen_name tweets.\n\n";
 
 # "####" is for Smart::Comments CPAN Module
@@ -143,6 +145,7 @@ open( TIMELINE_YAML_DUMPER, ">>", "$screen_name" . "_dumper.yml" );
 
 # Timeline is less than 200 tweets
 if ( $statuses_count >= $count ) {
+	# TODO Display Progress Bar
     while ( $statuses_count > $count ) {
 
         # TODO Refactor as sub()
