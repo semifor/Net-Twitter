@@ -11,6 +11,8 @@ use File::Spec;
 use Storable;
 use Getopt::Long;
 use Data::Dumper;
+use YAML::XS; # TODO Refactor with YAML::Tiny
+# use utf8; applied within YAML::XS 
 
 # #CONFIGURATION Remove "#" for Smart::Comments
 # use Smart::Comments '####','###';
@@ -19,7 +21,7 @@ use Data::Dumper;
 #### [<time>] oauth_desktop.pl start
 
 
-my $VERSION = "0.001_1";
+my $VERSION = "0.001_2";
 $VERSION = eval $VERSION;
 
 print "\n\"oauth_desktop\" Alpha v$VERSION\n";
@@ -136,7 +138,8 @@ my $count               = 200;
 my $contributor_details = 1;     # true
 my $include_rts         = 1;     # true
 
-open( TIMELINE_DUMPER, ">>", "$screen_name" . "_dumper.txt" );
+open( TIMELINE_DATA_DUMPER, ">>", "$screen_name" . "_dumper.txt" );
+open( TIMELINE_YAML_DUMPER, ">>", "$screen_name" . "_dumper.yml" );
 
 # Timeline is less than 200 tweets
 if ( $statuses_count >= $count ) {
@@ -156,7 +159,9 @@ if ( $statuses_count >= $count ) {
         @statuses       = @{$statuses_ref};
 
         my $data_dumper = Data::Dumper->new([\@statuses], [qw (statuses)]);
-        print TIMELINE_DUMPER ( $data_dumper->Dump);
+        print TIMELINE_DATA_DUMPER ( $data_dumper->Dump);
+        my $yaml_dumper = Dump @statuses;
+        print TIMELINE_YAML_DUMPER ( $yaml_dumper );
         foreach my $status (@$statuses_ref) {
             $max_id = $status->{id_str};
 
@@ -192,7 +197,10 @@ if ( $statuses_count != 0 ) {
     @statuses       = @{$statuses_ref};
 
     my $data_dumper = Data::Dumper->new([\@statuses], [qw (statuses)]);
-    print TIMELINE_DUMPER ( $data_dumper->Dump);
+    print TIMELINE_DATA_DUMPER ( $data_dumper->Dump);
+    my $yaml_dumper = Dump @statuses;
+    print TIMELINE_YAML_DUMPER ( $yaml_dumper );
+    
     foreach my $status (@$statuses_ref) {
         $max_id = $status->{id_str};
 
