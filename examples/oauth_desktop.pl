@@ -64,6 +64,7 @@ if ( $update eq 1 ) {
     die();
 }
 
+# TODO Confirm that -screen_name does exist on Twitter
 # TODO insert $statuses_count i.e. $statuses[0]->{user}{statuses_count}
 print "Retrieving $screen_name tweets.\n\n";
 
@@ -110,6 +111,9 @@ else {
     store \@access_tokens, $datafile;
 }
 
+# TODO https://dev.twitter.com/docs/rate-limiting, has dependency on either
+# https://github.com/semifor/Net-Twitter/pull/32 or 
+# https://github.com/semifor/Net-Twitter/pull/31
 my $statuses_ref =
   $nt->user_timeline( { count => 1, screen_name => $screen_name } );
 
