@@ -29,7 +29,7 @@ sub error {
     # Don't walk on $@
     local $@;
 
-    # Twitter does not return a consintent error structure, so we have to
+    # Twitter does not return a consistent error structure, so we have to
     # try each known (or guessed) variant to find a suitable message...
     my $error = $self->has_twitter_error && do {
         my $e = $self->twitter_error;
