@@ -304,7 +304,7 @@ sub _filter_since {
     $visitor->visit($obj);
 }
 
-# check an arrayref to see if it contains satuses
+# check an arrayref to see if it contains statuses
 sub _contains_statuses {
     my ($self, $arrayref) = @_;
 
