@@ -5,7 +5,7 @@ use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use URI;
 
-# API v1.1 incorporoates the Search and Upload APIs
+# API v1.1 incorporates the Search and Upload APIs
 excludes map "Net::Twitter::Role::$_", qw/API::Search API::Upload Net::Twitter::Role::RateLimit/;
 
 has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1.1'  );
@@ -1671,7 +1671,7 @@ EOT
     returns  => 'RateLimitStatus',
 );
 
-# translate resources arrayref to to a comma separated string 
+# translate resources arrayref to a comma separated string 
 around rate_limit_status => sub {
     my $orig = shift;
     my $self = shift;
