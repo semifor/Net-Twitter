@@ -57,7 +57,7 @@ sub authorized {
     return defined $self->has_access_token && $self->has_access_token_secret;
 }
 
-# get the athorization or authentication url
+# get the authorization or authentication url
 sub _get_auth_url {
     my ($self, $which_url, %params ) = @_;
 
