@@ -4,6 +4,7 @@ use Carp::Clan qw/^Net::Twitter/;
 use JSON;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
+use Class::Load ();
 
 use namespace::autoclean;
 
@@ -40,7 +41,7 @@ sub _resolve_traits {
     return map {
         unless ( ref ) {
             $_ = $class->_transform_trait($_);
-            Class::MOP::load_class($_);
+            Class::Load::load_class($_);
         }
         $_;
     } @traits;

@@ -1,3 +1,4 @@
+    - Use Class::Load to replace deprecated Class::Mop method (issue #35)
     - Add missing dependency: LWP::Protocol::https (issue #25)
     - Fix OAuth failure for UTF8 params (issue #21)
 
