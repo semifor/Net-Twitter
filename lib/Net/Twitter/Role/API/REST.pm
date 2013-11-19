@@ -1,6 +1,6 @@
 package Net::Twitter::Role::API::REST;
 use Moose::Role;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Net::Twitter::API;
 use DateTime::Format::Strptime;
 use URI;

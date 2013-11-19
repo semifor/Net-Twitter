@@ -6,7 +6,7 @@ our $VERSION = '4.00007';
 
 use 5.008001;
 use Moose;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use JSON;
 use URI::Escape;
 use HTTP::Request::Common;

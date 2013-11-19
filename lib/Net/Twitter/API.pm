@@ -1,6 +1,6 @@
 package Net::Twitter::API;
 use Moose ();
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Moose::Exporter;
 use URI::Escape;
 use DateTime::Format::Strptime;
@@ -116,7 +116,7 @@ sub twitter_api_method {
 
 package Net::Twitter::Meta::Method;
 use Moose;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 extends 'Moose::Meta::Method';
 
 use namespace::autoclean;

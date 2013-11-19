@@ -1,7 +1,7 @@
 package Net::Twitter::Role::OAuth;
 use Moose::Role;
 use HTTP::Request::Common;
-use Carp::Clan qw/^Net::Twitter/;
+use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use URI;
 use Digest::SHA;
 use List::Util qw/first/;
