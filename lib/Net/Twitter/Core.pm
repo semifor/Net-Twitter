@@ -6,7 +6,6 @@ our $VERSION = '4.00007';
 
 use 5.008001;
 use Moose;
-use MooseX::Aliases;
 use Carp::Clan qw/^Net::Twitter/;
 use JSON;
 use URI::Escape;
@@ -24,10 +23,8 @@ use namespace::autoclean;
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
-has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username',
-                         alias => 'user' );
-has password        => ( isa => 'Str', is => 'rw', predicate => 'has_password',
-                         alias => 'pass' );
+has username        => ( isa => 'Str', is => 'rw', predicate => 'has_username' );
+has password        => ( isa => 'Str', is => 'rw', predicate => 'has_password' );
 has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
 has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' );
@@ -64,6 +61,19 @@ around BUILDARGS => sub {
     my $class   = shift;
 
     my %options = @_ == 1 ? %{$_[0]} : @_;
+
+    # aliases
+    for ( [ user => 'username' ], [ pass => 'password' ] ) {
+        my ( $alias, $base ) = @$_;
+        if ( exists $options{$alias} ) {
+            if ( !defined $options{$base} ) {
+                $options{$base} = delete $options{$alias};
+            }
+            else {
+                cluck "Both $base and $alias provided. Ignoring $alias";
+            }
+        }
+    }
 
     if ( delete $options{identica} ) {
         %options = (
