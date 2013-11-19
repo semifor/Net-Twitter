@@ -98,4 +98,49 @@ is exception  { Net::Twitter->new(netrc => 1, traits => [qw/API::Lists/]) }, und
 $r  = $nt->update_profile_image([ undef, 'my_mug.jpg', Content_Type => 'image/jpeg', Content => '' ]);
 is    $t->request->content_type, 'multipart/form-data', 'multipart/form-data';
 
+### v4.00007 ### unicode args in search result in 401 "Could not authenticate you"
+{
+    use utf8;
+    require URI::Escape;
+
+    my $nt = Net::Twitter->new(
+        traits              => [qw/API::RESTv1_1 OAuth/],
+        consumer_key        => 'my-consumer-key',
+        consumer_secret     => 'my-consumer-secret',
+        access_token        => 'my-access-token',
+        access_token_secret => 'my-access-token-secret',
+    );
+
+    my $search_term = '作家'; # writer
+
+    $nt->ua->add_handler(request_send => sub {
+        my $req = shift;
+
+        my $uri = $req->uri->clone;
+        $uri->query(undef);
+
+        my $oauth = Net::OAuth->request('protected_resource')->from_authorization_header(
+            $req->header('Authorization'),
+            request_url      => $uri,
+            consumer_key     => 'my-consumer-key',
+            consumer_secret  => 'my-consumer-secret',
+            token            => 'my-access-token',
+            token_secret     => 'my-access-token-secret',
+            version          => '1.0',
+            request_method   => 'GET',
+            signature_method => 'HMAC-SHA1',
+            extra_params     => { map Encode::decode_utf8($_), $req->uri->query_form },
+        );
+
+        ok $oauth->verify, 'valid oauth signature';
+
+        my $res = HTTP::Response->new(200);
+        $res->header('Content-Type' => 'application/json');
+        $res->content('{}');
+        return $res;
+    });
+
+    $nt->search($search_term);
+}
+
 done_testing

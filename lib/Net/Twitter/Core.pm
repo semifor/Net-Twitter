@@ -19,8 +19,6 @@ use Encode qw/encode_utf8/;
 use DateTime;
 use Data::Visitor::Callback;
 use Try::Tiny;
-use Net::OAuth::Message;
-
 
 use namespace::autoclean;
 
@@ -188,7 +186,7 @@ sub _query_string_for {
 
     my @pairs;
     while ( my ($k, $v) = each %$args ) {
-        push @pairs, join '=', map Net::OAuth::Message::encode($_), $k, $v;
+        push @pairs, join '=', map URI::Escape::uri_escape_utf8($_,'^\w.~-'), $k, $v;
     }
 
     return join '&', @pairs;

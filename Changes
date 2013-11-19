@@ -1,3 +1,5 @@
+    - Fix OAuth failure for UTF8 params (issue #21)
+
 4.00007 2013-08-12
     - Support for HTTP method PUT (sartak)
     - example improvements (clmh)

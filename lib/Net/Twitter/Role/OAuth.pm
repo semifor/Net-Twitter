@@ -175,9 +175,12 @@ override _add_authorization_header => sub {
 
     local $Net::OAuth::SKIP_UTF8_DOUBLE_ENCODE_CHECK = 1;
 
+    my $uri = $msg->uri->clone;
+    $uri->query(undef);
+
     my $request = $self->_make_oauth_request(
         'protected resource',
-        request_url    => $msg->uri,
+        request_url    => $uri,
         request_method => $msg->method,
         token          => $self->access_token,
         token_secret   => $self->access_token_secret,
