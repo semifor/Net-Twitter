@@ -70,7 +70,7 @@ around BUILDARGS => sub {
                 $options{$base} = delete $options{$alias};
             }
             else {
-                cluck "Both $base and $alias provided. Ignoring $alias";
+                carp "Both $base and $alias provided. Ignoring $alias";
             }
         }
     }
