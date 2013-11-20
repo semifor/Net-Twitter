@@ -258,6 +258,22 @@ EOT
     returns  => 'Status',
 );
 
+twitter_api_method retweeters_ids => (
+    description => <<'EOT',
+Returns a collection of up to 100 user IDs belonging to users who have
+retweeted the tweet specified by the id parameter.
+
+This method offers similar data to C<retweets> and replaces API v1's
+C<retweeted_by_ids> method.
+EOT
+    method   => 'GET',
+    path     => 'statuses/retweeters/ids',
+    params   => [qw/id cursor stringify_ids/],
+    required => [qw/id/],
+    booleans => [qw/stringify_ids/],
+    returns  => 'HashRef',
+);
+
 twitter_api_method search => (
     description => <<'EOT',
 Returns a HASH reference with some meta-data about the query including the
@@ -1744,6 +1760,7 @@ twitter_api_method no_retweet_ids => (
 Returns an ARRAY ref of user IDs for which the authenticating user does not
 want to receive retweets.
 
+    aliases  => [qw/no_retweets_ids/],
     path     => 'friendships/no_retweets/ids',
     method   => 'GET',
     params   => [],
