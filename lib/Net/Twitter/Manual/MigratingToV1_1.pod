@@ -122,7 +122,7 @@ In v1.1, use C<max_id> and C<count> to get paged results:
 
     # With Twitter API v1.1
     for ( my %args = ( q => $query, count => 100 ), my $n = 0; $n < 1000; ) {
-        my $r = $nt->search({ %$args });
+        my $r = $nt->search({ %args });
         last unless @{$r->{statuses}};
 
         $args{max_id} = $r->{statuses}[-1]{id} - 1;
