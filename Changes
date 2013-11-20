@@ -1,3 +1,4 @@
+    - Fix update_with_media with utf8 status (RT#72814)
     - Expand Carp::Clan list (should resolve RT#77306)
     - Remove reliance on MooseX::Aliases (issue #35)
     - Use Class::Load to replace deprecated Class::Mop method (issue #35)
