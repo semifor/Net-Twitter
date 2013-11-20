@@ -1,6 +1,6 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.00007';
+our $VERSION = '4.01000';
 
 # ABSTRACT: A perl interface to the Twitter API
 

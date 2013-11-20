@@ -60,6 +60,7 @@ IP
 ip
 IRC
 JSON
+json
 KATOU
 Laconica
 lang
