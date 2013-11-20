@@ -9,13 +9,15 @@ use Net::Twitter;
 eval "use LWP::UserAgent 5.819";
 plan skip_all => 'LWP::UserAgent >= 5.819 required' if $@;
 
-plan tests => 12;
+plan tests => 13;
 
 my $req;
 my $ua = LWP::UserAgent->new;
 $ua->add_handler(request_send => sub {
     $req = shift;
-    return HTTP::Response->new(200);
+    my $res = HTTP::Response->new(200);
+    $res->content('{}');
+    return $res;
 });
 
 sub raw_sent_status {
@@ -95,3 +97,20 @@ is sent_status(), $status, 'basic auth';
 
 try { $nt->update($latin1) };
 is sent_status(), $latin1, 'latin-1 basic auth';
+
+############################################################
+# update_with_media
+############################################################
+try {
+    my $r = $nt->update_with_media($status, [
+        undef, undef,
+        content_type => 'image/png',
+        content      => 'image-data',
+    ]);
+
+    pass 'update_image_with_media';
+}
+catch {
+    fail $_;
+};
+

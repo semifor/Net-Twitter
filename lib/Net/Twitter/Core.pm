@@ -175,7 +175,9 @@ sub _prepare_request {
         $msg = (first { ref } values %natural_args)
              ? POST($uri,
                     Content_Type => 'form-data',
-                    Content      => \%natural_args,
+                    Content      => [
+                        map { ref $_ ? $_ : encode_utf8 $_ } %natural_args,
+                    ],
                )
              : POST($uri, Content => $self->_query_string_for(\%natural_args))
              ;
