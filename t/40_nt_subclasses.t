@@ -16,7 +16,7 @@ sub does_legacy_roles {
 my $nt = Net::Twitter::Search->new;
 does_legacy_roles($nt);
 like  $nt->apiurl,   qr/twitter/,     'twitter url';
-is    $nt->apihost, 'api.twitter.com:80', 'twitter host';
+is    $nt->apihost, 'api.twitter.com:443', 'twitter host';
 
 $nt = Net::Twitter::OAuth->new(consumer_key => 'key', consumer_secret => 'secret');
 does_legacy_roles($nt);

@@ -98,19 +98,13 @@ See L<Net::Twitter> for full documentation.
 
 =cut
 
-has lists_api_url => ( isa => 'Str', is => 'rw', default => 'http://api.twitter.com/1' );
+has lists_api_url => ( isa => 'Str', is => 'rw', default => 'https://api.twitter.com/1' );
 
 base_url     'lists_api_url';
 authenticate 1;
 
 our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
 datetime_parser $DATETIME_PARSER;
-
-after BUILD => sub {
-    my $self = shift;
-
-    $self->{lists_api_url} =~ s/^http:/https:/ if $self->ssl;
-};
 
 twitter_api_method legacy_create_list => (
     path        => ':user/lists',
