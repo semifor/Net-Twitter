@@ -1,3 +1,6 @@
+4.01001 2014-01-16
+    - Warn if ssl option to new is not passed (deprecation cycle)
+
 4.01000 2013-11-19
     - Add API method retweeters_ids
     - Fix update_with_media with utf8 status (RT#72814)

@@ -23,6 +23,7 @@ plan skip_all => 'LWP::UserAgent 5.819 required for tests' if $@;
 use Net::Twitter;
 
 my $nt = Net::Twitter->new(
+    ssl    => 0,
     traits => [qw/API::REST/],
     username => 'homer',
     password => 'doh!',
@@ -93,7 +94,7 @@ $r  = $nt->list_lists('perl_api');
 is    $t->request->uri->scheme, 'https', 'ssl used for Lists';
 
 ### v3.10001 ### netrc used $self->apiurl, which is only available via the API::REST trait
-is exception  { Net::Twitter->new(netrc => 1, traits => [qw/API::Lists/]) }, undef, 'netrc with API::Lists lives';
+is exception  { Net::Twitter->new(ssl => 0, netrc => 1, traits => [qw/API::Lists/]) }, undef, 'netrc with API::Lists lives';
 ### v3.11004 ### single array ref arg to update_profile_image not proprerly handled
 $r  = $nt->update_profile_image([ undef, 'my_mug.jpg', Content_Type => 'image/jpeg', Content => '' ]);
 is    $t->request->content_type, 'multipart/form-data', 'multipart/form-data';
@@ -104,6 +105,7 @@ is    $t->request->content_type, 'multipart/form-data', 'multipart/form-data';
     require URI::Escape;
 
     my $nt = Net::Twitter->new(
+        ssl                 => 0,
         traits              => [qw/API::RESTv1_1 OAuth/],
         consumer_key        => 'my-consumer-key',
         consumer_secret     => 'my-consumer-secret',

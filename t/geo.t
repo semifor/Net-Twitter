@@ -27,6 +27,7 @@ sub params {
 }
 
 my $nt = Net::Twitter->new(
+    ssl      => 0,
     traits   => [qw/API::REST/],
     username => 'fred',
     password => 'secret',

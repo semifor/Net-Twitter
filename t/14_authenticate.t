@@ -11,10 +11,10 @@ plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
 plan tests => 13;
 
-my $nt = Net::Twitter->new(legacy => 1);
+my $nt = Net::Twitter->new(ssl => 0, legacy => 1);
 isa_ok $nt, 'Net::Twitter';
 
-$nt = Net::Twitter->new(legacy => 0);
+$nt = Net::Twitter->new(ssl => 0, legacy => 0);
 my $t = TestUA->new(1, $nt->ua);
 
 is exception { $nt->user_timeline }, undef, "lives without credentials";
@@ -40,6 +40,7 @@ $nt->rate_limit_status;
 ok       $t->request->header('Authorization'), "rate_limit_status defaults to auth";
 
 $nt = Net::Twitter->new(
+    ssl                 => 0,
     traits              => [qw/API::REST OAuth/],
     consumer_key        => 'com key',
     consumer_secret     => 'com secret',

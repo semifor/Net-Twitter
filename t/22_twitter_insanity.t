@@ -14,7 +14,7 @@ use Net::Twitter;
 # For end_session, on success, twitter returns status code 200 and an ERROR
 # payload!!!
 
-my $nt = Net::Twitter->new(legacy => 0, username => 'me', password => 'secret');
+my $nt = Net::Twitter->new(ssl => 0, legacy => 0, username => 'me', password => 'secret');
 my $t  = TestUA->new(1, $nt->ua);
 $t->response->content('{"error":"Logged out.","request":"/account/end_session.json"}');
 

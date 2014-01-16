@@ -22,7 +22,7 @@ use Net::Twitter;
 
 
 {
-    my $nt = t::NT->new(consumer_key => 'foo', consumer_secret => 'bar');
+    my $nt = t::NT->new(ssl => 0, consumer_key => 'foo', consumer_secret => 'bar');
     is $t::NT::count, 1, "BUILT";
 }
 

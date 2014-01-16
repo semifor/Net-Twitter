@@ -14,7 +14,7 @@ plan tests => 8;
 
 use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search RateLimit InflateObjects/]);
+my $nt = Net::Twitter->new(ssl => 0, traits => [qw/API::REST API::Search RateLimit InflateObjects/]);
 
 my $datetime_parser = do {
     no warnings 'once';
@@ -59,7 +59,7 @@ try {
 }
 catch { pass $test };
 
-$nt = Net::Twitter->new(traits => [qw/API::Search API::REST/]);
+$nt = Net::Twitter->new(ssl => 0, traits => [qw/API::Search API::REST/]);
 $nt->ua->add_handler(request_send => sub {
         my $res = HTTP::Response->new(200);
         $res->content('{"test":"done"}');

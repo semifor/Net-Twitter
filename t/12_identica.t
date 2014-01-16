@@ -14,7 +14,7 @@ plan tests => 5;
 use_ok 'Net::Twitter';
 
 {
-    my $nt = Net::Twitter->new(legacy => 0, identica => 1, username => 'me', password => 'secret');
+    my $nt = Net::Twitter->new(ssl => 0, legacy => 0, identica => 1, username => 'me', password => 'secret');
     my $t = TestUA->new(1, $nt->ua);
 
     $t->response->content('"true"');
@@ -32,6 +32,6 @@ use_ok 'Net::Twitter';
 }
 
 {
-    my $nt = Net::Twitter->new(traits => [qw/API::REST API::Search/], identica => 1);
+    my $nt = Net::Twitter->new(ssl => 0, traits => [qw/API::REST API::Search/], identica => 1);
     like $nt->searchapiurl, qr/identi\.ca/, 'use identica url for search';
 }

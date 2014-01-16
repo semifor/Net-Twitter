@@ -48,7 +48,7 @@ $test_count += keys %$_ for map { $_->{expect} } @tests;
 
 plan tests => $test_count;
 
-my $nt = Net::Twitter->new(legacy => 0);
+my $nt = Net::Twitter->new(ssl => 0, legacy => 0);
 
 my $req;
 $nt->ua->add_handler(request_send => sub {

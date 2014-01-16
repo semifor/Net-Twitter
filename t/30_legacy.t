@@ -14,7 +14,7 @@ BEGIN {
     use_ok 'Net::Twitter', qw/Legacy/;
 }
 
-my $nt  = Net::Twitter->new(username => 'me', password => 'secret');
+my $nt  = Net::Twitter->new(ssl => 0, username => 'me', password => 'secret');
 my $t   = TestUA->new(1, $nt->ua);
 my $msg = 'Test failure';
 

@@ -7,7 +7,7 @@ use Net::Twitter;
 eval 'use LWP::UserAgent 5.819';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
-my $nt = Net::Twitter->new(traits => [qw/API::Lists/], username => 'fred', password => 'secret');
+my $nt = Net::Twitter->new(ssl => 0, traits => [qw/API::Lists/], username => 'fred', password => 'secret');
 
 my $req;
 my $res = HTTP::Response->new(200);

@@ -24,7 +24,7 @@ use Net::Twitter;
 use HTTP::Response;
 use Try::Tiny;
 
-my $nt = Net::Twitter->new(legacy => 0);
+my $nt = Net::Twitter->new(ssl => 0, legacy => 0);
 
 $nt->ua->add_handler(request_send => sub {
     my $res = HTTP::Response->new(403);

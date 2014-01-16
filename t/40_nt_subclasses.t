@@ -13,16 +13,16 @@ sub does_legacy_roles {
                           qw/Legacy API::REST API::Search WrapError/;
 }
 
-my $nt = Net::Twitter::Search->new;
+my $nt = Net::Twitter::Search->new(ssl => 0);
 does_legacy_roles($nt);
 like  $nt->apiurl,   qr/twitter/,     'twitter url';
 is    $nt->apihost, 'api.twitter.com:80', 'twitter host';
 
-$nt = Net::Twitter::OAuth->new(consumer_key => 'key', consumer_secret => 'secret');
+$nt = Net::Twitter::OAuth->new(ssl => 0, consumer_key => 'key', consumer_secret => 'secret');
 does_legacy_roles($nt);
 ok $nt->does('Net::Twitter::Role::OAuth');
 
-$nt = Net::Identica->new;
+$nt = Net::Identica->new(ssl => 0);
 does_legacy_roles($nt);
 like $nt->apiurl,   qr/identi[.]ca/, 'identica url';
 is   $nt->apihost, 'identi.ca:80',  'identica host';

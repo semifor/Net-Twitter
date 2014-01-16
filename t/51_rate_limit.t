@@ -9,7 +9,7 @@ use Net::Twitter;
 eval 'use TestUA';
 plan skip_all => 'LWP::UserAgent 5.819 required' if $@;
 
-my $nt = Net::Twitter->new(traits => [qw/API::REST RateLimit/]);
+my $nt = Net::Twitter->new(ssl => 0, traits => [qw/API::REST RateLimit/]);
 
 my $reset = time + 1800;
 my $t = TestUA->new(1, $nt->ua);

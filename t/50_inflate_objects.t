@@ -13,7 +13,7 @@ plan tests => 12;
 
 use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(traits => [qw/API::REST InflateObjects/]);
+my $nt = Net::Twitter->new(ssl => 0, traits => [qw/API::REST InflateObjects/]);
 
 my $datetime_parser = do {
     no warnings 'once';

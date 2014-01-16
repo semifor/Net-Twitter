@@ -6,6 +6,7 @@ use Test::More;
 use Test::Warn;
 
 my $nt = Net::Twitter->new(
+    ssl  => 0,
     user => 'foo',
     pass => 'bar',
 );
@@ -16,6 +17,7 @@ is $nt->password, 'bar', 'pass alias';
 { # ensure it warns
 
     my @args = (
+        ssl      => 0,
         username => 'foo',
         password => 'bar',
         user     => 'other',

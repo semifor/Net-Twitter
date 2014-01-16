@@ -52,7 +52,7 @@ use Test::More tests => 27;
 }
 
 #diag 'subclass with new';
-my $nt1 = My::Subclass::WithNew->new(username => 'me', password => 'secret');
+my $nt1 = My::Subclass::WithNew->new(ssl => 0, username => 'me', password => 'secret');
 isa_ok  $nt1, 'Net::Twitter';
 isa_ok  $nt1, 'Net::Twitter::Core';
 isa_ok  $nt1, 'My::Subclass::WithNew';
@@ -61,7 +61,7 @@ is      $nt1->subclass_method, 'attribute value', 'has subclass attribute value'
 is      $nt1->password, 'secret', 'has base class attribute value';
 
 #diag 'subclass without new';
-my $nt2 = My::Subclass::WithoutNew->new(username => 'me', password => 'secret');
+my $nt2 = My::Subclass::WithoutNew->new(ssl => 0, username => 'me', password => 'secret');
 isa_ok  $nt2, 'Net::Twitter';
 isa_ok  $nt2, 'Net::Twitter::Core';
 isa_ok  $nt2, 'My::Subclass::WithoutNew';
@@ -72,7 +72,7 @@ is      $nt2->password, 'secret', 'has base class attribute value';
 TODO: {
 local $TODO = 'Moose classes should subclass Core, not Net::Twitter';
 #diag 'Moose subclass';
-my $nt3 = My::Subclass::WithMoose->new(username => 'me', password => 'secret');
+my $nt3 = My::Subclass::WithMoose->new(ssl => 0, username => 'me', password => 'secret');
 isa_ok  $nt3, 'Net::Twitter';
 isa_ok  $nt3, 'Net::Twitter::Core';
 isa_ok  $nt3, 'My::Subclass::WithMoose';
@@ -82,7 +82,7 @@ is      $nt3->password, 'secret', 'has base class attribute value';
 }
 
 #diag 'valid Moose subclass';
-my $nt4 = My::Subclass::ValidMoose->new(username => 'me', password => 'secret');
+my $nt4 = My::Subclass::ValidMoose->new(ssl => 0, username => 'me', password => 'secret');
 ok      !$nt4->isa('Net::Twitter'), 'not created by Net::Twitter';
 isa_ok  $nt4, 'Net::Twitter::Core';
 isa_ok  $nt4, 'My::Subclass::ValidMoose';
@@ -91,6 +91,6 @@ is      $nt4->subclass_method, 'attribute value', 'has subclass attribute value'
 is      $nt4->password, 'secret', 'has base class attribute value';
 
 #diag 'class reuse';
-is      ref $nt1, ref My::Subclass::WithNew->new, 'reused anon class';
+is      ref $nt1, ref My::Subclass::WithNew->new(ssl => 0), 'reused anon class';
 ok      ref $nt1 ne ref $nt2, 'different subclasses have different anon classes';
-ok      ref $nt1 ne ref My::Subclass::WithNew->new(legacy => 0), 'different roles have different classes';
+ok      ref $nt1 ne ref My::Subclass::WithNew->new(ssl => 0, legacy => 0), 'different roles have different classes';

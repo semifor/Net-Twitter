@@ -17,7 +17,7 @@ $tt->process($input, {
 sub get_methods_for {
     my $role = shift;
 
-    my $nt = Net::Twitter->new(traits => [$role]);
+    my $nt = Net::Twitter->new(ssl => 0, traits => [$role]);
 
     return 
         sort { $a->name cmp $b->name }

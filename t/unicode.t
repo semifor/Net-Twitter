@@ -30,6 +30,7 @@ sub raw_sent_status {
 sub sent_status { decode_utf8 raw_sent_status() }
 
 my $nt = Net::Twitter->new(
+    ssl             => 0,
     traits          => [qw/API::REST OAuth/],
     consumer_key    => 'key',
     consumer_secret => 'secret',
@@ -86,6 +87,7 @@ SKIP: {
 ############################################################
 
 $nt = Net::Twitter->new(
+    ssl      => 0,
     legacy   => 0,
     username => 'fred',
     password => 'pebbles',

@@ -15,6 +15,7 @@ plan tests => 2;
 # Bug reported by Nick Andrew (@elronxenu) 2013-02-27
 
 my $nt = Net::Twitter->new(
+    ssl                 => 0,
     traits              => [qw/API::RESTv1_1/],
     consumer_key        => 'mykey',
     consumer_secret     => 'mysecret',

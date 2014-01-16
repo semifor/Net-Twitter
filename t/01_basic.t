@@ -66,10 +66,11 @@ plan tests => @tests * 2 * 4 + 2;
 
 use_ok 'Net::Twitter';
 
-my $nt = Net::Twitter->new(legacy => 1);
+my $nt = Net::Twitter->new(legacy => 1, ssl => 0);
 isa_ok $nt, 'Net::Twitter';
 
 $nt = Net::Twitter->new(
+    ssl      => 0,
     legacy   => 0,
     username => 'homer',
     password => 'doh!',

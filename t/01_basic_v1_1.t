@@ -117,6 +117,7 @@ plan tests => @tests * 2 * 4 + 1;
 use_ok 'Net::Twitter';
 
 my $nt = Net::Twitter->new(
+    ssl      => 0,
     traits   => [qw/API::RESTv1_1/],
     username => 'homer',
     password => 'doh!',

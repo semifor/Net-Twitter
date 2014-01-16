@@ -28,6 +28,7 @@ sub params {
 
 my $retry_count = 0;
 my $nt = Net::Twitter->new(
+    ssl      => 0,
     traits   => [qw/API::REST RetryOnError/],
     username => 'fred',
     password => 'secret',
