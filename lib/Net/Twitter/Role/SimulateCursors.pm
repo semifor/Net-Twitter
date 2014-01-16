@@ -1,4 +1,5 @@
 package Net::Twitter::Role::SimulateCursors;
+
 use Moose::Role;
 use namespace::autoclean;
 

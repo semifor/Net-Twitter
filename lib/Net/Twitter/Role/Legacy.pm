@@ -1,4 +1,5 @@
 package Net::Twitter::Role::Legacy;
+
 use Moose::Role;
 
 use namespace::autoclean;

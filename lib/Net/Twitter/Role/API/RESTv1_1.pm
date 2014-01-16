@@ -1,4 +1,5 @@
 package Net::Twitter::Role::API::RESTv1_1;
+
 use Moose::Role;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use Net::Twitter::API;

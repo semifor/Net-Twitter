@@ -1,4 +1,5 @@
 package Net::Twitter::Role::API::Search::Trends;
+
 use Moose::Role;
 
 after BUILD => sub {

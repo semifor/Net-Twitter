@@ -1,4 +1,5 @@
 package Net::Twitter::Role::API::TwitterVision;
+
 use Moose::Role;
 
 requires qw/credentials/;

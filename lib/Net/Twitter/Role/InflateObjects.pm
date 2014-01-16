@@ -1,4 +1,5 @@
 package Net::Twitter::Role::InflateObjects;
+
 use Moose::Role;
 use namespace::autoclean;
 use Data::Visitor::Callback;

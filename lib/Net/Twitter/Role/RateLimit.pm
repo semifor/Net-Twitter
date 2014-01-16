@@ -1,4 +1,5 @@
 package Net::Twitter::Role::RateLimit;
+
 use Moose::Role;
 use namespace::autoclean;
 use Try::Tiny;

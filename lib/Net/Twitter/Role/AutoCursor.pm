@@ -1,4 +1,5 @@
 package Net::Twitter::Role::AutoCursor;
+
 use MooseX::Role::Parameterized;
 
 parameter max_calls      => isa => 'Int',  default => 16;

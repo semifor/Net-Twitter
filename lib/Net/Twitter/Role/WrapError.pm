@@ -1,4 +1,5 @@
 package Net::Twitter::Role::WrapError;
+
 use Moose::Role;
 use Try::Tiny;
 use Scalar::Util qw/blessed/;

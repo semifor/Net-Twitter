@@ -1,4 +1,5 @@
 package Net::Twitter::Error;
+
 use Moose;
 use Try::Tiny;
 use Devel::StackTrace;

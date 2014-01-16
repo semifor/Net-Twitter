@@ -1,4 +1,5 @@
 package Net::Twitter;
+
 use Moose;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use JSON;

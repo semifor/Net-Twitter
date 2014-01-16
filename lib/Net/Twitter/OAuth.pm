@@ -1,4 +1,5 @@
 package Net::Twitter::OAuth;
+
 use Moose;
 
 extends  'Net::Twitter::Core';

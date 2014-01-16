@@ -1,4 +1,5 @@
 package Net::Identica;
+
 use Moose;
 
 extends 'Net::Twitter::Core';

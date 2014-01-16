@@ -1,4 +1,5 @@
 package Net::Twitter::Search;
+
 use Moose;
 
 extends 'Net::Twitter::Core';

@@ -1,4 +1,5 @@
 package Net::Twitter::Role::RetryOnError;
+
 use Moose::Role;
 use namespace::autoclean;
 use Time::HiRes;
