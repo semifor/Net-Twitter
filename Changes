@@ -1,3 +1,6 @@
+4.01002 2014-01-16
+    - Fix POD bugs
+
 4.01001 2014-01-16
     - Warn if ssl option to new is not passed (deprecation cycle)
 

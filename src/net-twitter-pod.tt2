@@ -44,7 +44,7 @@ version [% VERSION %]
 =head1 TWITTER NOW REQUIRES SSL
 
 B<Deprecation cycle>. Twitter now requires SSL connections for API calls. To
-enable SSL, add C<( ssl => 1)> to the options passed to new. E.g.,
+enable SSL, add C<( ssl =E<gt> 1)> to the options passed to new. E.g.,
 
     my $nt = Net::Twitter->new(
         traits              => [qw/API::RESTv1_1 RetryOnError/],
@@ -58,7 +58,7 @@ enable SSL, add C<( ssl => 1)> to the options passed to new. E.g.,
 This version will warn if no C<ssl> option is passed to C<new>. For backwards
 compatibility, the default in this version remains SSL disabled. A future
 release will change the default to SSL enabled and remove the warning. Add
-C<( ssl => 0 )> to disable the warning and keep SSL disabled.
+C<( ssl =E<gt> 0 )> to disable the warning and keep SSL disabled.
 
 B<Why not just make the default SSL enabled, now?> Net::Twitter has always
 tried to adhere to a strict policy of backwards compatibility. An upgrade to
