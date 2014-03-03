@@ -28,7 +28,7 @@ $VERSION = eval $VERSION;
 
 print "\n\"oauth_desktop\" Alpha v$VERSION\n";
 print "\n";
-print "Copyright 2013 Christian Heinrich and Marc Mims\n";
+print "Copyright 2013, 2014 Christian Heinrich and Marc Mims\n";
 print "Licensed under the Apache License, Version 2.0\n\n";
 
 # Command line arguements
@@ -319,4 +319,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. 
 
-Copyright 2013 Christian Heinrich
+Copyright 2013, 2014 Christian Heinrich
