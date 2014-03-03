@@ -23,7 +23,7 @@ use YAML::XS;    # TODO Refactor with YAML::Tiny
 # "####" is for Smart::Comments CPAN Module
 #### [<time>] oauth_desktop.pl start
 
-my $VERSION = "0.001_2";
+my $VERSION = "0.001_3";
 $VERSION = eval $VERSION;
 
 print "\n\"oauth_desktop\" Alpha v$VERSION\n";
@@ -83,7 +83,7 @@ my %consumer_tokens = (
 my ( undef, undef, $datafile ) = File::Spec->splitpath($0);
 $datafile =~ s/\..*/.dat/;
 
-my $nt = Net::Twitter->new( traits => [qw/API::RESTv1_1/], %consumer_tokens );
+my $nt = Net::Twitter->new( traits => [qw/API::RESTv1_1/], %consumer_tokens, ssl => 1, );
 
 # my $ua = $nt->ua;
 # 127.0.0.1:8080 for http://portswigger.net/burp/help/proxy_using.html
