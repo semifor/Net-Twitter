@@ -1,3 +1,6 @@
+4.01003 2014-03-12
+    - Net::Twitter::Error's twitter_error_text excludes stack trace line number
+
 4.01002 2014-01-16
     - Fix POD bugs
 
