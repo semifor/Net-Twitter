@@ -1,7 +1,7 @@
 #!perl
 use warnings;
 use strict;
-use Test::More tests => 4;
+use Test::More tests => 8;
 use Net::Twitter::Error;
 use HTTP::Response;
 
@@ -15,6 +15,7 @@ use HTTP::Response;
     );
 
     like $e, qr/Something wicked/, 'old school twitter error';
+    is $e->twitter_error_text, 'Something wicked', 'twitter_error_text for old school twitter error';
 }
 
 {
@@ -27,6 +28,7 @@ use HTTP::Response;
     );
 
     like $e, qr/Something wicked/, 'twitter error with message/code';
+    is $e->twitter_error_text, 'Something wicked', 'twitter_error_text for twitter error with message/code';
 }
 
 {
@@ -39,6 +41,7 @@ use HTTP::Response;
     );
 
     like $e, qr/Something wicked/, 'twitter array of errors';
+    is $e->twitter_error_text, 'Something wicked', 'twitter_error_text for twitter array of errors';
 }
 
 {
@@ -49,5 +52,6 @@ use HTTP::Response;
         http_response => $res,
     );
 
+    is $e->twitter_error_text, '', 'twitter_error_text is empty string';
     like $e, qr/Bad Request/, 'twitter array of errors';
 }
