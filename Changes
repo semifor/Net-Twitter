@@ -1,3 +1,6 @@
+4.01004 2014-04-11
+    - PUT requires paramters in the message body, now (Samuel Kaufman)
+
 4.01003 2014-03-12
     - Net::Twitter::Error's twitter_error_text excludes stack trace line number
 
