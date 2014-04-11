@@ -182,8 +182,13 @@ sub _prepare_request {
     my %natural_args = $self->_natural_args($args);
 
     $self->_encode_args(\%natural_args);
-
-    if ( $http_method =~ /^(?:GET|DELETE|PUT)$/ ) {
+    if( $http_method eq 'PUT' ) {
+        $msg = PUT(
+            $uri,
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            Content        => $self->_query_string_for( \%natural_args ) );
+    }
+    elsif ( $http_method =~ /^(?:GET|DELETE)$/ ) {
         $uri->query($self->_query_string_for(\%natural_args));
         $msg = HTTP::Request->new($http_method, $uri);
     }
