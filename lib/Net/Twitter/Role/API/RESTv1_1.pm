@@ -132,7 +132,7 @@ authenticating user must be the author of the specified status.
 twitter_api_method update => (
     path       => 'statuses/update',
     method     => 'POST',
-    params     => [qw/status lat long place_id display_coordinates in_reply_to_status_id trim_user/],
+    params     => [qw/media_ids status lat long place_id display_coordinates in_reply_to_status_id trim_user/],
     required   => [qw/status/],
     booleans   => [qw/display_coordinates trim_user/],
     add_source => 1,
