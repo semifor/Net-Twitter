@@ -16,10 +16,6 @@ after BUILD => sub {
 base_url     'upload_url';
 authenticate 1;
 
-our $DATETIME_PARSER = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
-datetime_parser $DATETIME_PARSER;
-
-
 twitter_api_method upload => (
     path        => 'media/upload',
     method      => 'POST',
@@ -36,30 +32,15 @@ __END__
 
 =head1 NAME
 
-Net::Twitter::Role::API::Upload - A definition of the Twitter Upload API as a Moose role
+Net::Twitter::Role::API::UploadImage - A definition of the Twitter Upload API as a Moose role
 
 =head1 SYNOPSIS
 
   package My::Twitter;
   use Moose;
-  with 'Net::Twitter::API::Upload';
+  with 'Net::Twitter::API::UploadImage';
 
 =head1 DESCRIPTION
 
 This module provides definitions the Twitter Upload API methods.
 
-=head1 AUTHOR
-
-Allen Haim <allen@netherrealm.net>
-
-Marc Mims <marc@questright.com>
-
-=head1 LICENSE
-
-Copyright (c) 2011 Marc Mims
-
-The Twitter API itself, and the description text used in this module is:
-
-Copyright (c) 2011 Twitter
-
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
