@@ -1,4 +1,4 @@
-package Net::Twitter::Role::API::UploadImage;
+package Net::Twitter::Role::API::UploadMedia;
 
 use Moose::Role;
 use Net::Twitter::API;
