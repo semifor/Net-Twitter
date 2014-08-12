@@ -1,3 +1,6 @@
+4.01005 2014-08-12
+    - Added upload_media for multi-image support (@ghathwar)
+
 4.01004 2014-04-11
     - PUT requires paramters in the message body, now (Samuel Kaufman)
 
