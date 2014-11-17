@@ -2039,6 +2039,19 @@ used to retrieve each variation of the banner.
     returns  => 'HashRef',
 );
 
+twitter_api_method muting_ids => (
+    description => <<'',
+Returns an array of numeric user ids the authenticating user has muted.
+
+    path     => 'mutes/users/ids',
+    aliases  => [qw//],
+    method   => 'GET',
+    params   => [qw/cursor/],
+    required => [qw//],
+    booleans => [qw//],
+    returns  => 'ArrayRef[Int]',
+);
+
 # infer screen_name or user_id from positional args for backwards compatibility
 # and convenience
 around [qw/
