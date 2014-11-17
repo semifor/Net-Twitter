@@ -1,3 +1,4 @@
+    - Default `ssl => 1`
     - Added `mutes` (@pjcj on Github)
 
 4.01005 2014-08-12
