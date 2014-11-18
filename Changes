@@ -1,3 +1,6 @@
+    - Bumped IO::Socket::SSL requirement to 2.005; recent versions seem to fix
+      an issue with stalled connections.
+
 4.01006 2014-11-17
     - Default `ssl => 1`
     - Added `mutes` (@pjcj on Github)
