@@ -27,7 +27,7 @@ Returns a HASH reference with some meta-data about the query including the
 C<next_page>, C<refresh_url>, and C<max_id>. The statuses are returned in
 C<results>.  To iterate over the results, use something similar to:
 
-    my $r = $nt->search($searh_term);
+    my $r = $nt->search($search_term);
     for my $status ( @{$r->{results}} ) {
         print "$status->{text}\n";
     }
