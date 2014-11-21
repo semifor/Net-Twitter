@@ -102,7 +102,7 @@ In v1.1, Twitter returns a hash with 2 slots: C<search_metadata> and C<statuses>
     # With Twitter API v1.1
     my $nt = Net::Twitter->new(traits => [qw/API::RESTv1_1/], %oauth_credentials);
 
-    my $r = $nt->searh('perl hacker');
+    my $r = $nt->search('perl hacker');
     for my $status ( @{$r->{statuses} ) {
         # process each status...
     }
