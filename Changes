@@ -1,3 +1,6 @@
+4.01007 2015-01-07
+    - Added REST API method lookup_statuses (thanks SocialFlow)
+    - Typo fixes (thanks Zaki Mughal)
     - Bumped IO::Socket::SSL requirement to 2.005; recent versions seem to fix
       an issue with stalled connections.
 
