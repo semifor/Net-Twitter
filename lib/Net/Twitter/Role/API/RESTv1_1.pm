@@ -2052,6 +2052,17 @@ Returns an array of numeric user ids the authenticating user has muted.
     returns  => 'ArrayRef[Int]',
 );
 
+twitter_api_method lookup_statuses => (
+    description => <<'',
+Returns a hash reference of tweets from an arbitrary set of ids.
+
+    path     => 'statuses/lookup',
+    method   => 'GET',
+    params   => [qw/id include_entities trim_user map/],
+    required => [qw/id/],
+    returns  => 'HashRef',
+);
+
 # infer screen_name or user_id from positional args for backwards compatibility
 # and convenience
 around [qw/
