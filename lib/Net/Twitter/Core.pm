@@ -1,6 +1,6 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.01007';
+our $VERSION = '4.01008';
 
 # ABSTRACT: A perl interface to the Twitter API
 
@@ -151,9 +151,9 @@ sub _encode_args {
     return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
-sub _json_request { 
+sub _json_request {
     my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
-    
+
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
     my $res = $self->_send_request($msg);
 

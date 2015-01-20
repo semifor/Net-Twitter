@@ -1,3 +1,6 @@
+4.01008 2015-01-19
+    - Added REST API mithods muting, create_mute, destroy_mute (Ashley Willis)
+
 4.01007 2015-01-07
     - Added REST API method lookup_statuses (thanks SocialFlow)
     - Typo fixes (thanks Zaki Mughal)
