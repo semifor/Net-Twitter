@@ -28,6 +28,8 @@ C<next_page>, C<refresh_url>, and C<max_id>. The statuses are returned in
 C<results>.  To iterate over the results, use something similar to:
 
     my $r = $nt->search($search_term);
+    my $r = $nt->search({ q => $search_term, count => 10 })
+
     for my $status ( @{$r->{results}} ) {
         print "$status->{text}\n";
     }
@@ -35,7 +37,7 @@ EOT
 
     path     => 'search',
     method   => 'GET',
-    params   => [qw/q callback lang locale rpp page since_id until geocode show_user result_type/],
+    params   => [qw/q geocode lang locale result_type count until since_id max_id include_entities callback/],
     required => [qw/q/],
     returns  => 'HashRef',
 );
