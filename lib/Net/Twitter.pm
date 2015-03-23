@@ -119,8 +119,11 @@ sub new {
 
     $traits ||= [ qw/Legacy/ ];
 
-    # ensure we have the OAuth trait if we have a consumer key
-    $traits = [ (grep $_ ne 'OAuth', @$traits), 'OAuth' ] if $args{consumer_key};
+    # ensure we have the OAuth trait if we have a consumer key (unless we've
+    # specified AppAuth)
+    if ( $args{consumer_key} && !grep $_ eq 'AppAuth', @$traits ) {
+        $traits = [ (grep $_ ne 'OAuth', @$traits), 'OAuth' ];
+    }
 
     # create a unique name for the created class based on trait names and parameters
     my $anon_class_name = _name_for_anon_class($traits);

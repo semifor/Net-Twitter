@@ -39,6 +39,7 @@ cursoring
 DateTime
 DirectMessage
 dzil
+ediblenergy
 EOT
 Etcheverry
 ExtendedUser
@@ -46,6 +47,7 @@ favorited
 friended
 geo
 geocode
+Github
 GPS
 granularities
 Grennan
@@ -62,6 +64,7 @@ IRC
 JSON
 json
 KATOU
+Kaugman
 Laconica
 lang
 Marc
@@ -77,6 +80,7 @@ oEmbed
 ok
 OMG
 online
+Papperello
 parameterized
 params
 Pecorella
