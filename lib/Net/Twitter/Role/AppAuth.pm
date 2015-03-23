@@ -3,8 +3,6 @@ package Net::Twitter::Role::AppAuth;
 use Moose::Role;
 use Carp::Clan   qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use HTTP::Request::Common qw/POST/;
-use MIME::Base64 qw/encode_base64/;
-use URL::Encode  qw/url_encode/;
 
 requires qw/_add_authorization_header ua from_json/;
 
