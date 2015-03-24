@@ -75,7 +75,7 @@ sub invalidate_token {
 
     my $req = POST($self->invalidate_token_url,
         'Content-Type' => 'application/x-www-form-urlencoded;charset=UTF-8',
-        Content        => { access_token => $self->access_token },
+        Content        => join '=', access_token => $self->access_token,
     );
     $self->_add_consumer_auth_header($req);
 
