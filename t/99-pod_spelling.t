@@ -25,6 +25,7 @@ apihost
 apirealm
 APIs
 apiurl
+AppAuth
 AutoCursor
 BasicUser
 blogging
@@ -68,6 +69,7 @@ Kaugman
 Laconica
 lang
 Marc
+maxwidth
 MERCHANTABILITY
 Mims
 Miyagawa

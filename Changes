@@ -1,3 +1,6 @@
+4.01009 2015-03-24
+    - Added Application-Only Authentication via trait AppAuth
+
 4.01008 2015-01-19
     - Added REST API mithods muting, create_mute, destroy_mute (Ashley Willis)
 
