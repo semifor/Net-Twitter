@@ -306,8 +306,7 @@ C<useragent_class>, above.  It defaults to {} (an empty HASH ref).
 =item useragent
 
 The value for C<User-Agent> HTTP header.  It defaults to
-"Net::Twitter/$VERSION (Perl)", where C<$VERSION> is the current version of
-C<Net::Twitter>.
+"Net::Twitter/[% VERSION %] (Perl)".
 
 =item source
 
