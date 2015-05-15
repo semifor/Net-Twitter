@@ -99,6 +99,7 @@ sub twitter_api_method {
             $args,
             $authenticate,
             $options{datetime_parser},
+            $options{content_type}
         );
     };
 
@@ -137,6 +138,7 @@ has authenticate    => ( isa => 'Bool', is => 'ro', required => 1 );
 has datetime_parser => ( is => 'ro', required => 1 );
 has base_url_method => ( isa => 'Str', is => 'ro', required => 1 );
 has path_suffix     => ( isa => 'Str', is => 'ro', required => 1 );
+has content_type     => ( isa => 'Str', is => 'ro', default => '' );
 
 # TODO: can MooseX::StrictConstructor be made to work here?
 my %valid_attribute_names = map { $_->init_arg => 1 }
