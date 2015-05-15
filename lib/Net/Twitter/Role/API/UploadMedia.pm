@@ -26,6 +26,16 @@ twitter_api_method upload => (
     description => 'Upload images to twitter without posting them on the timeline'
 );
 
+twitter_api_method upload_media_data => (
+    path        => 'media/upload',
+    method      => 'POST',
+    params      => [qw/media_data/],
+    required    => [qw/media_data/],
+    booleans    => [qw/possibly_sensitive display_coordinates/],
+    returns     => 'Image',
+    description => 'Upload images to twitter without posting them on the timeline'
+);
+
 1;
 
 __END__
