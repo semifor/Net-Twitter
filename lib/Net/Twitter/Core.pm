@@ -20,6 +20,7 @@ use Data::Visitor::Callback;
 use Try::Tiny;
 
 use namespace::autoclean;
+use JSON;
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
@@ -152,16 +153,16 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
-    
-    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
-    my $res = $self->_send_request($msg);
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type ) = @_;
 
+    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
+    my $res = $self->_send_request($msg);
+    
     return $self->_parse_result($res, $args, $dt_parser);
 }
 
 sub _prepare_request {
-    my ($self, $http_method, $uri, $args, $authenticate) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $content_type ) = @_;
 
     my $msg;
 
@@ -179,16 +180,21 @@ sub _prepare_request {
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
-        # if any of the arguments are (array) refs, use form-data
-        $msg = (first { ref } values %natural_args)
-             ? POST($uri,
-                    Content_Type => 'form-data',
-                    Content      => [
-                        map { ref $_ ? $_ : encode_utf8 $_ } %natural_args,
-                    ],
-               )
-             : POST($uri, Content => $self->_query_string_for(\%natural_args))
-             ;
+        if( $content_type eq 'application/json' ) {
+            $msg = POST( $uri,  Content_Type => 'application/json', Content =>  encode_json $args );
+        }
+        else {
+            # if any of the arguments are (array) refs, use form-data
+            $msg = (first { ref } values %natural_args)
+                ? POST($uri,
+                       Content_Type => 'form-data',
+                       Content      => [
+                           map { ref $_ ? $_ : encode_utf8 $_ } %natural_args,
+                       ],
+                )
+                : POST($uri, Content => $self->_query_string_for(\%natural_args))
+                ;
+        }
     }
     else {
         croak "unexpected HTTP method: $http_method";
@@ -266,10 +272,10 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $obj if $res->is_success && defined $obj;
+    return $obj if $res->is_success;
 
     my $error = Net::Twitter::Error->new(http_response => $res);
-    $error->twitter_error($obj) if ref $obj;
+    $error->twitter_error($obj) if ref $obj; #removing test for $obj being defined because media metadata endpoint only returns success or failure - no content
 
     die $error;
 }
