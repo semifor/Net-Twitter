@@ -2070,7 +2070,8 @@ twitter_api_method add_media_metadata => (
     required    => [qw/media_id/],
     returns     => 'HashRef',
     description => 'Upload images to twitter without posting them on the timeline',
-    content_type => 'application/json'
+    content_type => 'application/json',
+    allow_empty_response_content => 1
 );
 
 # infer screen_name or user_id from positional args for backwards compatibility

@@ -153,15 +153,19 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type ) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type, $allow_empty_response_content ) = @_;
 
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
     my $res = $self->_send_request($msg);
+
+    if( $allow_empty_response_content ) {
+        return $self->_parse_result_containing_empty_content( $res );
+    }
     return $self->_parse_result($res, $args, $dt_parser);
 }
 
 sub _prepare_request {
-    my ($self, $http_method, $uri, $args, $authenticate, $content_type ) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $content_type, $allow_empty_response_content ) = @_;
 
     my $msg;
 
@@ -277,6 +281,11 @@ sub _parse_result {
     $error->twitter_error($obj) if ref $obj;
 
     die $error;
+}
+
+sub _parse_result_containing_empty_content{
+    my( $self, $res ) = @_;
+    return  $res->content
 }
 
 # Return a DateTime object, given $since as one of:
