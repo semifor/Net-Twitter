@@ -275,7 +275,7 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $obj if $res->is_success; #removing test for $obj being defined because media metadata endpoint only returns success or failure - no content
+    return $obj if $res->is_success && defined $obj;
 
     my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if ref $obj;
