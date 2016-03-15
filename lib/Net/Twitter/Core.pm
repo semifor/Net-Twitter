@@ -157,7 +157,6 @@ sub _json_request {
 
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
     my $res = $self->_send_request($msg);
-    
     return $self->_parse_result($res, $args, $dt_parser);
 }
 
@@ -272,10 +271,10 @@ sub _parse_result {
         die Net::Twitter::Error->new(twitter_error => $obj, http_response => $res);
     }
 
-    return $obj if $res->is_success;
+    return $obj if $res->is_success; #removing test for $obj being defined because media metadata endpoint only returns success or failure - no content
 
     my $error = Net::Twitter::Error->new(http_response => $res);
-    $error->twitter_error($obj) if ref $obj; #removing test for $obj being defined because media metadata endpoint only returns success or failure - no content
+    $error->twitter_error($obj) if ref $obj;
 
     die $error;
 }
