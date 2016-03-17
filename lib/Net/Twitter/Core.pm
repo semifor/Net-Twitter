@@ -20,7 +20,6 @@ use Data::Visitor::Callback;
 use Try::Tiny;
 
 use namespace::autoclean;
-use JSON;
 
 has useragent_class => ( isa => 'Str', is => 'ro', default => 'LWP::UserAgent' );
 has useragent_args  => ( isa => 'HashRef', is => 'ro', default => sub { {} } );
