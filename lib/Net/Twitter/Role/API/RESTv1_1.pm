@@ -2069,7 +2069,7 @@ twitter_api_method add_media_metadata => (
     params      => [qw/media_id alt_text/],
     required    => [qw/media_id/],
     returns     => 'HashRef',
-    description => 'Upload images to twitter without posting them on the timeline',
+    description => 'add metadata to media',
     content_type => 'application/json',
     allow_empty_response_content => 1
 );
