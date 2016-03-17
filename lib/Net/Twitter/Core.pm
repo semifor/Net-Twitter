@@ -284,7 +284,9 @@ sub _parse_result {
 
 sub _parse_result_containing_empty_content{
     my( $self, $res ) = @_;
-    return  $res->content;
+    return  $res->content if $res->is_success;
+    my $error = Net::Twitter::Error->new(http_response => $res);
+    die $error;
 }
 
 # Return a DateTime object, given $since as one of:
