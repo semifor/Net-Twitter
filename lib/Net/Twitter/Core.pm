@@ -284,7 +284,7 @@ sub _parse_result {
 
 sub _parse_result_containing_empty_content{
     my( $self, $res ) = @_;
-    return  $res->content
+    return  $res->content;
 }
 
 # Return a DateTime object, given $since as one of:
