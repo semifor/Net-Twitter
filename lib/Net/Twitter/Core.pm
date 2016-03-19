@@ -5,7 +5,7 @@ package Net::Twitter::Core;
 use 5.008001;
 use Moose;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
-use JSON;
+use JSON::MaybeXS;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
@@ -36,7 +36,7 @@ has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpa
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 has _json_handler   => (
     is      => 'rw',
-    default => sub { JSON->new->utf8 },
+    default => sub { JSON::MaybeXS->new->utf8 },
     handles => { from_json => 'decode' },
 );
 

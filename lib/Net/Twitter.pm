@@ -2,7 +2,7 @@ package Net::Twitter;
 
 use Moose;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
-use JSON;
+use JSON::MaybeXS;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
 use Class::Load ();
@@ -86,7 +86,7 @@ sub _create_anon_class {
             my $t = shift @t;
             if ( ref $t[0] eq 'HASH' ) {
                 my $params = shift @t;
-                my $sig = sha1_hex(JSON->new->utf8->encode($params));
+                my $sig = sha1_hex(JSON::MaybeXS->new->utf8->encode($params));
                 my $sn  = $serial_for_params{$sig} ||= ++$serial_number;
                 $t .= "_$sn";
             }
