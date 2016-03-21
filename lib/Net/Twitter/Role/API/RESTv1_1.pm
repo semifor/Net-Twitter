@@ -2063,7 +2063,7 @@ Returns a hash reference of tweets from an arbitrary set of ids.
     returns  => 'HashRef',
 );
 
-twitter_api_method add_media_metadata => (
+twitter_api_method create_media_metadata => (
     path        => 'media/metadata/create',
     method      => 'POST',
     params      => [qw/media_id alt_text/],
