@@ -157,9 +157,6 @@ sub _json_request {
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
     my $res = $self->_send_request($msg);
 
-    if( $allow_empty_response_content ) {
-        return $self->_parse_result_containing_empty_content( $res );
-    }
     return $self->_parse_result($res, $args, $dt_parser);
 }
 
@@ -258,7 +255,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = try { $self->_from_json($content) };
+    my $obj = length $content ? try { $self->_from_json($content) } : {};
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects
