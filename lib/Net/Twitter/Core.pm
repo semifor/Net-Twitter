@@ -183,7 +183,7 @@ sub _prepare_request {
     }
     elsif ( $http_method eq 'POST' ) {
         if( $content_type eq 'application/json' ) {
-            $msg = POST( $uri,  Content_Type => 'application/json', Content =>  encode_json $args );
+            $msg = POST( $uri,  Content_Type => 'application/json', Content =>  encode_json \%natural_args );
         }
         else {
             # if any of the arguments are (array) refs, use form-data
