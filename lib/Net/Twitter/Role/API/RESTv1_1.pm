@@ -2070,8 +2070,7 @@ twitter_api_method create_media_metadata => (
     required    => [qw/media_id/],
     returns     => 'HashRef',
     description => 'add metadata to media',
-    content_type => 'application/json',
-    allow_empty_response_content => 1
+    content_type => 'application/json'
 );
 
 # infer screen_name or user_id from positional args for backwards compatibility

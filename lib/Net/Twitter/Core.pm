@@ -152,7 +152,7 @@ sub _encode_args {
 }
 
 sub _json_request { 
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type, $allow_empty_response_content ) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type ) = @_;
 
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
     my $res = $self->_send_request($msg);
@@ -161,7 +161,7 @@ sub _json_request {
 }
 
 sub _prepare_request {
-    my ($self, $http_method, $uri, $args, $authenticate, $content_type, $allow_empty_response_content ) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $content_type ) = @_;
 
     my $msg;
 
@@ -276,13 +276,6 @@ sub _parse_result {
     my $error = Net::Twitter::Error->new(http_response => $res);
     $error->twitter_error($obj) if ref $obj;
 
-    die $error;
-}
-
-sub _parse_result_containing_empty_content{
-    my( $self, $res ) = @_;
-    return  $res->content if $res->is_success;
-    my $error = Net::Twitter::Error->new(http_response => $res);
     die $error;
 }
 
