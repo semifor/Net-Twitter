@@ -179,7 +179,7 @@ sub _prepare_request {
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
-        if( $content_type eq 'application/json' ) {
+        if( $content_type && $content_type eq 'application/json' ) {
             $msg = POST( $uri,  Content_Type => 'application/json', Content =>  encode_json \%natural_args );
         }
         else {
