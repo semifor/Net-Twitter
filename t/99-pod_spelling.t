@@ -25,6 +25,7 @@ apihost
 apirealm
 APIs
 apiurl
+AppAuth
 AutoCursor
 BasicUser
 blogging
@@ -39,6 +40,7 @@ cursoring
 DateTime
 DirectMessage
 dzil
+ediblenergy
 EOT
 Etcheverry
 ExtendedUser
@@ -46,6 +48,7 @@ favorited
 friended
 geo
 geocode
+Github
 GPS
 granularities
 Grennan
@@ -62,9 +65,11 @@ IRC
 JSON
 json
 KATOU
+Kaugman
 Laconica
 lang
 Marc
+maxwidth
 MERCHANTABILITY
 Mims
 Miyagawa
@@ -77,6 +82,7 @@ oEmbed
 ok
 OMG
 online
+Papperello
 parameterized
 params
 Pecorella

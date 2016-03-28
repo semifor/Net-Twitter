@@ -1,7 +1,5 @@
 package Net::Twitter::Core;
 
-our $VERSION = '4.01006';
-
 # ABSTRACT: A perl interface to the Twitter API
 
 use 5.008001;
@@ -39,7 +37,7 @@ has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching 
 has _json_handler   => (
     is      => 'rw',
     default => sub { JSON->new->utf8 },
-    handles => { _from_json => 'decode' },
+    handles => { from_json => 'decode' },
 );
 
 sub _legacy_synthetic_args { qw/authenticate since/ }
@@ -151,9 +149,9 @@ sub _encode_args {
     return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
-sub _json_request { 
+sub _json_request {
     my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
-    
+
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
     my $res = $self->_send_request($msg);
 
@@ -250,7 +248,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = try { $self->_from_json($content) };
+    my $obj = try { $self->from_json($content) };
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects

@@ -139,6 +139,31 @@ Provides support for the Twitter REST API version 1.1 methods.
 
 Provides support for the Twitter Search API methods.
 
+=item AppAuth
+
+Provides L<Application-Only
+Authentication|https://dev.twitter.com/oauth/application-only> with methods,
+C<request_access_token> and C<invalidate_token>. See
+L<Net::Twitter::Role::AppAuth>.
+
+Example:
+
+    my $nt = Net::Twitter->new(
+        traits          => [ qw/AppAuth API::RESTv1_1/ ],
+        consumer_key    => 'my-consumer-key',
+        consumer_secret => 'my-consumer-secret',
+    );
+
+    $nt->request_access_token;
+    say 'token: ', $nt->access_token;
+    my $r = $nt->followers_ids({
+        screen_name => 'timtoady',
+        cursor      => -1,
+    });
+
+    # good until invalidated, with ...
+    $nt->invalidate_token
+
 =item AutoCursor
 
 C<AutoCursor> is a parameterized trait that provides an automatic loop for
@@ -281,8 +306,7 @@ C<useragent_class>, above.  It defaults to {} (an empty HASH ref).
 =item useragent
 
 The value for C<User-Agent> HTTP header.  It defaults to
-"Net::Twitter/$VERSION (Perl)", where C<$VERSION> is the current version of
-C<Net::Twitter>.
+"Net::Twitter/[% VERSION %] (Perl)".
 
 =item source
 
@@ -370,7 +394,7 @@ C<Net::Twitter>.  Use it with caution.
 
 =head1 AUTHENTICATION
 
-With REST API version 1.1, all API calls require OAuth. Since 
+With REST API version 1.1, all API calls require OAuth. Since
 31-Aug-2010, version 1 required OAuth requests requiring authentication.  Other
 Twitter compatible services, like Identi.ca, accept Basic Authentication.  So,
 C<Net::Twitter> provides support for both.
