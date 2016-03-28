@@ -2052,6 +2052,45 @@ Returns an array of numeric user ids the authenticating user has muted.
     returns  => 'ArrayRef[Int]',
 );
 
+twitter_api_method muting => (
+    description => <<'',
+Returns an array of user objects that the authenticating user is muting.
+
+    path     => 'mutes/users/list',
+    aliases  => [qw/mutes_list/],
+    method   => 'GET',
+    params   => [qw/cursor include_entities skip_status/],
+    required => [qw//],
+    returns  => 'ArrayRef[BasicUser]',
+);
+
+twitter_api_method create_mute => (
+    description => <<'',
+Mutes the user specified in the C<user_id> or C<screen_name> parameter as the
+authenticating user.  Returns the muted user when successful.  You can find
+out more about muting in the Twitter Support Knowledge Base.
+
+    path     => 'mutes/users/create',
+    method   => 'POST',
+    params   => [qw/user_id screen_name/],
+    booleans => [qw//],
+    required => [qw/id/],
+    returns  => 'BasicUser',
+);
+
+twitter_api_method destroy_mute => (
+    description => <<'',
+Un-mutes the user specified in the C<user_id> or C<screen_name> parameter as
+the authenticating user.  Returns the un-muted user when successful.
+
+    path     => 'mutes/users/destroy',
+    method   => 'POST',
+    params   => [qw/user_id screen_name/],
+    booleans => [qw//],
+    required => [qw/id/],
+    returns  => 'BasicUser',
+);
+
 twitter_api_method lookup_statuses => (
     description => <<'',
 Returns a hash reference of tweets from an arbitrary set of ids.

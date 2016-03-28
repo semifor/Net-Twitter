@@ -53,7 +53,7 @@ sub twitter_api_method {
         my $args = ref $_[-1] eq 'HASH' ? { %{pop @_} } : {};
 
         # flatten array arguments
-        for ( qw/user_id screen_name/ ) {
+        for ( qw/id user_id screen_name/ ) {
             $args->{$_} = join ',' => @{ $args->{$_} } if ref $args->{$_} eq 'ARRAY';
         }
 
