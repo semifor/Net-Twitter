@@ -2102,6 +2102,16 @@ Returns a hash reference of tweets from an arbitrary set of ids.
     returns  => 'HashRef',
 );
 
+twitter_api_method create_media_metadata => (
+    path        => 'media/metadata/create',
+    method      => 'POST',
+    params      => [qw/media_id alt_text/],
+    required    => [qw/media_id/],
+    returns     => 'HashRef',
+    description => 'add metadata to media',
+    content_type => 'application/json'
+);
+
 # infer screen_name or user_id from positional args for backwards compatibility
 # and convenience
 around [qw/

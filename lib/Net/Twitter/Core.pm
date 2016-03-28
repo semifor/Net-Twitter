@@ -149,17 +149,17 @@ sub _encode_args {
     return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
-sub _json_request {
-    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser) = @_;
+sub _json_request { 
+    my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type ) = @_;
 
-    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate);
+    my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
     my $res = $self->_send_request($msg);
 
     return $self->_parse_result($res, $args, $dt_parser);
 }
 
 sub _prepare_request {
-    my ($self, $http_method, $uri, $args, $authenticate) = @_;
+    my ($self, $http_method, $uri, $args, $authenticate, $content_type ) = @_;
 
     my $msg;
 
@@ -177,16 +177,21 @@ sub _prepare_request {
         $msg = HTTP::Request->new($http_method, $uri);
     }
     elsif ( $http_method eq 'POST' ) {
-        # if any of the arguments are (array) refs, use form-data
-        $msg = (first { ref } values %natural_args)
-             ? POST($uri,
-                    Content_Type => 'form-data',
-                    Content      => [
-                        map { ref $_ ? $_ : encode_utf8 $_ } %natural_args,
-                    ],
-               )
-             : POST($uri, Content => $self->_query_string_for(\%natural_args))
-             ;
+        if( $content_type && $content_type eq 'application/json' ) {
+            $msg = POST( $uri,  Content_Type => 'application/json', Content =>  encode_json \%natural_args );
+        }
+        else {
+            # if any of the arguments are (array) refs, use form-data
+            $msg = (first { ref } values %natural_args)
+                ? POST($uri,
+                       Content_Type => 'form-data',
+                       Content      => [
+                           map { ref $_ ? $_ : encode_utf8 $_ } %natural_args,
+                       ],
+                )
+                : POST($uri, Content => $self->_query_string_for(\%natural_args))
+                ;
+        }
     }
     else {
         croak "unexpected HTTP method: $http_method";
@@ -248,7 +253,8 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = try { $self->from_json($content) };
+    my $obj = length $content ? try { $self->_from_json($content) } : {};
+
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects
