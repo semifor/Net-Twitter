@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Scalar::Util qw/blessed/;
 use Test::More;
-use JSON qw/to_json/;
+use JSON::MaybeXS qw /encode_json/;
 use lib qw(t/lib);
 
 eval 'use TestUA';
@@ -24,7 +24,7 @@ my $dt = DateTime->now;
 $dt->subtract(minutes => 6);
 
 my $t = TestUA->new(1, $nt->ua);
-$t->response->content(to_json([{
+$t->response->content(encode_json([{
     text => 'Hello, twittersphere!',
     user => {
        screen_name => 'net_twitter',
@@ -43,7 +43,7 @@ is     $object->relative_created_at, '6 minutes ago', 'relative_created_at';
 is     $object->user->screen_name,   'net_twitter',   'nested objects';
 
 # make sure we don't co-mingle our object methods
-$t->response->content(to_json({
+$t->response->content(encode_json({
     foo => 'foo',
     bar => 'bar',
     baz => 'and of course, baz',
