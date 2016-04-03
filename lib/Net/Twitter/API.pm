@@ -278,7 +278,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2009 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 

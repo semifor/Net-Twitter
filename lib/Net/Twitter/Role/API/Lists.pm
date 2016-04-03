@@ -411,7 +411,7 @@ Marc Mims <marc@questright.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2009-2010 Marc Mims
+Copyright (c) 2009-2016 Marc Mims
 
 =head1 LICENSE
 

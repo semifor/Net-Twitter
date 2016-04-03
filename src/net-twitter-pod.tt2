@@ -825,11 +825,11 @@ Olaf Alders (oalders on Github)
 
 =head1 LICENSE
 
-Copyright (c) 2009-2014 Marc Mims
+Copyright (c) 2009-2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 
-Copyright (c) 2009 Twitter
+Copyright (c) 2016 Twitter
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

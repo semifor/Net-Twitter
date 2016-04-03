@@ -62,7 +62,7 @@ user specified by C<screen_name> or C<user_id>.
 twitter_api_method home_timeline => (
     description => <<'',
 Returns the 20 most recent statuses, including retweets, posted by the
-authenticating user and that user's friends. 
+authenticating user and that user's friends.
 
     path      => 'statuses/home_timeline',
     method    => 'GET',
@@ -77,7 +77,7 @@ authenticating user and that user's friends.
 twitter_api_method friends_timeline => (
     description => <<'',
 Returns the 20 most recent statuses, including retweets, posted by the
-authenticating user and that user's friends. 
+authenticating user and that user's friends.
 
     path      => 'statuses/home_timeline',
     aliases   => [qw/following_timeline/],
@@ -193,7 +193,7 @@ EOT
 
 twitter_api_method retweet => (
     description => <<'',
-Retweets a tweet. 
+Retweets a tweet.
 
     path      => 'statuses/retweet/:id',
     method    => 'POST',
@@ -234,7 +234,7 @@ C<undef> as the first array value.
 The Tweet text will be rewritten to include the media URL(s), which will reduce
 the number of characters allowed in the Tweet text. If the URL(s) cannot be
 appended without text truncation, the tweet will be rejected and this method
-will return an HTTP 403 error. 
+will return an HTTP 403 error.
 EOT
 
 );
@@ -862,7 +862,7 @@ out more about blocking in the Twitter Support Knowledge Base.
     path     => 'blocks/create',
     method   => 'POST',
     params   => [qw/user_id screen_name include_entities skip_status/],
-    booleans => [qw/include_entities skip_status/],    
+    booleans => [qw/include_entities skip_status/],
     required => [qw/id/],
     returns  => 'BasicUser',
 );
@@ -1562,7 +1562,7 @@ ID L<http://developer.yahoo.com/geo/geoplanet/>) and some other human-readable
 information such as a the location's canonical name and country.
 
 For backwards compatibility, this method accepts optional C<lat> and C<long>
-parameters. You should call C<trends_closest> directly, instead. 
+parameters. You should call C<trends_closest> directly, instead.
 
 Use the WOEID returned in the location object to query trends for a specific
 location.
@@ -1690,7 +1690,7 @@ EOT
     returns  => 'RateLimitStatus',
 );
 
-# translate resources arrayref to a comma separated string 
+# translate resources arrayref to a comma separated string
 around rate_limit_status => sub {
     my $orig = shift;
     my $self = shift;
@@ -2170,7 +2170,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2009 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 

@@ -201,7 +201,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2009 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
