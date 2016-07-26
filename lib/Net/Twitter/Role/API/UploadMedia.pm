@@ -26,6 +26,16 @@ twitter_api_method upload => (
     description => 'Upload images to twitter without posting them on the timeline'
 );
 
+twitter_api_method upload_status => (
+    path        => 'media/upload',
+    method      => 'GET',
+    params      => [qw/media_id command/],
+    required    => [qw/media_id command/],
+    booleans    => [qw//],
+    returns     => 'status',
+    description => 'Check the status for async video uploads'
+);
+
 1;
 
 __END__
