@@ -91,7 +91,7 @@ __END__
 
   use Net::Twitter;
   my $nt = Net::Twitter->new(traits => [qw/InflateObjects API::Rest/]);
-  
+
   $nt->credentials($username, $password);
 
   $r = $nt->friends_timeline;
@@ -130,7 +130,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2009 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 

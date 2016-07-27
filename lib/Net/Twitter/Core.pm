@@ -5,7 +5,7 @@ package Net::Twitter::Core;
 use 5.008001;
 use Moose;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
-use JSON;
+use JSON::MaybeXS;
 use URI::Escape;
 use HTTP::Request::Common;
 use Net::Twitter::Error;
@@ -36,7 +36,7 @@ has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpa
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 has _json_handler   => (
     is      => 'rw',
-    default => sub { JSON->new->utf8 },
+    default => sub { JSON->new->allow_nonref->utf8 },
     handles => { from_json => 'decode' },
 );
 
@@ -149,7 +149,7 @@ sub _encode_args {
     return { map { utf8::upgrade($_) unless ref($_); $_ } %$args };
 }
 
-sub _json_request { 
+sub _json_request {
     my ($self, $http_method, $uri, $args, $authenticate, $dt_parser, $content_type ) = @_;
 
     my $msg = $self->_prepare_request($http_method, $uri, $args, $authenticate, $content_type);
@@ -253,8 +253,7 @@ sub _parse_result {
     my $content = $res->content;
     $content =~ s/^"(true|false)"$/$1/;
 
-    my $obj = length $content ? try { $self->_from_json($content) } : {};
-
+    my $obj = length $content ? try { $self->from_json($content) } : {};
     $self->_decode_html_entities($obj) if $obj && $self->decode_html_entities;
 
     # filter before inflating objects
@@ -377,7 +376,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2009 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 

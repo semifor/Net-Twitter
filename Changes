@@ -1,4 +1,8 @@
-4.01010 2014-03-25
+4.01020 2016-04-03
+    - Add create_media_metadata endpoint endpoint (AnnMary Mathew)
+    - Use JSON::MaybeXS (Olaf Alders)
+
+4.01010 2015-03-25
     - Replace missing POD file
 
 4.01009 2015-03-24

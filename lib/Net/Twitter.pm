@@ -2,7 +2,7 @@ package Net::Twitter;
 
 use Moose;
 use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
-use JSON;
+use JSON::MaybeXS;
 use Net::Twitter::Core;
 use Digest::SHA qw/sha1_hex/;
 use Class::Load ();
