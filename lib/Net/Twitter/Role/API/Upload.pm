@@ -50,7 +50,7 @@ C<undef> as the first array value.
 The Tweet text will be rewritten to include the media URL(s), which will reduce
 the number of characters allowed in the Tweet text. If the URL(s) cannot be
 appended without text truncation, the tweet will be rejected and this method
-will return an HTTP 403 error. 
+will return an HTTP 403 error.
 EOT
 
 );
@@ -81,7 +81,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2011 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 

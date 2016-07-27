@@ -9,7 +9,7 @@ after BUILD => sub {
         warn <<EOT;
 The "trends" methods have been moved to the API::REST trait. This warning
 will be removed in a future release. You can supress it by:
-   
+
    - including the API::REST trait
    - or setting the environment variable NET_TWITTER_NO_TRENDS_WARNING=1
 EOT
@@ -38,7 +38,7 @@ Marc Mims <marc@questright.com>
 
 =head1 LICENSE
 
-Copyright (c) 2010 Marc Mims
+Copyright (c) 2016 Marc Mims
 
 The Twitter API itself, and the description text used in this module is:
 
