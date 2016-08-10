@@ -533,7 +533,7 @@ each API method, Net::Twitter supports additional I<synthetic> arguments.
 When set to 1, Net::Twitter will provide an Authorization header for the API
 call; when set to 0, it will suppress the Authentication header.  This argument
 overrides the defined authentication behavior for the API method.  It is
-probably only useful for the C<rate_limit_satus> method which returns different
+probably only useful for the C<rate_limit_status> method which returns different
 values for authenticated and unauthenticated calls.  See L</AUTHENTICATION> for
 more details.
 
