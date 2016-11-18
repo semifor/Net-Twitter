@@ -1,3 +1,4 @@
+4.01030 2016-11-18
     - cleaned up Net::Twitter::Error and documented stack_trace and stack_frame
       methods
     - Add method upload_status (ghathwar on Github)
