@@ -4,13 +4,35 @@ use Moose;
 use Try::Tiny;
 use Devel::StackTrace;
 
-use overload '""' => \&error,
-             'fallback' => 1;
+use overload (
+    # We can't use 'error' directly, because overloads are called with three
+    # arguments ($self, undef, '') resulting in an error:
+    # Cannot assign a value to a read-only accessor
+    '""'     => sub { shift->error },
 
-has twitter_error   => ( is => 'rw', predicate => 'has_twitter_error' );
-has http_response   => ( isa => 'HTTP::Response', is => 'rw', required => 1, handles => [qw/code message/] );
-has stack_trace     => ( is => 'ro', init_arg => undef, builder => '_build_stack_trace' );
-has _stringified    => ( is => 'rw', init_arg => undef, default => undef );
+    fallback => 1,
+);
+
+has http_response => (
+    isa      => 'HTTP::Response',
+    is       => 'ro',
+    required => 1,
+    handles  => [qw/code message/],
+);
+
+has twitter_error => (
+    is        => 'ro',
+    predicate => 'has_twitter_error',
+);
+
+has stack_trace => (
+    is       => 'ro',
+    init_arg => undef,
+    builder  => '_build_stack_trace',
+    handles => {
+        stack_frame => 'frame',
+    },
+);
 
 sub _build_stack_trace {
     my $seen;
@@ -22,19 +44,19 @@ sub _build_stack_trace {
     });
 }
 
-sub error {
+has error => (
+    is       => 'ro',
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_error',
+);
+
+sub _build_error {
     my $self = shift;
 
-    return $self->_stringified if $self->_stringified;
-
-    # Don't walk on $@
-    local $@;
-
-    my $error = $self->has_twitter_error && $self->twitter_error_text
-      || $self->http_response->status_line;
-
-    my ($location) = $self->stack_trace->frame(0)->as_string =~ /( at .*)/;
-    return $self->_stringified($error . ($location || ''));
+    my $error = $self->twitter_error_text || $self->http_response->status_line;
+    my ($location) = $self->stack_frame(0)->as_string =~ /( at .*)/;
+    return $error . ($location || '');
 }
 
 sub twitter_error_text {
@@ -45,29 +67,29 @@ sub twitter_error_text {
     return '' unless $self->has_twitter_error;
     my $e = $self->twitter_error;
 
-    # the newest: array of errors
-    return try {
-             exists $e->{errors}
-          && exists $e->{errors}[0]
-          && exists $e->{errors}[0]{message}
-          && $e->{errors}[0]{message};
-    }
+    return ref $e eq 'HASH' && (
+        # the newest variant: array of errors
+        exists $e->{errors}
+            && ref $e->{errors} eq 'ARRAY'
+            && exists $e->{errors}[0]
+            && ref $e->{errors}[0] eq 'HASH'
+            && exists $e->{errors}[0]{message}
+            && $e->{errors}[0]{message}
 
-    # it's single error variant
-      || try {
-        exists $e->{error}
-          && exists $e->{error}{message}
-          && $e->{error}{message};
-    }
+        # it's single error variant
+        || exists $e->{error}
+            && ref $e->{error} eq 'HASH'
+            && exists $e->{error}{message}
+            && $e->{error}{message}
 
-    # or maybe it's not that deep (documentation would be helpful, here, Twitter!)
-      || try { exists $e->{message} && $e->{message} }
+        # the original error structure (still applies to some endpoints)
+        || exists $e->{error} && $e->{error}
 
-    # the original error structure
-      || try { exists $e->{error} && $e->{error} }
-      || '';
+        # or maybe it's not that deep (documentation would be helpful, here,
+        # Twitter!)
+        || exists $e->{message} && $e->{message}
+    ) || ''; # punt
 }
-
 
 sub twitter_error_code {
     my $self = shift;
@@ -94,16 +116,22 @@ Net::Twitter::Error - A Net::Twitter exception object
 
 =head1 SYNOPSIS
 
-    my $nt = Net::Twitter->new(username => $username, password => $password);
+    use Scalar::Util qw/blessed/;
+    use Try::Tiny;
 
-    my $followers = eval { $nt->followers };
-    if ( my $err = $@ ) {
-        die $@ unless blessed $err and $err->isa('Net::Twitter::Error');
+    my $nt = Net::Twitter->new(@options);
 
-        warn "HTTP Response Code: ", $err->code, "\n",
-             "HTTP Message......: ", $err->message, "\n",
-             "Twitter error.....: ", $err->error, "\n";
+    my $followers = try {
+        $nt->followers;
     }
+    catch {
+        die $_ unless blessed($_) && $_->isa('Net::Twitter::Error');
+
+        warn "HTTP Response Code: ", $_->code, "\n",
+             "HTTP Message......: ", $_->message, "\n",
+             "Twitter error.....: ", $_->error, "\n",
+             "Stack Trace.......: ", $_->stack_trace->as_string, "\n";
+    };
 
 =head1 DESCRIPTION
 
@@ -170,6 +198,14 @@ in a numeric test.
 
 See L<Twitter Error Codes|https://dev.twitter.com/docs/error-codes-responses>
 for a list of defined error codes.
+
+=item stack_trace
+
+Returns a L<Devel::StackTrace> object.
+
+=item stack_frame($i)
+
+Returns the C<$i>th stack frame as a L<Devel::StackTrace::Frame> object.
 
 =back
 

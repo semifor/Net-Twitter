@@ -271,10 +271,10 @@ sub _parse_result {
 
     return $obj if $res->is_success && defined $obj;
 
-    my $error = Net::Twitter::Error->new(http_response => $res);
-    $error->twitter_error($obj) if ref $obj;
-
-    die $error;
+    die Net::Twitter::Error->new(
+        http_response => $res,
+        $obj ? ( twitter_error => $obj ) : (),
+    );
 }
 
 # Return a DateTime object, given $since as one of:
