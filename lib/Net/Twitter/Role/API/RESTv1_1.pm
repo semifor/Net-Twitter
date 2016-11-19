@@ -702,8 +702,8 @@ user credentials are valid.
 
     path     => 'account/verify_credentials',
     method   => 'GET',
-    params   => [qw/include_entities skip_status/],
-    booleans => [qw/include_entities skip_status/],
+    params   => [qw/include_entities skip_status include_email/],
+    booleans => [qw/include_entities skip_status include_email/],
     required => [qw//],
     returns  => 'ExtendedUser',
 );
