@@ -1406,13 +1406,8 @@ around geo_id => sub {
 
     my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
 
-    unless ( exists $args->{place_id} ) {
-        if ( exists $args->{id} ) {
-            $args->{place_id} = delete $args->{id};
-        }
-        elsif ( @_ ) {
-            $args->{place_id} = shift;
-        }
+    if ( exists $args->{id} ) {
+        $args->{place_id} = delete $args->{id};
     }
 
     return $self->$next(@_, $args);
