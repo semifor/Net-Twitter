@@ -1,5 +1,7 @@
-    - rename placholder :category to :slug with backwards compatibilty to match
-      Twitter's documentation
+    - added trait WrapResult (returns both the HTTP response, with rate limit
+      accessors, and the decoded JSON response)
+    - rename placeholder :category to :slug with backwards compatibility to
+      match Twitter's documentation
     - add attachment_url parameter to update method
     - add links to Twitter API docs
 
