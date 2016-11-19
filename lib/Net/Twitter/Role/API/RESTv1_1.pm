@@ -132,7 +132,10 @@ authenticating user must be the author of the specified status.
 twitter_api_method update => (
     path       => 'statuses/update',
     method     => 'POST',
-    params     => [qw/media_ids status lat long place_id display_coordinates in_reply_to_status_id trim_user/],
+    params     => [qw/
+        attachment_url display_coordinates in_reply_to_status_id lat long
+        media_ids place_id status trim_user
+    /],
     required   => [qw/status/],
     booleans   => [qw/display_coordinates trim_user/],
     add_source => 1,
@@ -983,30 +986,43 @@ require authentication.
 
 twitter_api_method user_suggestions_for => (
     aliases     => [qw/follow_suggestions/],
-    path        => 'users/suggestions/:category',
+    path        => 'users/suggestions/:slug',
     method      => 'GET',
-    params      => [qw/category lang/],
-    required    => [qw/category/],
+    params      => [qw/slug lang/],
+    required    => [qw/slug/],
     returns     => 'ArrayRef',
     description => <<''
-Access the users in a given category of the Twitter suggested user list.
+Access the users in a given slug (category) of the Twitter suggested user list.
 
 );
 
 twitter_api_method user_suggestions => (
-    aliases     => [qw/follow_suggestions/],
-    path        => 'users/suggestions/:category/members',
+    aliases     => [qw/follow_suggestions_for/],
+    path        => 'users/suggestions/:slug/members',
     method      => 'GET',
-    params      => [qw/category lang/],
-    required    => [qw/category/],
+    params      => [qw/slug lang/],
+    required    => [qw/slug/],
     returns     => 'ArrayRef',
     description => <<''
-Access the users in a given category of the Twitter suggested user list and
-return their most recent status if they are not a protected user. Currently
-supported values for optional parameter C<lang> are C<en>, C<fr>, C<de>, C<es>,
-C<it>.  Does not require authentication.
+Access the users in a given slug (category) of the Twitter suggested user list
+and return their most recent status if they are not a protected user.
+Currently supported values for optional parameter C<lang> are C<en>, C<fr>,
+C<de>, C<es>, C<it>.  Does not require authentication.
 
 );
+
+# backwards compatibility: Twitter renamed "category" to "slug"
+around [ qw/follow_suggestions follow_suggestions_for user_suggestions
+user_suggestions_for/ ] => sub {
+    my ( $next, $self ) = splice @_, 0, 2;
+
+    my $args = ref $_[-1] eq 'HASH' ? pop : {};
+    if ( exists $args->{category} ) {
+        $args->{slug} = delete $args->{category};
+    }
+
+    return $self->$next(@_, $args);
+};
 
 twitter_api_method favorites => (
     description => <<'',

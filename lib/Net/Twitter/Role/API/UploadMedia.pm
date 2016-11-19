@@ -33,7 +33,7 @@ twitter_api_method upload_status => (
     required    => [qw/media_id command/],
     booleans    => [qw//],
     returns     => 'status',
-    description => 'Check the status for async video uploads'
+    description => 'Check the status for async video uploads.'
 );
 
 1;

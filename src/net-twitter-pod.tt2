@@ -135,7 +135,7 @@ Provides support for the Twitter REST API version 1.1 methods.
 
 =item API::Search
 
-Provides support for the Twitter Search API methods.
+Deprecated. Use L</search> in API::RESTv1_1 instead.
 
 =item AppAuth
 
@@ -596,8 +596,8 @@ to indicate the numerical ID of the Twitter user that sent the status.
 
 =head2 Methods
 
-[% INCLUDE APIDOC class='API::RESTv1_1' %]
-[% INCLUDE APIDOC class='API::Upload' %]
+[% INCLUDE APIDOC class='API::RESTv1_1' twitter_doc_links=1 %]
+[% INCLUDE APIDOC class='API::Upload' twitter_doc_links=1 %]
 
 =head1 Search API Methods
 
@@ -854,7 +854,9 @@ FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGES.
 
-[% BLOCK APIDOC %]
+[% BLOCK APIDOC;
+   DEFAULT twitter_doc_links=0
+%]
 
 =over 4
 
@@ -889,7 +891,7 @@ SUCH DAMAGES.
 [% method.description %]
 
 Returns: [% method.returns %]
-[% UNLESS method.deprecated -%]
+[% IF twitter_doc_links AND NOT method.deprecated -%]
 
 Twitter API documentation: L<[% method.method | upper %] [% method.path
     %]|https://dev.twitter.com/rest/reference/[% method.method | lower

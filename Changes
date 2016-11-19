@@ -1,3 +1,6 @@
+    - rename placholder :category to :slug with backwards compatibilty to match
+      Twitter's documentation
+    - add attachment_url parameter to update method
     - add links to Twitter API docs
 
 4.01030 2016-11-18
