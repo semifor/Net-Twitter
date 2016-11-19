@@ -891,7 +891,12 @@ SUCH DAMAGES.
 [% method.description %]
 
 Returns: [% method.returns %]
+[% UNLESS method.deprecated -%]
 
+Twitter API documentation: L<[% method.method | upper %] [% method.path
+    %]|https://dev.twitter.com/rest/reference/[% method.method | lower
+    %]/[% method.path %]>
+[% END %]
 [% END -%]
 
 =back

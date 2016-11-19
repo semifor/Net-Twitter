@@ -1392,12 +1392,31 @@ twitter_api_method geo_id => (
     description => <<'',
 Returns details of a place returned from the C<reverse_geocode> method.
 
-    path => 'geo/id/:id',
-    method => 'GET',
-    params => [qw/id/],
-    required => [qw/id/],
+    path     => 'geo/id/:place_id',
+    method   => 'GET',
+    params   => [qw/place_id/],
+    required => [qw/place_id/],
     returns  => 'HashRef',
 );
+
+# backwards compat for 'geo/id/:id'
+# recast to 'geo/id/:place_id
+around geo_id => sub {
+    my ( $next, $self ) = splice @_, 0, 2;
+
+    my $args = ref $_[-1] eq 'HASH' ? pop @_ : {};
+
+    unless ( exists $args->{place_id} ) {
+        if ( exists $args->{id} ) {
+            $args->{place_id} = delete $args->{id};
+        }
+        elsif ( @_ ) {
+            $args->{place_id} = shift;
+        }
+    }
+
+    return $self->$next(@_, $args);
+};
 
 twitter_api_method reverse_geocode => (
     description => <<EOT,
