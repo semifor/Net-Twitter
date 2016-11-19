@@ -1,3 +1,4 @@
+4.01040 2016-11-19
     - added trait WrapResult (returns both the HTTP response, with rate limit
       accessors, and the decoded JSON response)
     - rename placeholder :category to :slug with backwards compatibility to
