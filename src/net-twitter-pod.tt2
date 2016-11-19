@@ -2,10 +2,6 @@
 
 Net::Twitter - A perl interface to the Twitter API
 
-=head1 VERSION
-
-version [% VERSION %]
-
 =head1 SYNOPSIS
 
   use Net::Twitter;

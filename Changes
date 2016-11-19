@@ -1,3 +1,6 @@
+4.01041 2016-11-19
+    - hack dist.ini to get POD and README back into the distribution O_o
+
 4.01040 2016-11-19
     - added trait WrapResult (returns both the HTTP response, with rate limit
       accessors, and the decoded JSON response)

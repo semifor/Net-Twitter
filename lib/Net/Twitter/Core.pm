@@ -27,11 +27,23 @@ has ssl             => ( isa => 'Bool', is => 'ro', default => 0 );
 has netrc           => ( isa => 'Str', is => 'ro', predicate => 'has_netrc' );
 has netrc_machine   => ( isa => 'Str', is => 'ro', default => 'api.twitter.com' );
 has decode_html_entities => ( isa => 'Bool', is => 'rw', default => 0 );
-has useragent       => ( isa => 'Str', is => 'ro', default => "Net::Twitter/$Net::Twitter::Core::VERSION (Perl)" );
+
+has useragent => (
+    isa     => 'Str',
+    is      => 'ro',
+    default => "Net::Twitter/${ \($Net::Twitter::Core::VERSION || 1) } (Perl)",
+);
+
 has source          => ( isa => 'Str', is => 'ro', default => 'twitterpm' );
 has ua              => ( isa => 'Object', is => 'rw', lazy => 1, builder => '_build_ua' );
 has clientname      => ( isa => 'Str', is => 'ro', default => 'Perl Net::Twitter' );
-has clientver       => ( isa => 'Str', is => 'ro', default => $Net::Twitter::Core::VERSION );
+
+has clientver => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => $Net::Twitter::Core::VERSION || 1,
+);
+
 has clienturl       => ( isa => 'Str', is => 'ro', default => 'http://search.cpan.org/dist/Net-Twitter/' );
 has _base_url       => ( is => 'rw' ); ### keeps role composition from bitching ??
 has _json_handler   => (
