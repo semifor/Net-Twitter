@@ -948,6 +948,7 @@ the first 1000 matches from this API.
 );
 
 twitter_api_method contributees => (
+    deprecated  => 1,
     path        => 'users/contributees',
     method      => 'GET',
     params      => [qw/user_id screen_name include_entities skip_satus/],
@@ -960,6 +961,7 @@ Returns an array of users that the specified user can contribute to.
 );
 
 twitter_api_method contributors => (
+    deprecated  => 1,
     path        => 'users/contributors',
     method      => 'GET',
     params      => [qw/user_id screen_name include_entities skip_satus/],

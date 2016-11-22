@@ -1,3 +1,5 @@
+    - deprecated contributors/contributees
+
 4.01041 2016-11-19
     - hack dist.ini to get POD and README back into the distribution O_o
 
