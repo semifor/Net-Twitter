@@ -987,7 +987,7 @@ require authentication.
 );
 
 twitter_api_method user_suggestions_for => (
-    aliases     => [qw/follow_suggestions/],
+    aliases     => [qw/follow_suggestions_for/],
     path        => 'users/suggestions/:slug',
     method      => 'GET',
     params      => [qw/slug lang/],
@@ -999,7 +999,7 @@ Access the users in a given slug (category) of the Twitter suggested user list.
 );
 
 twitter_api_method user_suggestions => (
-    aliases     => [qw/follow_suggestions_for/],
+    aliases     => [qw/follow_suggestions/],
     path        => 'users/suggestions/:slug/members',
     method      => 'GET',
     params      => [qw/slug lang/],
