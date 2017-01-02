@@ -36,7 +36,7 @@ my $text = q[Bob's your !@##$%^&*(){}} uncle!];
 $nt->new_direct_message({ screen_name => 'perl_api', text => $text });
 
 my $encoded_text = Net::OAuth::Message::encode($text);
-like $req->content, qr/\E$encoded_text/, 'properly encoded';
+like $req->content, qr/\Q$encoded_text/, 'properly encoded';
 
 my $uri = URI->new($req->uri);
 $uri->query($req->content);
