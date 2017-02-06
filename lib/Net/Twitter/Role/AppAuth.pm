@@ -31,7 +31,7 @@ has [ qw/consumer_key consumer_secret/ ] => (
 
 # url attributes
 has [ qw/request_token_url invalidate_token_url/ ] => (
-    isa      => 'URI',
+    isa      => 'Net::Twitter::Types::URI',
     is       => 'ro',
     required => 1,
     coerce   => 1,

@@ -35,10 +35,14 @@ around BUILDARGS => sub {
 has consumer_key    => ( isa => 'Str', is => 'ro', required => 1 );
 has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
 
-# url attributes
-for my $attribute ( qw/authentication_url authorization_url request_token_url access_token_url xauth_url/ ) {
-    has $attribute => ( isa => 'URI', is => 'ro', required => 1, coerce => 1 );
-}
+# URI attributes
+has [ qw/authentication_url authorization_url request_token_url
+         access_token_url xauth_url/ ] => (
+    isa      => 'Net::Twitter::Types::URI',
+    is       => 'ro',
+    required => 1,
+    coerce   => 1,
+);
 
 # token attributes
 for my $attribute ( qw/access_token access_token_secret request_token request_token_secret/ ) {
