@@ -6,6 +6,7 @@ use Carp::Clan qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use URI;
 use Digest::SHA;
 use List::Util qw/first/;
+use Net::Twitter::Types;
 
 requires qw/_add_authorization_header ua/;
 
@@ -36,11 +37,7 @@ has consumer_secret => ( isa => 'Str', is => 'ro', required => 1 );
 
 # url attributes
 for my $attribute ( qw/authentication_url authorization_url request_token_url access_token_url xauth_url/ ) {
-    has $attribute => (
-        isa    => 'Str', is => 'rw', required => 1,
-        # inflate urls to URI objects when read
-        reader => { $attribute => sub { URI->new(shift->{$attribute}) } },
-    );
+    has $attribute => ( isa => 'URI', is => 'ro', required => 1, coerce => 1 );
 }
 
 # token attributes

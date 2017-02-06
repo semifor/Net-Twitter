@@ -3,6 +3,7 @@ package Net::Twitter::Role::AppAuth;
 use Moose::Role;
 use Carp::Clan   qw/^(?:Net::Twitter|Moose|Class::MOP)/;
 use HTTP::Request::Common qw/POST/;
+use Net::Twitter::Types;
 
 requires qw/_add_authorization_header ua from_json/;
 
@@ -30,9 +31,10 @@ has [ qw/consumer_key consumer_secret/ ] => (
 
 # url attributes
 has [ qw/request_token_url invalidate_token_url/ ] => (
-    isa      => 'Str',
-    is       => 'rw',
+    isa      => 'URI',
+    is       => 'ro',
     required => 1,
+    coerce   => 1,
 );
 
 has access_token => (
