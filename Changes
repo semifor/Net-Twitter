@@ -1,5 +1,8 @@
+4.01042 2017-02-06
     - deprecated contributors/contributees
     - Fixed: follow_suggestions and follow_suggestions_for were reversed
+    - fix "overwriting a accessor" warnings under Moose 2.2004 #70
+    - build changes: keep dist.ini, create Makefile.PL (ether)
 
 4.01041 2016-11-19
     - hack dist.ini to get POD and README back into the distribution O_o
