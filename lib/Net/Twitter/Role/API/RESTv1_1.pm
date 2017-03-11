@@ -11,7 +11,7 @@ with 'Net::Twitter::Role::API::UploadMedia';
 # API v1.1 incorporates the Search and Upload APIs
 excludes map "Net::Twitter::Role::$_", qw/API::Search API::Upload Net::Twitter::Role::RateLimit/;
 
-has apiurl          => ( isa => 'Str', is => 'ro', default => 'http://api.twitter.com/1.1'  );
+has apiurl          => ( isa => 'Str', is => 'ro', default => 'https://api.twitter.com/1.1'  );
 has apihost         => ( isa => 'Str', is => 'ro', lazy => 1, builder => '_build_apihost' );
 has apirealm        => ( isa => 'Str', is => 'ro', default => 'Twitter API'               );
 
@@ -19,12 +19,6 @@ sub _build_apihost {
     my $uri = URI->new(shift->apiurl);
     join ':', $uri->host, $uri->port;
 }
-
-after BUILD => sub {
-    my $self = shift;
-
-    $self->{apiurl} =~ s/^http:/https:/ if $self->ssl;
-};
 
 base_url     'apiurl';
 authenticate 1;
