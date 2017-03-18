@@ -207,6 +207,7 @@ Retweets a tweet.
 );
 
 twitter_api_method update_with_media => (
+    deprecated  => 1,
     path        => 'statuses/update_with_media',
     method      => 'POST',
     params      => [qw/
@@ -217,6 +218,10 @@ twitter_api_method update_with_media => (
     returns     => 'Status',
     description => <<'EOT',
 Updates the authenticating user's status and attaches media for upload.
+
+Note that Twitter has marked this endpoint as B<deprecated>, and recommends
+instead calling C<upload>, then (optionally) C<create_media_metadata>, then
+C<update>.
 
 The C<media[]> parameter is an arrayref with the following interpretation:
 
