@@ -2145,8 +2145,16 @@ twitter_api_method create_media_metadata => (
     params      => [qw/media_id alt_text/],
     required    => [qw/media_id/],
     returns     => 'HashRef',
-    description => 'add metadata to media',
-    content_type => 'application/json'
+    content_type => 'application/json',
+    description => <<'EOT',
+Adds metadata -- alt text, in particular -- to a previously uploaded media
+object, specified by its ID. (One knows this ID via the return value of the
+preceding C<upload> call.)
+
+The C<alt_text> parameter must have as its value a hashref containing a single
+key-value pair. The key must be C<text>, and the value is the alt text to assign
+to the media object. The text must be 400 characters or fewer in length.
+EOT
 );
 
 # infer screen_name or user_id from positional args for backwards compatibility
