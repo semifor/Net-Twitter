@@ -22,8 +22,13 @@ twitter_api_method upload => (
     params      => [qw/media/],
     required    => [qw/media/],
     booleans    => [qw/possibly_sensitive display_coordinates/],
-    returns     => 'Image',
-    description => 'Upload images to twitter without posting them on the timeline'
+    returns     => 'HashRef',
+    description => <<'',
+Uploads an image to twitter without immediately posting it to the
+authenticating user's timeline. Its return-value hashref notably contains a
+C<media_id> value that's useful as a parameter value in various other
+endpoint calls, such as C<update> and C<create_media_metadata>.
+
 );
 
 twitter_api_method upload_status => (
