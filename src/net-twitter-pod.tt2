@@ -49,7 +49,7 @@ L<Net::Twitter::Manual::MigratingToV1_1>.
 =head1 DESCRIPTION
 
 This module provides a perl interface to the Twitter APIs.  See
-L<http://dev.twitter.com/doc> for a full description of the Twitter APIs.
+L<http://dev.twitter.com/docs> for a full description of the Twitter APIs.
 
 =head1 TWITTER API VERSION 1.1
 
