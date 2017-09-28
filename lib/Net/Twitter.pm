@@ -160,5 +160,7 @@ Net::Twitter - A perl interface to the Twitter API
 
 =head1 DESCRIPTION
 
-See Net/Twitter.pod
+This module has been superseded by L<Twitter::API>. Please update your applications and/or downstream dependent modules as soon as possible. 
+
+
 

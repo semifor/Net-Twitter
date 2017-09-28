@@ -48,6 +48,10 @@ L<Net::Twitter::Manual::MigratingToV1_1>.
 
 =head1 DESCRIPTION
 
+This module has been superseded by L<Twitter::API>. Please update as
+soon as you possibly can to use new features and the new API
+versions. This module will no longer be supported.
+
 This module provides a perl interface to the Twitter APIs.  See
 L<http://dev.twitter.com/docs> for a full description of the Twitter APIs.
 
