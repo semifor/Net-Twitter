@@ -1,3 +1,9 @@
+4.01043 2018-01-17
+    - deprecation notice: Twitter::API is the new Net::Twitter
+    - deprecated update_with_media
+    - doc and build updates
+    - remove debugger breakpoint (Oof!)
+
 4.01042 2017-02-06
     - deprecated contributors/contributees
     - Fixed: follow_suggestions and follow_suggestions_for were reversed
