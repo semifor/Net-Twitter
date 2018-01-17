@@ -35,7 +35,6 @@ around _parse_result => sub {
 
     my $r = try { $next->($self, $res, $sythetic_args, $datetime_parser) }
     catch {
-        $DB::single = 1;
         die $_ unless blessed $_ && $_->isa('Net::Twitter::Error');
 
         $self->_twitter_error($_->has_twitter_error
