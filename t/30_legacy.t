@@ -11,7 +11,7 @@ BEGIN {
 
     plan tests => 5;
 
-    use_ok 'Net::Twitter', qw/Legacy/;
+    use_ok 'Net::Twitter';
 }
 
 my $nt  = Net::Twitter->new(ssl => 0, username => 'me', password => 'secret');
